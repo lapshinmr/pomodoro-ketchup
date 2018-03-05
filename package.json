@@ -1,8 +1,8 @@
 {
-  "name": "ketchup",
+  "name": "pomodoro-ketchup",
   "version": "0.0.1",
   "main": "index.js",
-  "repository": "",
+  "repository": "https://github.com/pomodoro-ketchup/pomodoro-ketchup.git",
   "author": "pomidorkin <lapshinmr@yandex.ru>",
   "license": "MIT",
   "scripts": {
@@ -38,5 +38,7 @@
     "webpack": "^3.5.5",
     "webpack-dev-server": "^2.7.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "gh-pages": "^1.1.0"
+  }
 }
