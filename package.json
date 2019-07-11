@@ -1,44 +1,29 @@
 {
   "name": "pomodoro-ketchup",
-  "version": "0.0.1",
-  "main": "index.js",
-  "repository": "https://github.com/pomodoro-ketchup/pomodoro-ketchup.git",
-  "author": "pomidorkin <lapshinmr@yandex.ru>",
-  "license": "MIT",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "build": "rm -rf dist && mkdir dist && webpack",
-    "deploy": "gh-pages -d dist",
-    "start": "webpack-dev-server --progress --colors"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-1": "^6.24.1",
-    "bootstrap": "^4.0.0",
-    "classnames": "^2.2.5",
-    "clone-deep": "^2.0.1",
-    "css-loader": "^0.28.7",
-    "file-loader": "^1.1.5",
-    "font-awesome": "^4.7.0",
-    "html-webpack-plugin": "^2.30.1",
-    "jquery": "^3.3.0",
-    "node-sass": "^4.7.2",
-    "path": "^0.12.7",
-    "popper.js": "^1.12.9",
-    "react": "^16.2.0",
-    "react-async-script": "^0.9.1",
-    "react-dom": "^16.2.0",
-    "react-loader": "^2.4.2",
-    "sass-loader": "^6.0.6",
-    "style-loader": "^0.18.2",
-    "tether": "^1.4.3",
-    "url-loader": "^0.6.2",
-    "webpack": "^3.5.5",
-    "webpack-dev-server": "^2.7.1"
+    "core-js": "^2.6.5",
+    "register-service-worker": "^1.6.2",
+    "vue": "^2.6.10",
+    "vue-router": "^3.0.3",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "gh-pages": "^1.1.0"
+    "@vue/cli-plugin-babel": "^3.9.0",
+    "@vue/cli-plugin-eslint": "^3.9.0",
+    "@vue/cli-plugin-pwa": "^3.9.0",
+    "@vue/cli-service": "^3.9.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "vue-template-compiler": "^2.6.10"
   }
 }
