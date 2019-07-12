@@ -1,18 +1,27 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <timer></timer>
+    <timer-title :time="time"></timer-title>
+    <pomodoros-counter></pomodoros-counter>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import Timer from '@/components/Timer.vue'
+import TimerTitle from '@/components/TimerTitle.vue'
+import PomodorosCounter from '@/components/PomodorosCounter.vue'
 
 export default {
   name: 'home',
   components: {
-    HelloWorld
+    Timer, TimerTitle, PomodorosCounter
+  },
+  computed: {
+    time() {
+      return this.$store.getters.getTimeFormatted
+    }
   }
 }
+
 </script>

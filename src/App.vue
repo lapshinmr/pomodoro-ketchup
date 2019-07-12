@@ -1,12 +1,30 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+  <div id="app" class="container-fluid">
+    <div class="row">
+      <div id="nav" class="col-sm-12">
+        <router-link to="/">Home</router-link> |
+        <router-link to="/about">About</router-link> |
+        <router-link to="/settings">Settings</router-link>
+      </div>
+      <div class="col-sm-12">
+        <router-view />
+      </div>
     </div>
-    <router-view/>
+    <div class="row">
+      <div class="col-sm-12">
+
+      </div>
+    </div>
   </div>
 </template>
+
+<script>
+  export default {
+    created() {
+      this.$store.dispatch('setTime')
+    }
+  }
+</script>
 
 <style>
 #app {
