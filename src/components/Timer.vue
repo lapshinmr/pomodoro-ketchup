@@ -6,7 +6,7 @@
     <div>
       <button class="btn btn-outline-success" @click="play">Play</button>
       <button class="btn btn-outline-success ml-2" @click="pause">Pause</button>
-      <button class="btn btn-outline-success ml-2" @click="stop">Stop</button>
+      <button class="btn btn-outline-success ml-2" @click="reset">Reset</button>
     </div>
   </div>
 </template>
@@ -30,20 +30,18 @@
       pause() {
         this.$store.dispatch('pauseTimer')
       },
-      stop() {
-        this.$store.dispatch('stopTimer')
+      reset() {
+        this.$store.dispatch('resetTimer')
       }
     }
   }
 </script>
 
-<style scoped>
-  p {
-    margin: 40px 0 0;
-    font-size: 100px;
-  }
+<style scoped lang="sass">
+  p
+    margin: 40px 0 0
+    font-size: 100px
 
-  p {
-    color: #42b983;
-  }
+  p
+    color: $primary
 </style>
