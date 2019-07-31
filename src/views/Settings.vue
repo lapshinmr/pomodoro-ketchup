@@ -1,7 +1,11 @@
 <template>
-  <div>
-    <h1>This is a settings page</h1>
-    <button class="btn btn-outline-success ml-2" @click="notify">Notify</button>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-8 offset-sm-2">
+        <h1>This is a settings page</h1>
+        <button class="btn btn-outline-success ml-2" @click="notify">Notify</button>
+      </div>
+    </div>
   </div>
 </template>
 

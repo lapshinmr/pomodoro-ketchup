@@ -1,8 +1,8 @@
 <template>
   <div>
-    <p class="timer">
+    <div class="timer">
       {{ curTimeFormatted }}
-    </p>
+    </div>
     <div>
       <button class="btn btn-outline-success" @click="play">Play</button>
       <button class="btn btn-outline-success ml-2" @click="pause">Pause</button>
@@ -38,10 +38,10 @@
 </script>
 
 <style scoped lang="sass">
-  p
+
+  .timer
     margin: 40px 0 0
     font-size: 100px
+    color: $dark
 
-  p
-    color: $primary
 </style>

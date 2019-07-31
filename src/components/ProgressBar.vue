@@ -1,16 +1,12 @@
 <template>
-  <div>
-    <div class="radialProgressBar progress" :style="sector">
-      <div class="overlay" >
-        <div class="inner">
-          <slot></slot>
-        </div>
-      </div>
-    </div>
-    <svg class="svgprogress" width="120" height="120" viewBox="0 0 120 120">
-      <circle cx="60" cy="60" r="54" fill="none" stroke="#e6e6e6" stroke-width="12" />
-      <circle class="progress__value" cx="60" cy="60" r="54" fill="none" stroke="#f77a52" stroke-width="12" />
+  <div class="radialProgressBar">
+    <svg class="svgprogress" viewBox="0 0 150 150">
+      <circle class="progress_background" cx="75" cy="75" r="70" />
+      <circle class="progress_bar" :style="progressValue" cx="75" cy="75" r="70" />
     </svg>
+    <div class="inner">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -18,16 +14,11 @@
   export default {
     name: 'ProgressBar',
     computed: {
-      sector() {
+      progressValue() {
         let ratio = this.$store.getters.getTimeSeconds / this.$store.getters.getInitTimeSeconds;
-        let angle = 90 + 360 * (1 - ratio);
-        let color = "#98CA32";
-        if (ratio < 0.5) {
-          color = "#C0DF81";
-          angle = 270 - 360 * ratio;
-        }
         return {
-          "background-image": "linear-gradient(" + angle + "deg, transparent 50%, " + color + " 50%), linear-gradient(90deg, #98CA32 50%, transparent 50%)"
+          "stroke-dasharray": 2 * Math.PI * 70,
+          "stroke-dashoffset": 2 * Math.PI * 70 * ratio
         }
       }
     }
@@ -38,32 +29,54 @@
 <style lang="sass">
 
   .radialProgressBar
-    border-radius: 50%
-    width: 60vh
-    height: 60vh
-    background: $light
-    z-index: 999
+    position: relative
+    width: 80vw
+    height: 80vw
 
-    .overlay
-      border-radius: 50%
-      width: 85%
-      height: 85%
-      margin: auto
-      background: $super-light
+    @media (min-width: 576px)
+      width: 70vw
+      height: 70vw
 
-      .inner
-        position: absolute
-        top: 50%
-        left: 50%
-        transform: translate(-50%, -50%)
+    @media (min-width: 768px)
+      width: 60vw
+      height: 60vw
 
-  .svgprogress
-    transform: rotate(-90deg)
+    @media (min-width: 992px)
+      width: 50vw
+      height: 50vw
 
-  .progress__value
-    stroke-dasharray: 339.292
-    stroke-dashoffset: 0
-    transition: all 2s
+    @media (min-width: 1200px)
+      width: 40vw
+      height: 40vw
+
+    .inner
+      position: absolute
+      top: 50%
+      left: 50%
+      transform: translate(-50%, -50%)
+      z-index: 999
+
+    .svgprogress
+      position: absolute
+      top: 50%
+      left: 50%
+      width: 100%
+      height: 100%
+      transform: translate(-50%, -50%) rotate(-90deg)
+      z-index: 1
+
+      circle
+        stroke-width: 10
+        fill: transparent
+
+        &.progress_background
+          stroke: $primary
+
+        &.progress_bar
+          transition: all 0.3s
+          stroke: $dark
+
+
 
 </style>
 

@@ -1,7 +1,7 @@
 <template>
-  <div class="row d-flex align-content-between" id="timerpomodoros">
+  <div>
     <pomodoros-counter></pomodoros-counter>
-    <div class="col-sm-12 d-flex align-content-center justify-content-center">
+    <div class="d-flex align-content-center justify-content-center">
       <progress-bar>
         <timer></timer>
       </progress-bar>
@@ -9,8 +9,8 @@
   </div>
 </template>
 
+
 <script>
-// @ is an alias to /src
 import Timer from '@/components/Timer.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import PomodorosCounter from '@/components/PomodorosCounter.vue'
@@ -21,11 +21,9 @@ export default {
     Timer, ProgressBar, PomodorosCounter,
   }
 }
-
 </script>
 
-<style lang="sass">
-  #timerpomodoros
-    height: 100%
+
+<style lang="sass" scoped>
 
 </style>

@@ -1,64 +1,100 @@
 <template>
-  <div id="pomodoroscounter">
+  <div>
     <div id="progressbar" :style="progressbar">
-      <div class="d-flex justify-content-left">
-        <div class="ml-4">
-          {{ pomodoros }}
-        </div>
+      <div id="indicator" class="d-flex justify-content-between" :style="indicatorPosition">
+        {{ indicatorText }}
       </div>
     </div>
-    <div id="buttons" class="d-flex justify-content-between mt-auto">
-      <button class="btn btn-outline-success btn-lg rounded-circle" @click="increase">+</button>
-      <button class="btn btn-outline-success btn-lg rounded-circle" @click="decrease">-</button>
+    <div id="pomodoros-buttons" class="d-flex justify-content-around">
+      <button class="btn btn-link btn-lg" @click="increase">
+        Add
+      </button>
+      <button class="btn btn-link btn-lg" @click="decrease">
+        Remove
+      </button>
+      <button class="btn btn-link btn-lg" @click="reset">
+        Reset
+      </button>
     </div>
   </div>
 </template>
 
 <script>
-  export default {
+    export default {
     name: 'pomodoros-counter',
     computed: {
-      progressbar() {
-        return {
-            "height": this.$store.state.pomodoros * 50 + 'px',
-            "background-color": "$primary"
-        }
-      },
       pomodoros() {
         return this.$store.state.pomodoros
+      },
+      pomodorosGoal() {
+        return this.$store.state.pomodorosGoal
+      },
+      progressbar() {
+        let ratio = this.pomodoros / this.pomodorosGoal;
+        return {
+            "height": (ratio < 1 ? ratio : 1) * 100  + '%',
+        }
+      },
+      indicatorPosition() {
+        let top;
+        let ratio = this.pomodoros / this.pomodorosGoal;
+        if (ratio < 0.6) {
+            top = -25;
+        } else {
+            top = 5;
+        }
+        return {
+            'top': top + 'px',
+        }
+      },
+      indicatorText() {
+          let text;
+          if (false) {
+              text = this.pomodoros + ' of ' + this.pomodorosGoal
+          } else if (false) {
+              text = Math.round(this.pomodoros / this.pomodorosGoal * 100) + '%'
+          } else {
+              text = this.pomodoros + ' of ' + this.pomodorosGoal + ' (' + Math.round(this.pomodoros / this.pomodorosGoal * 100) + '%)'
+          }
+          return text
       }
     },
     methods: {
       increase() {
-        this.$store.commit('ADD_POMODORO')
+        this.$store.dispatch('addPomodoro')
       },
       decrease() {
-        this.$store.commit('REMOVE_POMODORO')
+        this.$store.dispatch('removePomodoro')
+      },
+      reset() {
+        this.$store.dispatch('setPomodoros', 0)
       }
     }
   }
 </script>
 
 <style scoped lang="sass">
-  #pomodoroscounter
+
+  #progressbar
     position: fixed
     bottom: 0
-    left: 0
-    height: 100vh
     width: 100vw
-    z-index: 1
+    transition: 0.3s
+    background-color: $light
+    z-index: -1
 
-    #buttons
-      position: absolute
-      bottom: 30px
-      margin-left: 10%
-      width: 80%
+  #indicator
+    position: absolute
+    color: $dark
+    font-size: 20px
+    line-height: 20px
+    margin-left: 10px
+    transition: 0.3s
+    width: 100%
 
-    #progressbar
-      position: absolute
-      bottom: 0
-      width: 100vw
-      transition: 0.3s
-      color: white
+  #pomodoros-buttons
+    position: absolute
+    bottom: 0
+    right: 5px
 
 </style>

@@ -6,6 +6,7 @@ Vue.use(Vuex);
 
 const REFRESH_TIME = 1000;
 const POMODORO_DEFAULT = 10;
+const POMODOROS_GOAL_DEFAULT = 13;
 
 
 export default new Vuex.Store({
@@ -14,7 +15,8 @@ export default new Vuex.Store({
     curTime: 0,
     endTime: null,
     timerId: null,
-    pomodoros: 0
+    pomodoros: 0,
+    pomodorosGoal: 0
   },
   mutations: {
     'SET_INIT_TIME'(state, seconds) {
@@ -33,14 +35,21 @@ export default new Vuex.Store({
       state.timerId = timerId
     },
     'RESET_TIMER_ID'(state) {
-      clearInterval(state.timerId);
       state.timerId = null
+    },
+    'SET_POMODOROS'(state, pomodoros) {
+      state.pomodoros = pomodoros;
     },
     'ADD_POMODORO'(state) {
       state.pomodoros += 1
     },
     'REMOVE_POMODORO'(state) {
-      state.pomodoros -= 1
+      if (state.pomodoros > 0) {
+        state.pomodoros -= 1
+      }
+    },
+    'SET_POMODOROS_GOAL'(state, number) {
+      state.pomodorosGoal = number
     },
   },
   actions: {
@@ -51,6 +60,13 @@ export default new Vuex.Store({
       }
       commit('SET_INIT_TIME', initTime);
     },
+    setPomodorosGoal({commit}, number) {
+      let pomodorosGoal;
+      if (!number) {
+        pomodorosGoal = localStorage.getItem('pomodorosGoal') || POMODOROS_GOAL_DEFAULT;
+      }
+      commit('SET_POMODOROS_GOAL', pomodorosGoal);
+    },
     setTime({commit, state}, seconds) {
       if (!seconds) {
         seconds = state.initTime
@@ -59,7 +75,6 @@ export default new Vuex.Store({
     },
     runTimer({commit, state}) {
       if (state.timerId || state.curTime === 0) {
-        console.log('+')
         return
       }
       commit('SET_END_TIME');
@@ -80,13 +95,31 @@ export default new Vuex.Store({
       }, REFRESH_TIME);
       commit('SET_TIMER_ID', timerId)
     },
-    pauseTimer({commit}) {
+    pauseTimer({commit, state}) {
+      clearInterval(state.timerId);
       commit('RESET_TIMER_ID')
     },
-    resetTimer({commit, dispatch}) {
+    resetTimer({commit, state, dispatch}) {
+      clearInterval(state.timerId);
       commit('RESET_TIMER_ID');
       dispatch('setTime')
-    }
+    },
+    loadPomodoros({commit}) {
+      let pomodoros = Number(localStorage.getItem('pomodoros') || 0);
+      commit('SET_POMODOROS', pomodoros)
+    },
+    setPomodoros({commit, state}, pomodoros) {
+      commit('SET_POMODOROS', pomodoros);
+      localStorage.setItem('pomodoros', state.pomodoros)
+    },
+    addPomodoro({commit, state}) {
+      commit('ADD_POMODORO');
+      localStorage.setItem('pomodoros', state.pomodoros)
+    },
+    removePomodoro({commit, state}) {
+      commit('REMOVE_POMODORO');
+      localStorage.setItem('pomodoros', state.pomodoros)
+    },
   },
   getters: {
     getInitTimeSeconds(state) {
