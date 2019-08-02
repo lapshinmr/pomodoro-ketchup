@@ -7,6 +7,7 @@ Vue.use(Vuex);
 const REFRESH_TIME = 1000;
 const POMODORO_DEFAULT = 25 * 60;
 const POMODOROS_GOAL_DEFAULT = 70;
+const GOAL_INDICATOR_FORMAT_DEFAULT = 2;
 
 
 export default new Vuex.Store({
@@ -159,14 +160,16 @@ export default new Vuex.Store({
       localStorage.setItem('goalIndicatorFormat', value)
     },
     loadGoalIndicatorFormat({commit}) {
-      commit('SET_GOAL_INDICATOR_FORMAT', JSON.parse(localStorage.getItem('goalIndicatorFormat')));
+      let value = JSON.parse(localStorage.getItem('goalIndicatorFormat') || GOAL_INDICATOR_FORMAT_DEFAULT);
+      commit('SET_GOAL_INDICATOR_FORMAT', value);
     },
     switchProgressBar({commit, state}) {
       commit('SWITCH_PROGRESS_BAR');
       localStorage.setItem('reversedProgressBar', state.reversedProgressBar)
     },
     loadProgressBar({commit}) {
-      commit('SET_PROGRESS_BAR', JSON.parse(localStorage.getItem('reversedProgressBar') || false))
+      let value = JSON.parse(localStorage.getItem('reversedProgressBar') || false);
+      commit('SET_PROGRESS_BAR', value)
     }
   },
   getters: {
