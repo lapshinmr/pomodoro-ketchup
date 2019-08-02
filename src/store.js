@@ -5,8 +5,8 @@ import Vuex from 'vuex'
 Vue.use(Vuex);
 
 const REFRESH_TIME = 1000;
-const POMODORO_DEFAULT = 10;
-const POMODOROS_GOAL_DEFAULT = 13;
+const POMODORO_DEFAULT = 25 * 60;
+const POMODOROS_GOAL_DEFAULT = 70;
 
 
 export default new Vuex.Store({
@@ -16,7 +16,9 @@ export default new Vuex.Store({
     endTime: null,
     timerId: null,
     pomodoros: 0,
-    pomodorosGoal: 0
+    pomodorosGoal: 0,
+    timerTitle: true,
+    goalIndicatorFormat: 0
   },
   mutations: {
     'SET_INIT_TIME'(state, seconds) {
@@ -51,21 +53,40 @@ export default new Vuex.Store({
     'SET_POMODOROS_GOAL'(state, number) {
       state.pomodorosGoal = number
     },
+    'SET_TIMER_TITLE'(state, flag) {
+      state.timerTitle = flag
+    },
+    'SWITCH_TIMER_TITLE'(state) {
+      state.timerTitle = !state.timerTitle
+    },
+    'SET_GOAL_INDICATOR_FORMAT'(state, value) {
+      state.goalIndicatorFormat = value
+    }
   },
   actions: {
     setInitTime({commit}, seconds) {
       let initTime;
       if (!seconds) {
-        initTime = localStorage.getItem('initTime') || POMODORO_DEFAULT;
+        initTime = JSON.parse(localStorage.getItem('initTime')) || POMODORO_DEFAULT;
+      } else {
+        initTime = seconds;
+        localStorage.setItem('initTime', seconds)
       }
       commit('SET_INIT_TIME', initTime);
     },
     setPomodorosGoal({commit}, number) {
       let pomodorosGoal;
       if (!number) {
-        pomodorosGoal = localStorage.getItem('pomodorosGoal') || POMODOROS_GOAL_DEFAULT;
+        pomodorosGoal = JSON.parse(localStorage.getItem('pomodorosGoal')) || POMODOROS_GOAL_DEFAULT;
+      } else {
+        pomodorosGoal = number;
+        localStorage.setItem('pomodorosGoal', number)
       }
       commit('SET_POMODOROS_GOAL', pomodorosGoal);
+    },
+    loadTimerTitle({commit}) {
+      let timerTitle = JSON.parse(localStorage.getItem('timerTitle'));
+      commit('SET_TIMER_TITLE', timerTitle);
     },
     setTime({commit, state}, seconds) {
       if (!seconds) {
@@ -105,7 +126,7 @@ export default new Vuex.Store({
       dispatch('setTime')
     },
     loadPomodoros({commit}) {
-      let pomodoros = Number(localStorage.getItem('pomodoros') || 0);
+      let pomodoros = JSON.parse(localStorage.getItem('pomodoros')) || 0;
       commit('SET_POMODOROS', pomodoros)
     },
     setPomodoros({commit, state}, pomodoros) {
@@ -120,6 +141,17 @@ export default new Vuex.Store({
       commit('REMOVE_POMODORO');
       localStorage.setItem('pomodoros', state.pomodoros)
     },
+    switchTimerTitle({commit, state}) {
+      commit('SWITCH_TIMER_TITLE');
+      localStorage.setItem('timerTitle', state.timerTitle)
+    },
+    setGoalIndicatorFormat({commit}, value) {
+      commit('SET_GOAL_INDICATOR_FORMAT', value);
+      localStorage.setItem('goalIndicatorFormat', value)
+    },
+    loadGoalIndicatorFormat({commit}) {
+      commit('SET_GOAL_INDICATOR_FORMAT', JSON.parse(localStorage.getItem('goalIndicatorFormat')));
+    },
   },
   getters: {
     getInitTimeSeconds(state) {
@@ -132,6 +164,18 @@ export default new Vuex.Store({
       let minutes = Math.floor(state.curTime / 60);
       let seconds = Math.floor(state.curTime - minutes * 60);
       return (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds
+    },
+    getPomodorosGoal(state) {
+      return state.pomodorosGoal
+    },
+    getPomodoros(state) {
+      return state.pomodoros
+    },
+    getTimerTitle(state) {
+      return state.timerTitle
+    },
+    getGoalIndicatorFormat(state) {
+      return state.goalIndicatorFormat
     }
   }
 })

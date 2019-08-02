@@ -20,7 +20,9 @@
 </template>
 
 <script>
-    export default {
+  import { mapGetters } from 'vuex';
+
+  export default {
     name: 'pomodoros-counter',
     computed: {
       pomodoros() {
@@ -49,9 +51,11 @@
       },
       indicatorText() {
           let text;
-          if (false) {
+          let format = this.getGoalIndicatorFormat();
+          console.log('format', format, typeof format)
+          if (format === 0) {
               text = this.pomodoros + ' of ' + this.pomodorosGoal
-          } else if (false) {
+          } else if (format === 1) {
               text = Math.round(this.pomodoros / this.pomodorosGoal * 100) + '%'
           } else {
               text = this.pomodoros + ' of ' + this.pomodorosGoal + ' (' + Math.round(this.pomodoros / this.pomodorosGoal * 100) + '%)'
@@ -60,6 +64,9 @@
       }
     },
     methods: {
+      ...mapGetters([
+        'getGoalIndicatorFormat'
+      ]),
       increase() {
         this.$store.dispatch('addPomodoro')
       },

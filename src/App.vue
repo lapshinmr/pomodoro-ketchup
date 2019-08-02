@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="nav" class="p-4">
+    <div id="nav" class="text-center p-4">
       <router-link to="/">Home</router-link> |
       <!--
       <router-link to="/about">About</router-link> |
@@ -10,27 +10,37 @@
     <div id="content">
       <router-view />
     </div>
-    <timer-title :time="time"></timer-title>
+    <timer-title :title="title"></timer-title>
   </div>
 </template>
 
 <script>
-  import TimerTitle from '@/components/TimerTitle.vue'
+  import TimerTitle from '@/components/TimerTitle.vue';
+  import {mapGetters} from 'vuex';
 
   export default {
     components: {
         TimerTitle
     },
     computed: {
-        time() {
-            return this.$store.getters.getTimeFormatted
+      ...mapGetters([
+        'getTimerTitle'
+      ]),
+      title() {
+        if (this.getTimerTitle) {
+          return this.$store.getters.getTimeFormatted
+        } else {
+          return 'Pomodoro-Ketchup'
         }
+      }
     },
     created() {
       this.$store.dispatch('setInitTime');
       this.$store.dispatch('setPomodorosGoal');
       this.$store.dispatch('setTime');
       this.$store.dispatch('loadPomodoros');
+      this.$store.dispatch('loadTimerTitle');
+      this.$store.dispatch('loadGoalIndicatorFormat');
     }
   }
 </script>
@@ -53,7 +63,6 @@
     font-family: 'Avenir', Helvetica, Arial, sans-serif
     -webkit-font-smoothing: antialiased
     -moz-osx-font-smoothing: grayscale
-    text-align: center
     color: $super-dark
     height: 100vh
 

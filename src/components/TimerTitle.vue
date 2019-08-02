@@ -5,12 +5,12 @@
 <script>
   export default {
     name: 'timer-title',
-    props: ['time'],
+    props: ['title'],
     watch: {
-      time: {
+      title: {
         immediate: true,
         handler() {
-          document.title = this.time;
+          document.title = this.title;
         }
       }
     }
