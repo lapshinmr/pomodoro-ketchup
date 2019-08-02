@@ -11,11 +11,19 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
+
   export default {
     name: 'ProgressBar',
     computed: {
+      ...mapGetters([
+        'getProgressBar'
+      ]),
       progressValue() {
         let ratio = this.$store.getters.getTimeSeconds / this.$store.getters.getInitTimeSeconds;
+        if (this.getProgressBar) {
+          ratio = (1 - ratio);
+        }
         return {
           "stroke-dasharray": 2 * Math.PI * 70,
           "stroke-dashoffset": 2 * Math.PI * 70 * ratio

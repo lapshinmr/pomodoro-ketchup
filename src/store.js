@@ -18,7 +18,10 @@ export default new Vuex.Store({
     pomodoros: 0,
     pomodorosGoal: 0,
     timerTitle: true,
-    goalIndicatorFormat: 0
+    goalIndicatorFormat: 0,
+    reversedProgressBar: false,
+    notificationTitle: 'Time is over',
+    notificationBody: 'Well done!'
   },
   mutations: {
     'SET_INIT_TIME'(state, seconds) {
@@ -61,6 +64,12 @@ export default new Vuex.Store({
     },
     'SET_GOAL_INDICATOR_FORMAT'(state, value) {
       state.goalIndicatorFormat = value
+    },
+    'SWITCH_PROGRESS_BAR'(state) {
+      state.reversedProgressBar = !state.reversedProgressBar
+    },
+    'SET_PROGRESS_BAR'(state, value) {
+      state.reversedProgressBar = value
     }
   },
   actions: {
@@ -106,8 +115,8 @@ export default new Vuex.Store({
           commit('RESET_TIMER_ID');
           commit('ADD_POMODORO');
           if (Notification.permission === 'granted') {
-            new Notification('Time is over', {
-              body: 'Well done!'
+            new Notification(state.notificationTitle, {
+              body: state.notificationBody
             });
           }
         } else {
@@ -152,6 +161,13 @@ export default new Vuex.Store({
     loadGoalIndicatorFormat({commit}) {
       commit('SET_GOAL_INDICATOR_FORMAT', JSON.parse(localStorage.getItem('goalIndicatorFormat')));
     },
+    switchProgressBar({commit, state}) {
+      commit('SWITCH_PROGRESS_BAR');
+      localStorage.setItem('reversedProgressBar', state.reversedProgressBar)
+    },
+    loadProgressBar({commit}) {
+      commit('SET_PROGRESS_BAR', JSON.parse(localStorage.getItem('reversedProgressBar') || false))
+    }
   },
   getters: {
     getInitTimeSeconds(state) {
@@ -176,6 +192,9 @@ export default new Vuex.Store({
     },
     getGoalIndicatorFormat(state) {
       return state.goalIndicatorFormat
+    },
+    getProgressBar(state) {
+      return state.reversedProgressBar
     }
   }
 })

@@ -3,7 +3,7 @@
     <div class="timer">
       {{ curTimeFormatted }}
     </div>
-    <div>
+    <div class="text-center">
       <button class="btn btn-outline-success" @click="play">Play</button>
       <button class="btn btn-outline-success ml-2" @click="pause">Pause</button>
       <button class="btn btn-outline-success ml-2" @click="reset">Reset</button>

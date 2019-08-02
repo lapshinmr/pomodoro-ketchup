@@ -41,6 +41,7 @@
       this.$store.dispatch('loadPomodoros');
       this.$store.dispatch('loadTimerTitle');
       this.$store.dispatch('loadGoalIndicatorFormat');
+      this.$store.dispatch('loadProgressBar');
     }
   }
 </script>
@@ -67,11 +68,11 @@
     height: 100vh
 
   #nav
-    height: 15vh
+    height: 20vh
     z-index: 999
 
   #content
-    height: 85vh
+    height: 80vh
 
   #nav a
     font-weight: bold

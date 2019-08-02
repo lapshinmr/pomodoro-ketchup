@@ -2,46 +2,38 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-10 offset-sm-1">
-        <div class="form-group">
-          <label for="pomodoro">
+        <div class="form-group row">
+          <label for="pomodoro" class="col-sm-3 col-form-label">
             Pomodoro
           </label>
-          <input type="text"
-                 id="pomodoro"
-                 class="form-control"
-                 aria-describedby="pomodoroDuration"
-                 placeholder="25"
-                 v-model.lazy.number="pomodoro"
-          >
-          <small class="form-text text-muted">
-            Set pomodoro duration in minutes here.
-          </small>
+          <div class="col-sm-9">
+            <input type="text"
+                   id="pomodoro"
+                   class="form-control"
+                   aria-describedby="pomodoroDuration"
+                   placeholder="25"
+                   v-model.lazy.number="pomodoro"
+            >
+            <small class="form-text text-muted">
+              Set pomodoro duration in minutes here.
+            </small>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="goal">
+        <div class="form-group row">
+          <label for="goal" class="col-sm-3 col-form-label">
             Goal
           </label>
-          <input type="text"
-                 id="goal"
-                 class="form-control"
-                 placeholder="70"
-                 v-model.lazy.number="goal"
-          >
-          <small class="form-text text-muted">
-            Set your goal of pomodoros (e.g. daily or weekly).
-          </small>
-        </div>
-        <div class="form-group form-check">
-          <input type="checkbox"
-                 id="notification"
-                 class="form-check-input"
-                 v-model="isNotification"
-                 @click="notify"
-          >
-          <label class="form-check-label"
-                 for="notification">
-            Browser notifications.
-          </label>
+          <div class="col-sm-9">
+            <input type="text"
+                   id="goal"
+                   class="form-control"
+                   placeholder="70"
+                   v-model.lazy.number="goal"
+            >
+            <small class="form-text text-muted">
+              Set your goal of pomodoros (e.g. daily or weekly).
+            </small>
+          </div>
         </div>
         <div class="form-group form-check">
           <input type="checkbox"
@@ -53,6 +45,18 @@
           <label class="form-check-label"
                  for="title">
             Title timer indication.
+          </label>
+        </div>
+        <div class="form-group form-check">
+          <input type="checkbox"
+                 id="progress-bar"
+                 class="form-check-input"
+                 v-model="reversedProgressBar"
+                 @click="switchProgressBar"
+          >
+          <label class="form-check-label"
+                 for="progress-bar">
+            Reversed progress bar.
           </label>
         </div>
         <div class="form-group">
@@ -96,6 +100,38 @@
             Choose goal indication format.
           </small>
         </div>
+        <div class="form-group">
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">
+              Notifications
+            </label>
+            <div class="col-sm-9">
+              <div v-if="notificationPermission === 'granted'"
+                   class="form-control alert alert-success py-2 mb-0"
+              >
+                {{ notificationPermission }}
+              </div>
+              <div v-if="notificationPermission === 'denied'"
+                   class="form-control alert alert-danger py-2 mb-0"
+              >
+                {{ notificationPermission }}
+              </div>
+              <button v-if="notificationPermission !== 'granted' && notificationPermission !== 'denied'"
+                      id="notification"
+                      class="btn btn-outline-success"
+                      @click="notify"
+              >
+                Turn on browser notifications
+              </button>
+              <small v-if="notificationPermission === 'granted'">
+                To block notifications use your browser's settings.
+              </small>
+              <small v-if="notificationPermission === 'denied'">
+                To allow notifications use your browser's settings.
+              </small>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -109,17 +145,19 @@
         return {
           pomodoro: 0,
           goal: 0,
-          isNotification: false,
+          notificationPermission: '',
           timerTitle: false,
+          reversedProgressBar: false,
           goalIndicatorFormat: null
         }
     },
     created() {
       this.pomodoro = this.getInitTimeSeconds() / 60;
       this.goal = this.getPomodorosGoal();
-      this.isNotification = Notification.permission !== 'granted';
+      this.notificationPermission = Notification.permission;
       this.timerTitle = this.getTimerTitle();
       this.goalIndicatorFormat = this.getGoalIndicatorFormat();
+      this.reversedProgressBar = this.getProgressBar();
     },
     watch: {
       pomodoro: function() {
@@ -134,7 +172,6 @@
         this.setPomodorosGoal(goal);
       },
       goalIndicatorFormat: function() {
-        console.log(this.goalIndicatorFormat);
         this.setGoalIndicatorFormat(this.goalIndicatorFormat);
       }
     },
@@ -144,35 +181,28 @@
         'setTime',
         'setPomodorosGoal',
         'switchTimerTitle',
-        'setGoalIndicatorFormat'
+        'setGoalIndicatorFormat',
+        'switchProgressBar'
       ]),
       ...mapGetters([
         'getInitTimeSeconds',
         'getTimeSeconds',
         'getPomodorosGoal',
         'getTimerTitle',
-        'getGoalIndicatorFormat'
+        'getGoalIndicatorFormat',
+        'getProgressBar'
       ]),
-      permission() {
-        document.addEventListener('DOMContentLoaded', function () {
-          if (!Notification) {
-            alert('Desktop notifications not available in your browser. Try Chromium.');
-            return;
-          }
-
-          if (Notification.permission !== 'granted')
-            Notification.requestPermission();
-        });
-      },
       notify() {
-        if (Notification.permission !== 'granted')
-          Notification.requestPermission();
-        else {
-          let notification = new Notification('Notification title', {
-            //icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
-            body: '+1'
+        if (!Notification) {
+          alert('Desktop notifications not available in your browser. Try Chromium.');
+          return;
+        }
+        if (Notification.permission !== 'granted') {
+          Notification.requestPermission((permission) => {
+            this.notificationPermission = Notification.permission;
           });
         }
+        this.notificationPermission = Notification.permission;
       }
     }
   }
