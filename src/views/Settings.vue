@@ -35,15 +35,47 @@
             </small>
           </div>
         </div>
+        <div class="form-group row">
+          <label for="title" class="col-sm-3 col-form-label">
+            Title
+          </label>
+          <div class="col-sm-9">
+            <input type="text"
+                   id="title"
+                   class="form-control"
+                   placeholder="Time is over."
+                   v-model.lazy.text="notificationTitle"
+            >
+            <small class="form-text text-muted">
+              Write your own notification's title.
+            </small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="message" class="col-sm-3 col-form-label">
+            Message
+          </label>
+          <div class="col-sm-9">
+            <input type="text"
+                   id="message"
+                   class="form-control"
+                   placeholder="Well done!"
+                   v-model.lazy.text="notificationBody"
+            >
+            <small class="form-text text-muted">
+              Write your own notification's message.
+            </small>
+          </div>
+        </div>
         <div class="form-group form-check">
           <input type="checkbox"
-                 id="title"
+                 id="title-timer"
                  class="form-check-input"
                  v-model="timerTitle"
                  @click="switchTimerTitle"
           >
           <label class="form-check-label"
-                 for="title">
+                 for="title-timer">
             Title timer indication.
           </label>
         </div>
@@ -106,16 +138,20 @@
               Notifications
             </label>
             <div class="col-sm-9">
-              <div v-if="notificationPermission === 'granted'"
-                   class="form-control alert alert-success py-2 mb-0"
+              <input
+                v-if="notificationPermission === 'granted'"
+                type="text"
+                readonly
+                class="form-control-plaintext text-success"
+                value="allowed"
               >
-                {{ notificationPermission }}
-              </div>
-              <div v-if="notificationPermission === 'denied'"
-                   class="form-control alert alert-danger py-2 mb-0"
+              <input
+                v-if="notificationPermission === 'denied'"
+                type="text"
+                readonly
+                class="form-control-plaintext text-danger"
+                value="blocked"
               >
-                {{ notificationPermission }}
-              </div>
               <button v-if="notificationPermission !== 'granted' && notificationPermission !== 'denied'"
                       id="notification"
                       class="btn btn-outline-success"
@@ -123,10 +159,10 @@
               >
                 Turn on browser notifications
               </button>
-              <small v-if="notificationPermission === 'granted'">
+              <small class="form-text text-muted" v-if="notificationPermission === 'granted'">
                 To block notifications use your browser's settings.
               </small>
-              <small v-if="notificationPermission === 'denied'">
+              <small class="form-text text-muted" v-if="notificationPermission === 'denied'">
                 To allow notifications use your browser's settings.
               </small>
             </div>
@@ -145,10 +181,12 @@
         return {
           pomodoro: 0,
           goal: 0,
+          notificationTitle: '',
+          notificationBody: '',
           notificationPermission: '',
           timerTitle: false,
           reversedProgressBar: false,
-          goalIndicatorFormat: null
+          goalIndicatorFormat: null,
         }
     },
     created() {
@@ -158,6 +196,8 @@
       this.timerTitle = this.getTimerTitle();
       this.goalIndicatorFormat = this.getGoalIndicatorFormat();
       this.reversedProgressBar = this.getProgressBar();
+      this.notificationTitle = this.getNotificationTitle();
+      this.notificationBody = this.getNotificationBody();
     },
     watch: {
       pomodoro: function() {
@@ -173,6 +213,12 @@
       },
       goalIndicatorFormat: function() {
         this.setGoalIndicatorFormat(this.goalIndicatorFormat);
+      },
+      notificationTitle: function() {
+        this.setNotificationTitle(this.notificationTitle);
+      },
+      notificationBody: function() {
+        this.setNotificationBody(this.notificationBody);
       }
     },
     methods: {
@@ -182,7 +228,9 @@
         'setPomodorosGoal',
         'switchTimerTitle',
         'setGoalIndicatorFormat',
-        'switchProgressBar'
+        'switchProgressBar',
+        'setNotificationTitle',
+        'setNotificationBody',
       ]),
       ...mapGetters([
         'getInitTimeSeconds',
@@ -190,7 +238,9 @@
         'getPomodorosGoal',
         'getTimerTitle',
         'getGoalIndicatorFormat',
-        'getProgressBar'
+        'getProgressBar',
+        'getNotificationTitle',
+        'getNotificationBody',
       ]),
       notify() {
         if (!Notification) {

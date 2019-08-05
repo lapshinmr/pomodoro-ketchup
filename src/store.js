@@ -8,6 +8,8 @@ const REFRESH_TIME = 1000;
 const POMODORO_DEFAULT = 25 * 60;
 const POMODOROS_GOAL_DEFAULT = 70;
 const GOAL_INDICATOR_FORMAT_DEFAULT = 2;
+const NOTIFICATION_TITLE = 'Time is over.';
+const NOTIFICATION_BODY = 'Well done!';
 
 
 export default new Vuex.Store({
@@ -21,8 +23,8 @@ export default new Vuex.Store({
     timerTitle: true,
     goalIndicatorFormat: 0,
     reversedProgressBar: false,
-    notificationTitle: 'Time is over',
-    notificationBody: 'Well done!'
+    notificationTitle: '',
+    notificationBody: ''
   },
   mutations: {
     'SET_INIT_TIME'(state, seconds) {
@@ -71,7 +73,13 @@ export default new Vuex.Store({
     },
     'SET_PROGRESS_BAR'(state, value) {
       state.reversedProgressBar = value
-    }
+    },
+    'SET_NOTIFICATION_TITLE'(state, value) {
+      state.notificationTitle = value
+    },
+    'SET_NOTIFICATION_BODY'(state, value) {
+      state.notificationBody = value
+    },
   },
   actions: {
     setInitTime({commit}, seconds) {
@@ -170,6 +178,22 @@ export default new Vuex.Store({
     loadProgressBar({commit}) {
       let value = JSON.parse(localStorage.getItem('reversedProgressBar') || false);
       commit('SET_PROGRESS_BAR', value)
+    },
+    setNotificationTitle({commit}, value) {
+      commit('SET_NOTIFICATION_TITLE', value);
+      localStorage.setItem('notificationTitle', value);
+    },
+    setNotificationBody({commit}, value) {
+      commit('SET_NOTIFICATION_BODY', value);
+      localStorage.setItem('notificationBody', value);
+    },
+    loadNotificationTitle({commit}) {
+      let value = localStorage.getItem('notificationTitle') || NOTIFICATION_TITLE;
+      commit('SET_NOTIFICATION_TITLE', value);
+    },
+    loadNotificationBody({commit}) {
+      let value = localStorage.getItem('notificationBody') || NOTIFICATION_BODY;
+      commit('SET_NOTIFICATION_BODY', value);
     }
   },
   getters: {
@@ -198,6 +222,12 @@ export default new Vuex.Store({
     },
     getProgressBar(state) {
       return state.reversedProgressBar
+    },
+    getNotificationTitle(state) {
+      return state.notificationTitle
+    },
+    getNotificationBody(state) {
+      return state.notificationBody
     }
   }
 })

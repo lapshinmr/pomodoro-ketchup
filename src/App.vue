@@ -42,6 +42,8 @@
       this.$store.dispatch('loadTimerTitle');
       this.$store.dispatch('loadGoalIndicatorFormat');
       this.$store.dispatch('loadProgressBar');
+      this.$store.dispatch('loadNotificationTitle');
+      this.$store.dispatch('loadNotificationBody');
     }
   }
 </script>
@@ -68,11 +70,11 @@
     height: 100vh
 
   #nav
-    height: 20vh
+    height: 15vh
     z-index: 999
 
   #content
-    height: 80vh
+    height: 85vh
 
   #nav a
     font-weight: bold
