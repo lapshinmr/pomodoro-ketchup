@@ -132,41 +132,60 @@
             Choose goal indication format.
           </small>
         </div>
-        <div class="form-group">
-          <div class="form-group row">
-            <label class="col-sm-3 col-form-label">
-              Notifications
-            </label>
-            <div class="col-sm-9">
-              <input
-                v-if="notificationPermission === 'granted'"
-                type="text"
-                readonly
-                class="form-control-plaintext text-success"
-                value="allowed"
-              >
-              <input
-                v-if="notificationPermission === 'denied'"
-                type="text"
-                readonly
-                class="form-control-plaintext text-danger"
-                value="blocked"
-              >
-              <button v-if="notificationPermission !== 'granted' && notificationPermission !== 'denied'"
-                      id="notification"
-                      class="btn btn-outline-success"
-                      @click="notify"
-              >
-                Turn on browser notifications
-              </button>
-              <small class="form-text text-muted" v-if="notificationPermission === 'granted'">
-                To block notifications use your browser's settings.
-              </small>
-              <small class="form-text text-muted" v-if="notificationPermission === 'denied'">
-                To allow notifications use your browser's settings.
-              </small>
-            </div>
+        <div class="form-group row">
+          <label class="col-sm-3 col-form-label">
+            Notifications
+          </label>
+          <div class="col-sm-9">
+            <input
+              v-if="notificationPermission === 'granted'"
+              type="text"
+              readonly
+              class="form-control-plaintext text-success"
+              value="allowed"
+            >
+            <input
+              v-if="notificationPermission === 'denied'"
+              type="text"
+              readonly
+              class="form-control-plaintext text-danger"
+              value="blocked"
+            >
+            <button v-if="notificationPermission !== 'granted' && notificationPermission !== 'denied'"
+                    id="notification"
+                    class="btn btn-outline-success"
+                    @click="notify"
+            >
+              Turn on browser notifications
+            </button>
+            <small class="form-text text-muted" v-if="notificationPermission === 'granted'">
+              To block notifications use your browser's settings.
+            </small>
+            <small class="form-text text-muted" v-if="notificationPermission === 'denied'">
+              To allow notifications use your browser's settings.
+            </small>
           </div>
+        </div>
+        <div id="themes" class="form-group">
+          <div v-for="(color, index) in colorThemes" class="form-check form-check-inline">
+            <input
+                class="form-check-input"
+                type="radio"
+                name="goalIndicatorFormat"
+                :id="'color' + index"
+                :value="index"
+                v-model.number="colorThemeIndicator"
+            >
+            <label
+              class="form-check-label"
+              :for="'color' + index"
+              :style="{'background-color': color}"
+            >
+            </label>
+          </div>
+          <small class="form-text text-muted">
+            Choose goal indication format.
+          </small>
         </div>
       </div>
     </div>
@@ -187,10 +206,12 @@
           timerTitle: false,
           reversedProgressBar: false,
           goalIndicatorFormat: null,
+          colorThemeIndicator: 0,
+          colorThemes: ['green', 'yellow', 'red', 'blue']
         }
     },
     created() {
-      this.pomodoro = this.getInitTimeSeconds() / 60;
+      this.pomodoro = this.getInitTimeSeconds() // / 60;
       this.goal = this.getPomodorosGoal();
       this.notificationPermission = Notification.permission;
       this.timerTitle = this.getTimerTitle();
@@ -201,7 +222,7 @@
     },
     watch: {
       pomodoro: function() {
-        let pomodoro = this.pomodoro * 60;
+        let pomodoro = this.pomodoro ;
         if (this.getInitTimeSeconds() === this.getTimeSeconds()) {
           this.setTime(pomodoro);
         }
@@ -221,6 +242,19 @@
         this.setNotificationBody(this.notificationBody);
       }
     },
+    computed: {
+      colorTheme: function() {
+        if (this.colorThemeIndicator === 0) {
+          return 'green'
+        } else if (this.colorThemeIndicator === 1) {
+          return 'red'
+        } else if (this.colorThemeIndicator === 2) {
+          return 'yellow'
+        } else if (this.colorThemeIndicator === 3) {
+          return 'blue'
+        }
+  }
+  },
     methods: {
       ...mapActions([
         'setInitTime',
@@ -257,3 +291,19 @@
     }
   }
 </script>
+
+
+<style scoped lang="sass">
+
+  #themes
+    input
+      display: none
+
+    label
+      width: 40px
+      height: 20px
+
+    input:checked + label
+        border: red solid 3px
+
+</style>

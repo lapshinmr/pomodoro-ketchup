@@ -1,6 +1,24 @@
+$colorTheme: 0
+
 $super-light: #F1F8E2
-$light: #C0DF81
-$primary: #98CA32
-$dark: #59761E
-$super-dark: #263409
+$light:       #C0DF81
+$primary:     #98CA32
+$dark:        #59761E
+$super-dark:  #263409
+
+@if $colorTheme == 0
+
+  $super-light: #F1F8E2
+  $light:       #C0DF81
+  $primary:     #98CA32
+  $dark:        #59761E
+  $super-dark:  #263409
+
+@else
+
+  $super-light: #E7F3EF
+  $light:       #79BEA8
+  $primary:     #448D76
+  $dark:        #23483C
+  $super-dark:  #093426
 

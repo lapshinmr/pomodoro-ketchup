@@ -11,6 +11,13 @@ const GOAL_INDICATOR_FORMAT_DEFAULT = 2;
 const NOTIFICATION_TITLE = 'Time is over.';
 const NOTIFICATION_BODY = 'Well done!';
 
+function get(key, parse=false) {
+  if (parse) {
+    return JSON.parse(localStorage.getItem(key));
+  } else {
+    return localStorage.getItem(key);
+  }
+}
 
 export default new Vuex.Store({
   state: {
@@ -102,9 +109,25 @@ export default new Vuex.Store({
       }
       commit('SET_POMODOROS_GOAL', pomodorosGoal);
     },
-    loadTimerTitle({commit}) {
-      let timerTitle = JSON.parse(localStorage.getItem('timerTitle'));
+    loadVars({commit, dispatch}) {
+      let timerTitle = get('timerTitle', true) || true;
+      let pomodoros = get('pomodoros', true) || 0;
+      let goalIndicatorFormat = get('goalIndicatorFormat', true) || GOAL_INDICATOR_FORMAT_DEFAULT;
+      let reversedProgressBar = get('reversedProgressBar', true) || false;
+      let notificationTitle = get('notificationTitle') || NOTIFICATION_TITLE;
+      let notificationBody = get('notificationBody') || NOTIFICATION_BODY;
+      let endTime = get('endTime') || Date.now();
       commit('SET_TIMER_TITLE', timerTitle);
+      commit('SET_POMODOROS', pomodoros);
+      commit('SET_GOAL_INDICATOR_FORMAT', goalIndicatorFormat);
+      commit('SET_PROGRESS_BAR', reversedProgressBar);
+      commit('SET_NOTIFICATION_TITLE', notificationTitle);
+      commit('SET_NOTIFICATION_BODY', notificationBody);
+      let curTime = Math.floor((endTime - Date.now()) / 1000);
+      if ( curTime > 0 ) {
+        commit('SET_TIME', curTime);
+        dispatch('runTimer')
+      }
     },
     setTime({commit, state}, seconds) {
       if (!seconds) {
@@ -112,17 +135,23 @@ export default new Vuex.Store({
       }
       commit('SET_TIME', seconds)
     },
-    runTimer({commit, state}) {
-      if (state.timerId || state.curTime === 0) {
-        return
-      }
+    saveEndTime({commit, state}) {
       commit('SET_END_TIME');
+      localStorage.setItem('endTime', state.endTime)
+    },
+    runTimer({commit, dispatch, state}) {
+      if (state.timerId) {
+        return
+      } else if (!state.timeId && state.curTime === 0) {
+        dispatch('setTime')
+      }
+      dispatch('saveEndTime');
       let timerId = setInterval(() => {
         if ( state.endTime <= Date.now() && state.timerId ) {
           clearInterval(state.timerId);
           commit('SET_TIME', 0);
           commit('RESET_TIMER_ID');
-          commit('ADD_POMODORO');
+          dispatch('addPomodoro');
           if (Notification.permission === 'granted') {
             new Notification(state.notificationTitle, {
               body: state.notificationBody
@@ -142,10 +171,6 @@ export default new Vuex.Store({
       clearInterval(state.timerId);
       commit('RESET_TIMER_ID');
       dispatch('setTime')
-    },
-    loadPomodoros({commit}) {
-      let pomodoros = JSON.parse(localStorage.getItem('pomodoros')) || 0;
-      commit('SET_POMODOROS', pomodoros)
     },
     setPomodoros({commit, state}, pomodoros) {
       commit('SET_POMODOROS', pomodoros);
@@ -167,17 +192,9 @@ export default new Vuex.Store({
       commit('SET_GOAL_INDICATOR_FORMAT', value);
       localStorage.setItem('goalIndicatorFormat', value)
     },
-    loadGoalIndicatorFormat({commit}) {
-      let value = JSON.parse(localStorage.getItem('goalIndicatorFormat') || GOAL_INDICATOR_FORMAT_DEFAULT);
-      commit('SET_GOAL_INDICATOR_FORMAT', value);
-    },
     switchProgressBar({commit, state}) {
       commit('SWITCH_PROGRESS_BAR');
       localStorage.setItem('reversedProgressBar', state.reversedProgressBar)
-    },
-    loadProgressBar({commit}) {
-      let value = JSON.parse(localStorage.getItem('reversedProgressBar') || false);
-      commit('SET_PROGRESS_BAR', value)
     },
     setNotificationTitle({commit}, value) {
       commit('SET_NOTIFICATION_TITLE', value);
@@ -187,14 +204,6 @@ export default new Vuex.Store({
       commit('SET_NOTIFICATION_BODY', value);
       localStorage.setItem('notificationBody', value);
     },
-    loadNotificationTitle({commit}) {
-      let value = localStorage.getItem('notificationTitle') || NOTIFICATION_TITLE;
-      commit('SET_NOTIFICATION_TITLE', value);
-    },
-    loadNotificationBody({commit}) {
-      let value = localStorage.getItem('notificationBody') || NOTIFICATION_BODY;
-      commit('SET_NOTIFICATION_BODY', value);
-    }
   },
   getters: {
     getInitTimeSeconds(state) {

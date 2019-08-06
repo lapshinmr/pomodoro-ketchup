@@ -16,7 +16,7 @@
 
 <script>
   import TimerTitle from '@/components/TimerTitle.vue';
-  import {mapGetters} from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
 
   export default {
     components: {
@@ -35,21 +35,24 @@
       }
     },
     created() {
-      this.$store.dispatch('setInitTime');
-      this.$store.dispatch('setPomodorosGoal');
-      this.$store.dispatch('setTime');
-      this.$store.dispatch('loadPomodoros');
-      this.$store.dispatch('loadTimerTitle');
-      this.$store.dispatch('loadGoalIndicatorFormat');
-      this.$store.dispatch('loadProgressBar');
-      this.$store.dispatch('loadNotificationTitle');
-      this.$store.dispatch('loadNotificationBody');
+      this.setInitTime();
+      this.setPomodorosGoal();
+      this.setTime();
+      this.loadVars();
+    },
+    methods: {
+      ...mapActions([
+        'setInitTime',
+        'setPomodorosGoal',
+        'setTime',
+        'loadVars'
+      ])
     }
+
   }
 </script>
 
 <style lang="sass">
-
   html
     padding: 0
     margin: 0
