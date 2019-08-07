@@ -1,38 +1,32 @@
 <template>
   <div>
     <div class="timer">
-      {{ curTimeFormatted }}
+      {{ CUR_TIME_FORMATTED }}
     </div>
     <div class="text-center">
-      <button class="btn btn-outline-success" @click="play">Play</button>
-      <button class="btn btn-outline-success ml-2" @click="pause">Pause</button>
-      <button class="btn btn-outline-success ml-2" @click="reset">Reset</button>
+      <button class="btn btn-outline-success" @click="runTimer">Play</button>
+      <button class="btn btn-outline-success ml-2" @click="pauseTimer">Pause</button>
+      <button class="btn btn-outline-success ml-2" @click="resetTimer">Reset</button>
     </div>
   </div>
 </template>
 
 <script>
+  import { mapGetters, mapActions } from 'vuex';
+
   export default {
     name: 'Timer',
-    data() {
-      return {
-      }
-    },
     computed: {
-      curTimeFormatted() {
-        return this.$store.getters.getTimeFormatted
-      }
+      ...mapGetters([
+        'CUR_TIME_FORMATTED'
+      ])
     },
     methods: {
-      play() {
-        this.$store.dispatch('runTimer')
-      },
-      pause() {
-        this.$store.dispatch('pauseTimer')
-      },
-      reset() {
-        this.$store.dispatch('resetTimer')
-      }
+      ...mapActions([
+        'runTimer',
+        'pauseTimer',
+        'resetTimer'
+      ])
     }
   }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="blue">
     <div id="nav" class="text-center p-4">
       <router-link to="/">Home</router-link> |
       <!--
@@ -16,33 +16,29 @@
 
 <script>
   import TimerTitle from '@/components/TimerTitle.vue';
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapGetters, mapActions } from 'vuex';
+  import { TAB_TITLE_DEFAULT } from './constants'
 
   export default {
-    components: {
-        TimerTitle
-    },
+    components: { TimerTitle },
     computed: {
+      ...mapState([
+        'isTimerTitle'
+      ]),
       ...mapGetters([
-        'getTimerTitle'
+        'CUR_TIME_FORMATTED'
       ]),
       title() {
-        if (this.getTimerTitle) {
-          return this.$store.getters.getTimeFormatted
-        } else {
-          return 'Pomodoro-Ketchup'
-        }
+        return this.isTimerTitle ? this.CUR_TIME_FORMATTED : TAB_TITLE_DEFAULT
       }
     },
     created() {
-      this.setInitTime();
       this.setPomodorosGoal();
       this.setTime();
       this.loadVars();
     },
     methods: {
       ...mapActions([
-        'setInitTime',
         'setPomodorosGoal',
         'setTime',
         'loadVars'

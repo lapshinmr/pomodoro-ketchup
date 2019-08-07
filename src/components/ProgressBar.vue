@@ -11,17 +11,19 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
+  import { mapState } from 'vuex';
 
   export default {
     name: 'ProgressBar',
     computed: {
-      ...mapGetters([
-        'getProgressBar'
+      ...mapState([
+        'curTime',
+        'initTime',
+        'isReversedProgressBar',
       ]),
       progressValue() {
-        let ratio = this.$store.getters.getTimeSeconds / this.$store.getters.getInitTimeSeconds;
-        if (this.getProgressBar) {
+        let ratio = this.curTime / this.initTime;
+        if (this.isReversedProgressBar) {
           ratio = (1 - ratio);
         }
         return {
@@ -79,10 +81,12 @@
 
         &.progress_background
           stroke: $primary
+          opacity: 0.5
 
         &.progress_bar
           transition: all 0.3s
           stroke: $dark
+          opacity: 0.5
 
 
 

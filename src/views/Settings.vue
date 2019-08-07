@@ -12,7 +12,7 @@
                    class="form-control"
                    aria-describedby="pomodoroDuration"
                    placeholder="25"
-                   v-model.lazy.number="pomodoro"
+                   v-model.lazy.number="initTime"
             >
             <small class="form-text text-muted">
               Set pomodoro duration in minutes here.
@@ -28,7 +28,7 @@
                    id="goal"
                    class="form-control"
                    placeholder="70"
-                   v-model.lazy.number="goal"
+                   v-model.lazy.number="pomodorosGoal"
             >
             <small class="form-text text-muted">
               Set your goal of pomodoros (e.g. daily or weekly).
@@ -71,8 +71,8 @@
           <input type="checkbox"
                  id="title-timer"
                  class="form-check-input"
-                 v-model="timerTitle"
-                 @click="switchTimerTitle"
+                 v-model="isTimerTitle"
+                 @click="switchTimerTitleFlag"
           >
           <label class="form-check-label"
                  for="title-timer">
@@ -83,8 +83,8 @@
           <input type="checkbox"
                  id="progress-bar"
                  class="form-check-input"
-                 v-model="reversedProgressBar"
-                 @click="switchProgressBar"
+                 v-model="isReversedProgressBar"
+                 @click="switchProgressBarFlag"
           >
           <label class="form-check-label"
                  for="progress-bar">
@@ -166,26 +166,30 @@
             </small>
           </div>
         </div>
-        <div id="themes" class="form-group">
-          <div v-for="(color, index) in colorThemes" class="form-check form-check-inline">
-            <input
-                class="form-check-input"
+        <div id="themes" class="form-group container">
+          <div class="row">
+            <div v-for="(color, colorName, index) in colorThemes"
+                 class="col-sm p-1">
+              <input
                 type="radio"
-                name="goalIndicatorFormat"
+                name="theme"
                 :id="'color' + index"
-                :value="index"
-                v-model.number="colorThemeIndicator"
-            >
-            <label
-              class="form-check-label"
-              :for="'color' + index"
-              :style="{'background-color': color}"
-            >
-            </label>
+                :value="colorName"
+                :checked="colorName === colorTheme"
+                v-model="colorTheme"
+              >
+              <label
+                :for="'color' + index"
+                :style="{'background-color': color.primary, 'box-shadow': colorName === colorTheme ? checkedColorThemeStyle : 'none'}"
+              >
+              </label>
+            </div>
           </div>
-          <small class="form-text text-muted">
-            Choose goal indication format.
-          </small>
+          <div class="row">
+            <small class="form-text text-muted">
+              Choose color theme.
+            </small>
+          </div>
         </div>
       </div>
     </div>
@@ -193,44 +197,62 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapMutations, mapActions } from 'vuex';
+  import { COLOR_THEMES } from "../constants";
 
   export default {
     data() {
         return {
-          pomodoro: 0,
-          goal: 0,
+          initTime: 0,
+          curTime: 0,
+          pomodorosGoal: 0,
+          goalIndicatorFormat: null,
+          isTimerTitle: false,
+          isReversedProgressBar: false,
           notificationTitle: '',
           notificationBody: '',
           notificationPermission: '',
-          timerTitle: false,
-          reversedProgressBar: false,
-          goalIndicatorFormat: null,
-          colorThemeIndicator: 0,
-          colorThemes: ['green', 'yellow', 'red', 'blue']
+          colorTheme: '',
+          colorThemes: COLOR_THEMES
         }
+    },
+    computed: {
+      ...mapState({
+        'storeInitTime': 'initTime',
+        'storeCurTime': 'curTime',
+        'storePomodorosGoal': 'pomodorosGoal',
+        'storeGoalIndicatorFormat': 'goalIndicatorFormat',
+        'storeIsTimerTitle': 'isTimerTitle',
+        'storeIsReversedProgressBar': 'isReversedProgressBar',
+        'storeNotificationTitle': 'notificationTitle',
+        'storeNotificationBody': 'notificationBody',
+        'storeColorTheme': 'colorTheme',
+      }),
+      checkedColorThemeStyle() {
+        return '0 0 0.2rem 0.2rem ' + this.colorThemes[this.colorTheme].dark
+      }
     },
     created() {
-      this.pomodoro = this.getInitTimeSeconds() // / 60;
-      this.goal = this.getPomodorosGoal();
       this.notificationPermission = Notification.permission;
-      this.timerTitle = this.getTimerTitle();
-      this.goalIndicatorFormat = this.getGoalIndicatorFormat();
-      this.reversedProgressBar = this.getProgressBar();
-      this.notificationTitle = this.getNotificationTitle();
-      this.notificationBody = this.getNotificationBody();
+      this.initTime = this.storeInitTime;
+      this.curTime = this.storeCurTime;
+      this.pomodorosGoal = this.storePomodorosGoal;
+      this.goalIndicatorFormat = this.storeGoalIndicatorFormat;
+      this.isTimerTitle = this.storeIsTimerTitle;
+      this.isReversedProgressBar = this.storeIsReversedProgressBar;
+      this.notificationTitle = this.storeNotificationTitle;
+      this.notificationBody = this.storeNotificationBody;
+      this.colorTheme = this.storeColorTheme;
     },
     watch: {
-      pomodoro: function() {
-        let pomodoro = this.pomodoro ;
-        if (this.getInitTimeSeconds() === this.getTimeSeconds()) {
-          this.setTime(pomodoro);
+      initTime: function() {
+        if (this.initTime === this.curTime) {
+          this.setTime(this.initTime);
         }
-        this.setInitTime(pomodoro);
+        this.setInitTime(this.initTime);
       },
-      goal: function() {
-        let goal = this.goal;
-        this.setPomodorosGoal(goal);
+      pomodorosGoal: function() {
+        this.setPomodorosGoal(this.pomodorosGoal);
       },
       goalIndicatorFormat: function() {
         this.setGoalIndicatorFormat(this.goalIndicatorFormat);
@@ -240,41 +262,25 @@
       },
       notificationBody: function() {
         this.setNotificationBody(this.notificationBody);
-      }
-    },
-    computed: {
+      },
       colorTheme: function() {
-        if (this.colorThemeIndicator === 0) {
-          return 'green'
-        } else if (this.colorThemeIndicator === 1) {
-          return 'red'
-        } else if (this.colorThemeIndicator === 2) {
-          return 'yellow'
-        } else if (this.colorThemeIndicator === 3) {
-          return 'blue'
-        }
-  }
-  },
+        this.setColorTheme(this.colorTheme)
+      },
+    },
     methods: {
+      ...mapMutations([
+        'SET_THEME'
+      ]),
       ...mapActions([
         'setInitTime',
         'setTime',
         'setPomodorosGoal',
-        'switchTimerTitle',
+        'switchTimerTitleFlag',
+        'switchProgressBarFlag',
         'setGoalIndicatorFormat',
-        'switchProgressBar',
         'setNotificationTitle',
         'setNotificationBody',
-      ]),
-      ...mapGetters([
-        'getInitTimeSeconds',
-        'getTimeSeconds',
-        'getPomodorosGoal',
-        'getTimerTitle',
-        'getGoalIndicatorFormat',
-        'getProgressBar',
-        'getNotificationTitle',
-        'getNotificationBody',
+        'setColorTheme'
       ]),
       notify() {
         if (!Notification) {
@@ -300,10 +306,10 @@
       display: none
 
     label
-      width: 40px
-      height: 20px
+      height: 30px
+      width: 100%
 
     input:checked + label
-        border: red solid 3px
+      transition: all 0.15s
 
 </style>
