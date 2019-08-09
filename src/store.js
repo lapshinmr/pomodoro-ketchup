@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import * as cons from '@/constants';
+import { COLOR_THEMES, NOTIFICATION_SOUNDS } from "@/constants";
 
 
 Vue.use(Vuex);
@@ -12,6 +13,15 @@ function get(key, parse=false) {
   } else {
     return localStorage.getItem(key);
   }
+}
+
+
+export function secondsToTime(value) {
+  let minutes = Math.floor(value / 60);
+  let seconds = value % 60;
+  let isMinutesZero = minutes < 10 ? '0' : '';
+  let isSecondsZero = seconds < 10 ? '0' : '';
+  return `${isMinutesZero}${minutes}:${isSecondsZero}${seconds}`
 }
 
 
@@ -28,15 +38,25 @@ export default new Vuex.Store({
     isReversedProgressBar: false,
     notificationTitle: '',
     notificationBody: '',
-    colorTheme: null
+    notificationSound: '',
+    notificationSounds: NOTIFICATION_SOUNDS,
+    notificationVolume: 0,
+    colorTheme: '',
+    colorThemes: COLOR_THEMES
   },
   getters: {
     CUR_TIME_FORMATTED(state) {
-      let minutes = Math.floor(state.curTime / 60);
-      let seconds = Math.floor(state.curTime - minutes * 60);
-      let isMinutesZero = minutes < 10 ? '0' : '';
-      let isSecondsZero = seconds < 10 ? '0' : '';
-      return `${isMinutesZero}${minutes}:${isSecondsZero}${seconds}`
+      return secondsToTime(state.curTime)
+    },
+    COLORS(state) {
+      let colors = state.colorThemes[state.colorTheme];
+      return {
+        '--super-light': colors.superLight,
+        '--light': colors.light,
+        '--primary': colors.primary,
+        '--dark': colors.dark,
+        '--super-dark': colors.superDark
+      }
     }
   },
   mutations: {
@@ -90,33 +110,47 @@ export default new Vuex.Store({
     SET_NOTIFICATION_BODY(state, payload) {
       state.notificationBody = payload
     },
+    SET_NOTIFICATION_SOUND(state, payload) {
+      state.notificationSound = payload
+    },
+    SET_NOTIFICATION_VOLUME(state, payload) {
+      state.notificationVolume = payload
+    },
     SET_COLOR_THEME(state, payload) {
       state.colorTheme = payload
     }
   },
   actions: {
-    loadVars({commit, dispatch}) {
+    loadVars({commit, state, dispatch}) {
       let initTime = get('initTime', true) || cons.POMODORO_DEFAULT;
+      let endTime = get('endTime') || Date.now();
       let isTimerTitle = get('isTimerTitle', true) || true;
       let pomodorosTotal = get('pomodorosTotal', true) || 0;
+      let pomodorosGoal = get('pomodorosGoal', true) || cons.POMODOROS_GOAL_DEFAULT;
       let goalIndicatorFormat = get('goalIndicatorFormat', true) || cons.GOAL_INDICATOR_FORMAT_DEFAULT;
       let isReversedProgressBar = get('isReversedProgressBar', true) || false;
       let notificationTitle = get('notificationTitle') || cons.NOTIFICATION_TITLE_DEFAULT;
       let notificationBody = get('notificationBody') || cons.NOTIFICATION_BODY_DEFAULT;
-      let endTime = get('endTime') || Date.now();
+      let notificationSound = get('notificationSound') || cons.NOTIFICATION_SOUND_DEFAULT;
+      let notificationVolume = get('notificationVolume') || cons.NOTIFICATION_VOLUME_DEFAULT;
       let colorTheme = get('colorTheme') || cons.COLOR_THEME_DEFAULT;
       commit('SET_INIT_TIME', initTime);
       commit('SET_TIMER_TITLE_FLAG', isTimerTitle);
       commit('SET_POMODOROS_TOTAL', pomodorosTotal);
+      commit('SET_POMODOROS_GOAL', pomodorosGoal);
       commit('SET_GOAL_INDICATOR_FORMAT', goalIndicatorFormat);
       commit('SET_PROGRESS_BAR_FLAG', isReversedProgressBar);
       commit('SET_NOTIFICATION_TITLE', notificationTitle);
       commit('SET_NOTIFICATION_BODY', notificationBody);
+      commit('SET_NOTIFICATION_SOUND', notificationSound);
+      commit('SET_NOTIFICATION_VOLUME', notificationVolume);
       commit('SET_COLOR_THEME', colorTheme);
       let curTime = Math.floor((endTime - Date.now()) / 1000);
-      if ( curTime > 0 ) {
+      if ( curTime > 0 && curTime < state.initTime) {
         commit('SET_TIME', curTime);
         dispatch('runTimer')
+      } else {
+        commit('SET_TIME', initTime)
       }
     },
     setInitTime({commit}, payload) {
@@ -124,20 +158,11 @@ export default new Vuex.Store({
       localStorage.setItem('initTime', payload);
     },
     setTime({commit, state}, payload) {
-      if (!payload) {
-        payload = state.initTime
-      }
       commit('SET_TIME', payload)
     },
     setPomodorosGoal({commit}, payload) {
-      let pomodorosGoal;
-      if (!payload) {
-        pomodorosGoal = get('pomodorosGoal', true) || cons.POMODOROS_GOAL_DEFAULT;
-      } else {
-        pomodorosGoal = payload;
-        localStorage.setItem('pomodorosGoal', payload)
-      }
-      commit('SET_POMODOROS_GOAL', pomodorosGoal);
+      commit('SET_POMODOROS_GOAL', payload);
+      localStorage.setItem('pomodorosGoal', payload);
     },
     saveEndTime({commit, state}) {
       commit('SET_END_TIME');
@@ -147,7 +172,7 @@ export default new Vuex.Store({
       if (state.timerId) {
         return
       } else if (!state.timeId && state.curTime === 0) {
-        dispatch('setTime')
+        dispatch('setTime', state.initTime)
       }
       dispatch('saveEndTime');
       let timerId = setInterval(() => {
@@ -160,6 +185,9 @@ export default new Vuex.Store({
             new Notification(state.notificationTitle, {
               body: state.notificationBody
             });
+            var audio = new Audio(require('@/assets/' + state.notificationSound));
+            audio.volume = state.notificationVolume / 100;
+            audio.play();
           }
         } else {
           commit('DECREASE_TIME')
@@ -173,8 +201,9 @@ export default new Vuex.Store({
     },
     resetTimer({commit, state, dispatch}) {
       clearInterval(state.timerId);
+      localStorage.removeItem('endTime');
       commit('SET_TIMER_ID', null);
-      dispatch('setTime')
+      dispatch('setTime', state.initTime)
     },
     setPomodorosTotal({commit, state}, payload) {
       commit('SET_POMODOROS_TOTAL', payload);
@@ -211,6 +240,14 @@ export default new Vuex.Store({
     setColorTheme({commit}, payload) {
       commit('SET_COLOR_THEME', payload);
       localStorage.setItem('colorTheme', payload);
+    },
+    setNotificationSound({commit}, payload) {
+      commit('SET_NOTIFICATION_SOUND', payload);
+      localStorage.setItem('notificationSound', payload);
+    },
+    setNotificationVolume({commit}, payload) {
+      commit('SET_NOTIFICATION_VOLUME', payload);
+      localStorage.setItem('notificationVolume', payload);
     }
   }
 })

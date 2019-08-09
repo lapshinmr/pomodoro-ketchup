@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="blue">
+  <div id="app" class="blue" :style="COLORS">
     <div id="nav" class="text-center p-4">
       <router-link to="/">Home</router-link> |
       <!--
@@ -23,18 +23,17 @@
     components: { TimerTitle },
     computed: {
       ...mapState([
-        'isTimerTitle'
+        'isTimerTitle',
       ]),
       ...mapGetters([
-        'CUR_TIME_FORMATTED'
+        'CUR_TIME_FORMATTED',
+        'COLORS'
       ]),
       title() {
         return this.isTimerTitle ? this.CUR_TIME_FORMATTED : TAB_TITLE_DEFAULT
-      }
+      },
     },
     created() {
-      this.setPomodorosGoal();
-      this.setTime();
       this.loadVars();
     },
     methods: {
@@ -59,50 +58,49 @@
     padding: 0
     margin: 0
     min-height: 100%
-    background-color: $super-light
 
   #app
     font-family: 'Avenir', Helvetica, Arial, sans-serif
     -webkit-font-smoothing: antialiased
     -moz-osx-font-smoothing: grayscale
-    color: $super-dark
     height: 100vh
+    background-color: var(--super-light)
+    color: var(--super-dark)
 
   #nav
-    height: 15vh
+    height: 15%
     z-index: 999
 
   #content
-    height: 85vh
+    height: 85%
 
   #nav a
     font-weight: bold
     font-size: 20px
-    color: $super-dark
-    z-index: 999
+    color: var(--super-dark)
 
   #nav a.router-link-exact-active
-    color: $dark
+    color: var(--dark)
 
   .btn-outline-success
-    color: $dark
-    border-color: $dark
-    outline: $dark
+    color: var(--dark)
+    border-color: var(--dark)
+    outline: var(--dark)
 
   .btn-outline-success:hover
-    color: $super-light
-    border-color: $dark
-    background-color: $dark
+    color: var(--super-light)
+    border-color: var(--dark)
+    background-color: var(--dark)
 
   .btn-outline-success:focus
     outline: none
-    box-shadow: 0 0 0 0.2rem $primary
+    box-shadow: 0 0 0 0.2rem var(--primary)
 
   .btn-link
-    color: $dark
+    color: var(--dark)
 
   .btn-link:hover
-    color: $super-dark
+    color: var(--super-dark)
     text-decoration: none
 
   .btn-link:focus

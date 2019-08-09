@@ -36,6 +36,6 @@
   .timer
     margin: 40px 0 0
     font-size: 100px
-    color: $dark
+    color: var(--dark)
 
 </style>

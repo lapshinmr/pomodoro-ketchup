@@ -72,13 +72,12 @@
     bottom: 0
     width: 100vw
     transition: 0.3s
-    background-color: $light
-    z-index: -1
+    background-color: var(--light)
     opacity: 0.75
 
   #indicator
     position: absolute
-    color: $dark
+    color: var(--dark)
     font-size: 20px
     line-height: 20px
     margin-left: 10px

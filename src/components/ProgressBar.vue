@@ -80,12 +80,12 @@
         fill: transparent
 
         &.progress_background
-          stroke: $primary
+          stroke: var(--primary)
           opacity: 0.5
 
         &.progress_bar
           transition: all 0.3s
-          stroke: $dark
+          stroke: var(--dark)
           opacity: 0.5
 
 

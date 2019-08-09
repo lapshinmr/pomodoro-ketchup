@@ -4,6 +4,8 @@ const POMODOROS_GOAL_DEFAULT = 70;
 const GOAL_INDICATOR_FORMAT_DEFAULT = 2;
 const NOTIFICATION_TITLE_DEFAULT = 'Time is over.';
 const NOTIFICATION_BODY_DEFAULT = 'Well done!';
+const NOTIFICATION_SOUND_DEFAULT = 'sound1.mp3';
+const NOTIFICATION_VOLUME_DEFAULT = 100;
 const COLOR_THEME_DEFAULT = 'green';
 const TAB_TITLE_DEFAULT = 'Pomodoros Ketchup';
 
@@ -39,6 +41,13 @@ const COLOR_THEMES = {
   }
 };
 
+const NOTIFICATION_SOUNDS = [
+  'sound1.mp3',
+  'sound2.mp3',
+  'sound3.mp3',
+  'sound4.mp3',
+];
+
 export {
   REFRESH_TIME,
   POMODORO_DEFAULT,
@@ -48,6 +57,8 @@ export {
   NOTIFICATION_BODY_DEFAULT,
   COLOR_THEME_DEFAULT,
   TAB_TITLE_DEFAULT,
+  NOTIFICATION_SOUND_DEFAULT,
+  NOTIFICATION_SOUNDS,
   COLOR_THEMES
 }
 
