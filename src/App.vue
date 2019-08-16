@@ -7,9 +7,7 @@
       -->
       <router-link to="/settings">Settings</router-link>
     </div>
-    <div id="content">
-      <router-view />
-    </div>
+    <router-view />
     <timer-title :title="title"></timer-title>
   </div>
 </template>
@@ -63,16 +61,16 @@
     font-family: 'Avenir', Helvetica, Arial, sans-serif
     -webkit-font-smoothing: antialiased
     -moz-osx-font-smoothing: grayscale
-    height: 100vh
+    min-height: 100vh
     background-color: var(--super-light)
     color: var(--super-dark)
 
   #nav
-    height: 15%
-    z-index: 999
-
-  #content
-    height: 85%
+    position: absolute
+    left: 0
+    right: 0
+    top: 0
+    z-index: 1000
 
   #nav a
     font-weight: bold

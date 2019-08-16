@@ -14,7 +14,7 @@
   import { mapState } from 'vuex';
 
   export default {
-    name: 'ProgressBar',
+    name: 'timer-progress-bar',
     computed: {
       ...mapState([
         'curTime',
@@ -40,12 +40,12 @@
 
   .radialProgressBar
     position: relative
-    width: 80vw
-    height: 80vw
+    width: 90vw
+    height: 90vw
 
     @media (min-width: 576px)
-      width: 70vw
-      height: 70vw
+      width: 80vw
+      height: 80vw
 
     @media (min-width: 768px)
       width: 60vw
@@ -64,7 +64,6 @@
       top: 50%
       left: 50%
       transform: translate(-50%, -50%)
-      z-index: 999
 
     .svgprogress
       position: absolute
@@ -73,7 +72,6 @@
       width: 100%
       height: 100%
       transform: translate(-50%, -50%) rotate(-90deg)
-      z-index: 1
 
       circle
         stroke-width: 10
@@ -81,14 +79,10 @@
 
         &.progress_background
           stroke: var(--primary)
-          opacity: 0.5
 
         &.progress_bar
           transition: all 0.3s
           stroke: var(--dark)
-          opacity: 0.5
-
-
 
 </style>
 

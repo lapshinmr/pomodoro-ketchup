@@ -1,11 +1,6 @@
 <template>
-  <div>
-    <div id="progressbar" :style="progressBarHeight">
-      <div id="indicator" class="d-flex justify-content-between" :style="indicatorPosition">
-        {{ indicatorText }}
-      </div>
-    </div>
-    <div id="pomodoros-buttons" class="d-flex justify-content-around mb-2">
+  <div class="pomodoros-progress-bar" :style="progressBarHeight">
+    <div class="pomodoros-buttons d-flex justify-content-around mb-2">
       <button class="btn btn-outline-success btn-sm" @click="addPomodoro">
         Add
       </button>
@@ -23,7 +18,7 @@
   import { mapState, mapActions } from 'vuex';
 
   export default {
-    name: 'pomodoros-counter',
+    name: 'pomodoros-progress-bar',
     computed: {
       ...mapState([
         'pomodorosTotal',
@@ -37,22 +32,6 @@
         return {
             "height": (this.ratio < 1 ? this.ratio : 1) * 100  + '%',
         }
-      },
-      indicatorPosition() {
-        return {
-            'top': (this.ratio < 0.6 ? -25 : 5) + 'px'
-        }
-      },
-      indicatorText() {
-          let formatFirst = this.pomodorosTotal + ' of ' + this.pomodorosGoal;
-          let formatSecond = Math.round(this.ratio * 100) + '%';
-          let result = `${formatFirst} (${formatSecond})`;
-          if (this.goalIndicatorFormat === 0) {
-              result = formatFirst
-          } else if (this.goalIndicatorFormat === 1) {
-              result = formatSecond
-          }
-          return result
       }
     },
     methods: {
@@ -60,31 +39,21 @@
         'addPomodoro',
         'removePomodoro',
         'setPomodorosTotal'
-      ])
+      ]),
     }
   }
 </script>
 
 <style scoped lang="sass">
 
-  #progressbar
+  .pomodoros-progress-bar
     position: fixed
     bottom: 0
     width: 100vw
     transition: 0.3s
     background-color: var(--light)
-    opacity: 0.75
 
-  #indicator
-    position: absolute
-    color: var(--dark)
-    font-size: 20px
-    line-height: 20px
-    margin-left: 10px
-    transition: 0.3s
-    width: 100%
-
-  #pomodoros-buttons
+  .pomodoros-buttons
     position: absolute
     bottom: 0
     right: 5px
