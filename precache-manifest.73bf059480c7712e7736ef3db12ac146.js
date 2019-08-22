@@ -48,7 +48,7 @@ self.__precacheManifest = [
     "url": "/pomodoro-ketchup/css/app.6dd91053.css"
   },
   {
-    "revision": "8a6056bd34cfd7a17f1299662ddb24b5",
+    "revision": "2792a0d78836fa57511c37cf0a47c0e5",
     "url": "/pomodoro-ketchup/CNAME"
   }
 ];
