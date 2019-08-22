@@ -99,7 +99,7 @@
               @click="playSound(soundName)"
             >
             <label :for="'sound' + index" :style="buttonStyle(soundName === notificationSound)">
-              sound {{ index + 1 }}
+              Sound {{ index + 1 }}
             </label>
           </div>
         </div>
@@ -112,7 +112,7 @@
                    @click="switchTimerTitleFlag"
             >
             <label for="title-timer-check" :style="buttonStyle(isTimerTitle)">
-              tab timer
+              Tab timer
             </label>
           </div>
           <div id="progress-bar" class="flex-fill ml-3">
@@ -123,7 +123,7 @@
                    @click="switchProgressBarFlag"
             >
             <label for="progress-bar-check" :style="buttonStyle(isReversedProgressBar)">
-              revers progress
+              Revers progress
             </label>
           </div>
         </div>
@@ -161,7 +161,7 @@
               v-model="colorTheme"
             >
             <label :for="'color' + index" :style="buttonStyle(colorName === colorTheme)"
-            >{{ colorName }}</label>
+            >{{ colorName | capitalize }}</label>
           </div>
         </div>
       </div>
@@ -330,6 +330,11 @@
         audio.volume = this.notificationVolume / 100;
         audio.play();
       }
+    },
+    filters: {
+      capitalize(value) {
+        return value.charAt(0).toUpperCase() + value.slice(1);
+      }
     }
   }
 </script>
@@ -372,7 +377,6 @@
       justify-content: center
       align-items: center
       margin-bottom: 0
-      text-transform: capitalize
       cursor: pointer
 
     input:checked + label

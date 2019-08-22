@@ -7,13 +7,24 @@ import { COLOR_THEMES, NOTIFICATION_SOUNDS } from "@/constants";
 Vue.use(Vuex);
 
 
-function get(key, parse=false) {
+function save(key, data) {
+  localStorage.setItem(key, data)
+}
+
+
+function load(key, parse=false) {
   if (parse) {
     return JSON.parse(localStorage.getItem(key));
   } else {
     return localStorage.getItem(key);
   }
 }
+
+
+function remove(key) {
+  localStorage.removeItem(key)
+}
+
 
 
 export function secondsToTime(value) {
@@ -31,6 +42,7 @@ export default new Vuex.Store({
     curTime: 0,
     endTime: null,
     timerId: null,
+    isPause: false,
     pomodorosTotal: 0,
     pomodorosGoal: 0,
     goalIndicatorFormat: 0,
@@ -74,6 +86,9 @@ export default new Vuex.Store({
     },
     SET_TIMER_ID(state, payload) {
       state.timerId = payload
+    },
+    SET_PAUSE(state, payload) {
+      state.isPause = payload
     },
     SET_POMODOROS_TOTAL(state, payload) {
       state.pomodorosTotal = payload;
@@ -122,18 +137,19 @@ export default new Vuex.Store({
   },
   actions: {
     loadVars({commit, state, dispatch}) {
-      let initTime = get('initTime', true) || cons.POMODORO_DEFAULT;
-      let endTime = get('endTime') || Date.now();
-      let isTimerTitle = get('isTimerTitle', true) || true;
-      let pomodorosTotal = get('pomodorosTotal', true) || 0;
-      let pomodorosGoal = get('pomodorosGoal', true) || cons.POMODOROS_GOAL_DEFAULT;
-      let goalIndicatorFormat = get('goalIndicatorFormat', true) || cons.GOAL_INDICATOR_FORMAT_DEFAULT;
-      let isReversedProgressBar = get('isReversedProgressBar', true) || false;
-      let notificationTitle = get('notificationTitle') || cons.NOTIFICATION_TITLE_DEFAULT;
-      let notificationBody = get('notificationBody') || cons.NOTIFICATION_BODY_DEFAULT;
-      let notificationSound = get('notificationSound') || cons.NOTIFICATION_SOUND_DEFAULT;
-      let notificationVolume = get('notificationVolume') || cons.NOTIFICATION_VOLUME_DEFAULT;
-      let colorTheme = get('colorTheme') || cons.COLOR_THEME_DEFAULT;
+      let initTime = load('initTime', true) || cons.POMODORO_DEFAULT;
+      let endTime = load('endTime') || Date.now();
+      let isPause = load('isPause', true) || false;
+      let isTimerTitle = load('isTimerTitle', true) || true;
+      let pomodorosTotal = load('pomodorosTotal', true) || 0;
+      let pomodorosGoal = load('pomodorosGoal', true) || cons.POMODOROS_GOAL_DEFAULT;
+      let goalIndicatorFormat = load('goalIndicatorFormat', true) || cons.GOAL_INDICATOR_FORMAT_DEFAULT;
+      let isReversedProgressBar = load('isReversedProgressBar', true) || false;
+      let notificationTitle = load('notificationTitle') || cons.NOTIFICATION_TITLE_DEFAULT;
+      let notificationBody = load('notificationBody') || cons.NOTIFICATION_BODY_DEFAULT;
+      let notificationSound = load('notificationSound') || cons.NOTIFICATION_SOUND_DEFAULT;
+      let notificationVolume = load('notificationVolume') || cons.NOTIFICATION_VOLUME_DEFAULT;
+      let colorTheme = load('colorTheme') || cons.COLOR_THEME_DEFAULT;
       commit('SET_INIT_TIME', initTime);
       commit('SET_TIMER_TITLE_FLAG', isTimerTitle);
       commit('SET_POMODOROS_TOTAL', pomodorosTotal);
@@ -145,28 +161,36 @@ export default new Vuex.Store({
       commit('SET_NOTIFICATION_SOUND', notificationSound);
       commit('SET_NOTIFICATION_VOLUME', notificationVolume);
       commit('SET_COLOR_THEME', colorTheme);
-      let curTime = Math.floor((endTime - Date.now()) / 1000);
+      let curTime;
+      if (isPause) {
+        curTime = load('curTime') || 0;
+      } else {
+        curTime = Math.floor((endTime - Date.now()) / 1000);
+      }
+      console.log(curTime, isPause)
       if ( curTime > 0 && curTime < state.initTime) {
         commit('SET_TIME', curTime);
-        dispatch('runTimer')
+        if (!isPause) {
+          dispatch('runTimer')
+        }
       } else {
         commit('SET_TIME', initTime)
       }
     },
     setInitTime({commit}, payload) {
       commit('SET_INIT_TIME', payload);
-      localStorage.setItem('initTime', payload);
+      save('initTime', payload);
     },
     setTime({commit, state}, payload) {
-      commit('SET_TIME', payload)
+      commit('SET_TIME', payload);
     },
     setPomodorosGoal({commit}, payload) {
       commit('SET_POMODOROS_GOAL', payload);
-      localStorage.setItem('pomodorosGoal', payload);
+      save('pomodorosGoal', payload);
     },
     saveEndTime({commit, state}) {
       commit('SET_END_TIME');
-      localStorage.setItem('endTime', state.endTime)
+      save('endTime', state.endTime)
     },
     runTimer({commit, dispatch, state}) {
       if (state.timerId) {
@@ -190,64 +214,75 @@ export default new Vuex.Store({
             audio.play();
           }
         } else {
-          commit('DECREASE_TIME')
+          commit('DECREASE_TIME');
+          if (state.isPause) {
+            commit('SET_PAUSE', false);
+            save('isPause', false);
+            remove('curTime');
+          }
         }
       }, cons.REFRESH_TIME);
       commit('SET_TIMER_ID', timerId)
     },
     pauseTimer({commit, state}) {
       clearInterval(state.timerId);
-      commit('SET_TIMER_ID', null)
+      commit('SET_TIMER_ID', null);
+      commit('SET_PAUSE', true);
+      save('isPause', true);
+      save('curTime', state.curTime)
     },
     resetTimer({commit, state, dispatch}) {
       clearInterval(state.timerId);
-      localStorage.removeItem('endTime');
+      remove('endTime');
       commit('SET_TIMER_ID', null);
-      dispatch('setTime', state.initTime)
+      dispatch('setTime', state.initTime);
+      commit('SET_PAUSE', false);
+      save('isPause', false);
+      remove('curTime');
     },
     setPomodorosTotal({commit, state}, payload) {
       commit('SET_POMODOROS_TOTAL', payload);
-      localStorage.setItem('pomodorosTotal', state.pomodorosTotal)
+      save('pomodorosTotal', state.pomodorosTotal)
     },
     addPomodoro({commit, state}) {
       commit('ADD_POMODORO');
-      localStorage.setItem('pomodorosTotal', state.pomodorosTotal)
+      save('pomodorosTotal', state.pomodorosTotal)
     },
     removePomodoro({commit, state}) {
       commit('REMOVE_POMODORO');
-      localStorage.setItem('pomodorosTotal', state.pomodorosTotal)
+      save('pomodorosTotal', state.pomodorosTotal)
     },
     switchTimerTitleFlag({commit, state}) {
       commit('SWITCH_TIMER_TITLE_FLAG');
-      localStorage.setItem('isTimerTitle', state.isTimerTitle)
+      save('isTimerTitle', state.isTimerTitle)
     },
-    setGoalIndicatorFormat({commit}, value) {
-      commit('SET_GOAL_INDICATOR_FORMAT', value);
-      localStorage.setItem('goalIndicatorFormat', value)
+    setGoalIndicatorFormat({commit}, payload) {
+      commit('SET_GOAL_INDICATOR_FORMAT', payload);
+      save('goalIndicatorFormat', payload)
     },
     switchProgressBarFlag({commit, state}) {
       commit('SWITCH_PROGRESS_BAR_FLAG');
-      localStorage.setItem('isReversedProgressBar', state.isReversedProgressBar)
+      save('isReversedProgressBar', state.isReversedProgressBar)
     },
-    setNotificationTitle({commit}, value) {
-      commit('SET_NOTIFICATION_TITLE', value);
-      localStorage.setItem('notificationTitle', value);
+    setNotificationTitle({commit}, payload) {
+      commit('SET_NOTIFICATION_TITLE', payload);
+      save('notificationTitle', payload);
     },
-    setNotificationBody({commit}, value) {
-      commit('SET_NOTIFICATION_BODY', value);
-      localStorage.setItem('notificationBody', value);
+    setNotificationBody({commit}, payload) {
+      commit('SET_NOTIFICATION_BODY', payload);
+      save('notificationBody', payload);
     },
     setColorTheme({commit}, payload) {
       commit('SET_COLOR_THEME', payload);
-      localStorage.setItem('colorTheme', payload);
+      save('colorTheme', payload);
     },
     setNotificationSound({commit}, payload) {
       commit('SET_NOTIFICATION_SOUND', payload);
-      localStorage.setItem('notificationSound', payload);
+      save('notificationSound', payload);
     },
     setNotificationVolume({commit}, payload) {
       commit('SET_NOTIFICATION_VOLUME', payload);
-      localStorage.setItem('notificationVolume', payload);
+      save('notificationVolume', payload);
     }
   }
 })
