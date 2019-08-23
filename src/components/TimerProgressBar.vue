@@ -11,28 +11,28 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+import { mapState } from 'vuex'
 
-  export default {
-    name: 'timer-progress-bar',
-    computed: {
-      ...mapState([
-        'curTime',
-        'initTime',
-        'isReversedProgressBar',
-      ]),
-      progressValue() {
-        let ratio = this.curTime / this.initTime;
-        if (this.isReversedProgressBar) {
-          ratio = (1 - ratio);
-        }
-        return {
-          "stroke-dasharray": 2 * Math.PI * 70,
-          "stroke-dashoffset": 2 * Math.PI * 70 * ratio
-        }
+export default {
+  name: 'timer-progress-bar',
+  computed: {
+    ...mapState([
+      'curTime',
+      'initTime',
+      'isReversedProgressBar'
+    ]),
+    progressValue () {
+      let ratio = this.curTime / this.initTime
+      if (this.isReversedProgressBar) {
+        ratio = (1 - ratio)
+      }
+      return {
+        'stroke-dasharray': 2 * Math.PI * 70,
+        'stroke-dashoffset': 2 * Math.PI * 70 * ratio
       }
     }
   }
+}
 
 </script>
 
@@ -85,4 +85,3 @@
           stroke: var(--dark)
 
 </style>
-

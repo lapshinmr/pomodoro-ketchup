@@ -12,7 +12,6 @@
   </div>
 </template>
 
-
 <script>
 import Timer from '@/components/Timer.vue'
 import TimerProgressBar from '@/components/TimerProgressBar.vue'
@@ -22,11 +21,10 @@ import PomodorosProgressIndicator from '@/components/PomodorosProgressIndicator.
 export default {
   name: 'home',
   components: {
-    Timer, TimerProgressBar, PomodorosProgressBar, PomodorosProgressIndicator,
+    Timer, TimerProgressBar, PomodorosProgressBar, PomodorosProgressIndicator
   }
 }
 </script>
-
 
 <style lang="sass" scoped>
 

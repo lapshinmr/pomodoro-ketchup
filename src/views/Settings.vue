@@ -170,175 +170,170 @@
 </template>
 
 <script>
-  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
-  import { secondsToTime } from "../store";
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { secondsToTime } from '../store'
 
+const isNumber = function (value) {
+  return /^\d+$/.test(value)
+}
 
-  const isNumber = function(value) {
-    return /^\d+$/.test(value)
-  };
+const stringToTimeSeconds = function (value) {
+  value = value.replace(':', '')
+  if (!isNumber(value)) {
+    return false
+  }
+  let length = value.length
+  if (length < 1 || length > 4) {
+    return false
+  }
+  let digitLimits = [9, 9, 5, 9]
+  let digitCheck = value.split('').every(function (value, index) {
+    return value < digitLimits[4 - length + index]
+  })
+  if (!digitCheck) {
+    return false
+  }
+  let seconds = value.slice(-2)
+  let minutes = value.slice(0, length - 2)
+  return Number(minutes) * 60 + Number(seconds)
+}
 
-  const stringToTimeSeconds = function(value) {
-    value = value.replace(':', '');
-    if (!isNumber(value)) {
-      return false
+export default {
+  data () {
+    return {
+      initTime: '',
+      pomodorosGoal: 0,
+      goalIndicatorFormat: null,
+      isTimerTitle: false,
+      isReversedProgressBar: false,
+      notificationTitle: '',
+      notificationBody: '',
+      notificationSound: '',
+      notificationPermission: '',
+      colorTheme: '',
+      notificationVolume: 100
     }
-    let length = value.length;
-    if (length < 1 || length > 4) {
-      return false
+  },
+  computed: {
+    ...mapState({
+      'storeInitTime': 'initTime',
+      'storeCurTime': 'curTime',
+      'storePomodorosGoal': 'pomodorosGoal',
+      'storeGoalIndicatorFormat': 'goalIndicatorFormat',
+      'storeIsTimerTitle': 'isTimerTitle',
+      'storeIsReversedProgressBar': 'isReversedProgressBar',
+      'storeNotificationTitle': 'notificationTitle',
+      'storeNotificationBody': 'notificationBody',
+      'storeColorTheme': 'colorTheme',
+      'storeColorThemes': 'colorThemes',
+      'storeNotificationSounds': 'notificationSounds',
+      'storeNotificationSound': 'notificationSound',
+      'storeNotificationVolume': 'notificationVolume'
+    })
+  },
+  created () {
+    this.notificationPermission = Notification.permission
+    this.initTime = secondsToTime(this.storeInitTime)
+    this.curTime = this.storeCurTime
+    this.pomodorosGoal = this.storePomodorosGoal
+    this.goalIndicatorFormat = this.storeGoalIndicatorFormat
+    this.isTimerTitle = this.storeIsTimerTitle
+    this.isReversedProgressBar = this.storeIsReversedProgressBar
+    this.notificationTitle = this.storeNotificationTitle
+    this.notificationBody = this.storeNotificationBody
+    this.colorTheme = this.storeColorTheme
+    this.notificationSound = this.storeNotificationSound
+    this.notificationVolume = this.storeNotificationVolume
+  },
+  watch: {
+    initTime: function () {
+      let initTimeSeconds = stringToTimeSeconds(this.initTime)
+      if (!initTimeSeconds) {
+        this.initTime = secondsToTime(this.storeInitTime)
+        return
+      }
+      this.initTime = secondsToTime(initTimeSeconds)
+      if (this.storeInitTime === this.storeCurTime) {
+        this.setTime(initTimeSeconds)
+      }
+      this.setInitTime(initTimeSeconds)
+    },
+    pomodorosGoal: function () {
+      if (!isNumber(this.pomodorosGoal)) {
+        this.pomodorosGoal = this.storePomodorosGoal
+        return
+      }
+      this.setPomodorosGoal(this.pomodorosGoal)
+    },
+    goalIndicatorFormat: function () {
+      this.setGoalIndicatorFormat(this.goalIndicatorFormat)
+    },
+    notificationTitle: function () {
+      this.setNotificationTitle(this.notificationTitle)
+    },
+    notificationBody: function () {
+      this.setNotificationBody(this.notificationBody)
+    },
+    colorTheme: function () {
+      this.setColorTheme(this.colorTheme)
+    },
+    notificationSound: function () {
+      this.setNotificationSound(this.notificationSound)
+    },
+    notificationVolume: function () {
+      this.setNotificationVolume(this.notificationVolume)
     }
-    let digitLimits = [9, 9, 5, 9];
-    let digitCheck = value.split('').every(function (value, index) {
-      return value < digitLimits[4 - length + index]
-    });
-    if (!digitCheck) {
-      return false
-    }
-    let seconds = value.slice(-2);
-    let minutes = value.slice(0, length - 2);
-    return Number(minutes) * 60 + Number(seconds);
-  };
-
-  export default {
-    data() {
+  },
+  methods: {
+    ...mapMutations([
+      'SET_THEME'
+    ]),
+    ...mapActions([
+      'setInitTime',
+      'setTime',
+      'setPomodorosGoal',
+      'switchTimerTitleFlag',
+      'switchProgressBarFlag',
+      'setGoalIndicatorFormat',
+      'setNotificationTitle',
+      'setNotificationBody',
+      'setColorTheme',
+      'setNotificationSound',
+      'setNotificationVolume'
+    ]),
+    buttonStyle (condition) {
+      let colorThemeObj = this.storeColorThemes[this.colorTheme]
       return {
-        initTime: '',
-        pomodorosGoal: 0,
-        goalIndicatorFormat: null,
-        isTimerTitle: false,
-        isReversedProgressBar: false,
-        notificationTitle: '',
-        notificationBody: '',
-        notificationSound: '',
-        notificationPermission: '',
-        colorTheme: '',
-        notificationVolume: 100
+        'background-color': condition ? colorThemeObj.dark : colorThemeObj.light,
+        // 'box-shadow': condition ? '0 0 0.5rem 0.2rem ' + colorThemeObj.dark : 'none',
+        'color': condition ? colorThemeObj.superLight : colorThemeObj.superDark
       }
     },
-    computed: {
-      ...mapState({
-        'storeInitTime': 'initTime',
-        'storeCurTime': 'curTime',
-        'storePomodorosGoal': 'pomodorosGoal',
-        'storeGoalIndicatorFormat': 'goalIndicatorFormat',
-        'storeIsTimerTitle': 'isTimerTitle',
-        'storeIsReversedProgressBar': 'isReversedProgressBar',
-        'storeNotificationTitle': 'notificationTitle',
-        'storeNotificationBody': 'notificationBody',
-        'storeColorTheme': 'colorTheme',
-        'storeColorThemes': 'colorThemes',
-        'storeNotificationSounds': 'notificationSounds',
-        'storeNotificationSound': 'notificationSound',
-        'storeNotificationVolume': 'notificationVolume',
-      }),
-      ...mapGetters([
-        'CUR_TIME_FORMATTED'
-      ]),
-    },
-    created() {
-      this.notificationPermission = Notification.permission;
-      this.initTime = secondsToTime(this.storeInitTime);
-      this.curTime = this.storeCurTime;
-      this.pomodorosGoal = this.storePomodorosGoal;
-      this.goalIndicatorFormat = this.storeGoalIndicatorFormat;
-      this.isTimerTitle = this.storeIsTimerTitle;
-      this.isReversedProgressBar = this.storeIsReversedProgressBar;
-      this.notificationTitle = this.storeNotificationTitle;
-      this.notificationBody = this.storeNotificationBody;
-      this.colorTheme = this.storeColorTheme;
-      this.notificationSound = this.storeNotificationSound;
-      this.notificationVolume = this.storeNotificationVolume;
-    },
-    watch: {
-      initTime: function () {
-        let initTimeSeconds = stringToTimeSeconds(this.initTime);
-        if (!initTimeSeconds) {
-          this.initTime = secondsToTime(this.storeInitTime);
-          return
-        }
-        this.initTime = secondsToTime(initTimeSeconds);
-        if (this.storeInitTime === this.storeCurTime) {
-          this.setTime(initTimeSeconds);
-        }
-        this.setInitTime(initTimeSeconds);
-      },
-      pomodorosGoal: function () {
-        if (!isNumber(this.pomodorosGoal)) {
-          this.pomodorosGoal = this.storePomodorosGoal;
-          return
-        }
-        this.setPomodorosGoal(this.pomodorosGoal);
-      },
-      goalIndicatorFormat: function () {
-        this.setGoalIndicatorFormat(this.goalIndicatorFormat);
-      },
-      notificationTitle: function () {
-        this.setNotificationTitle(this.notificationTitle);
-      },
-      notificationBody: function () {
-        this.setNotificationBody(this.notificationBody);
-      },
-      colorTheme: function () {
-        this.setColorTheme(this.colorTheme)
-      },
-      notificationSound: function() {
-        this.setNotificationSound(this.notificationSound)
-      },
-      notificationVolume: function() {
-        this.setNotificationVolume(this.notificationVolume);
+    notify () {
+      if (!Notification) {
+        alert('Desktop notifications not available in your browser. Try Chromium.')
+        return
       }
-    },
-    methods: {
-      ...mapMutations([
-        'SET_THEME'
-      ]),
-      ...mapActions([
-        'setInitTime',
-        'setTime',
-        'setPomodorosGoal',
-        'switchTimerTitleFlag',
-        'switchProgressBarFlag',
-        'setGoalIndicatorFormat',
-        'setNotificationTitle',
-        'setNotificationBody',
-        'setColorTheme',
-        'setNotificationSound',
-        'setNotificationVolume',
-      ]),
-      buttonStyle(condition) {
-        let colorThemeObj = this.storeColorThemes[this.colorTheme];
-        return {
-          'background-color': condition ? colorThemeObj.dark : colorThemeObj.light,
-          //'box-shadow': condition ? '0 0 0.5rem 0.2rem ' + colorThemeObj.dark : 'none',
-          'color': condition ? colorThemeObj.superLight : colorThemeObj.superDark,
-        }
-      },
-      notify() {
-        if (!Notification) {
-          alert('Desktop notifications not available in your browser. Try Chromium.');
-          return;
-        }
-        if (Notification.permission !== 'granted') {
-          Notification.requestPermission((permission) => {
-            this.notificationPermission = Notification.permission;
-          });
-        }
-        this.notificationPermission = Notification.permission;
-      },
-      playSound(sound) {
-        let audio = new Audio(require('@/assets/' + sound));
-        audio.volume = this.notificationVolume / 100;
-        audio.play();
+      if (Notification.permission !== 'granted') {
+        Notification.requestPermission((permission) => {
+          this.notificationPermission = Notification.permission
+        })
       }
+      this.notificationPermission = Notification.permission
     },
-    filters: {
-      capitalize(value) {
-        return value.charAt(0).toUpperCase() + value.slice(1);
-      }
+    playSound (sound) {
+      let audio = new Audio(require('@/assets/' + sound))
+      audio.volume = this.notificationVolume / 100
+      audio.play()
+    }
+  },
+  filters: {
+    capitalize (value) {
+      return value.charAt(0).toUpperCase() + value.slice(1)
     }
   }
+}
 </script>
-
 
 <style scoped lang="sass">
   .mb-3
@@ -382,7 +377,6 @@
     input:checked + label
       transition: all 0.15s
 
-
   .slider
     height: 40px
 
@@ -424,6 +418,5 @@
       font-size: 1.5rem
       line-height: 40px
       text-align: right
-
 
 </style>

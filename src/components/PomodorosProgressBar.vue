@@ -1,13 +1,13 @@
 <template>
   <div class="pomodoros-progress-bar" :style="progressBarHeight">
     <div class="pomodoros-buttons d-flex justify-content-around mb-2">
-      <button class="btn btn-outline-success btn-sm" @click="addPomodoro">
+      <button class="btn btn-success btn-sm" @click="addPomodoro">
         Add
       </button>
-      <button class="btn btn-outline-success btn-sm ml-2" @click="removePomodoro">
+      <button class="btn btn-success btn-sm ml-2" @click="removePomodoro">
         Remove
       </button>
-      <button class="btn btn-outline-success btn-sm ml-2" @click="setPomodorosTotal(0)">
+      <button class="btn btn-success btn-sm ml-2" @click="setPomodorosTotal(0)">
         Reset
       </button>
     </div>
@@ -15,33 +15,33 @@
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex'
 
-  export default {
-    name: 'pomodoros-progress-bar',
-    computed: {
-      ...mapState([
-        'pomodorosTotal',
-        'pomodorosGoal',
-        'goalIndicatorFormat'
-      ]),
-      ratio() {
-        return this.pomodorosTotal / this.pomodorosGoal;
-      },
-      progressBarHeight() {
-        return {
-            "height": (this.ratio < 1 ? this.ratio : 1) * 100  + '%',
-        }
-      }
+export default {
+  name: 'pomodoros-progress-bar',
+  computed: {
+    ...mapState([
+      'pomodorosTotal',
+      'pomodorosGoal',
+      'goalIndicatorFormat'
+    ]),
+    ratio () {
+      return this.pomodorosTotal / this.pomodorosGoal
     },
-    methods: {
-      ...mapActions([
-        'addPomodoro',
-        'removePomodoro',
-        'setPomodorosTotal'
-      ]),
+    progressBarHeight () {
+      return {
+        'height': (this.ratio < 1 ? this.ratio : 1) * 100 + '%'
+      }
     }
+  },
+  methods: {
+    ...mapActions([
+      'addPomodoro',
+      'removePomodoro',
+      'setPomodorosTotal'
+    ])
   }
+}
 </script>
 
 <style scoped lang="sass">

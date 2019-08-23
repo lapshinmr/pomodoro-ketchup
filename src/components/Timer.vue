@@ -3,32 +3,32 @@
     <div class="timer">
       {{ CUR_TIME_FORMATTED }}
     </div>
-    <div class="d-flex buttons mt-1">
-      <button class="btn btn-outline-success" @click="runTimer">Play</button>
-      <button class="btn btn-outline-success ml-1 ml-xm-2" @click="pauseTimer">Pause</button>
-      <button class="btn btn-outline-success ml-1 ml-xm-2" @click="resetTimer">Reset</button>
+    <div class="d-flex buttons mt-3">
+      <button class="btn btn-success" @click="runTimer">Play</button>
+      <button class="btn btn-success ml-1 ml-xm-2" @click="pauseTimer">Pause</button>
+      <button class="btn btn-success ml-1 ml-xm-2" @click="resetTimer">Reset</button>
     </div>
   </div>
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex'
 
-  export default {
-    name: 'Timer',
-    computed: {
-      ...mapGetters([
-        'CUR_TIME_FORMATTED'
-      ])
-    },
-    methods: {
-      ...mapActions([
-        'runTimer',
-        'pauseTimer',
-        'resetTimer'
-      ])
-    }
+export default {
+  name: 'Timer',
+  computed: {
+    ...mapGetters([
+      'CUR_TIME_FORMATTED'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'runTimer',
+      'pauseTimer',
+      'resetTimer'
+    ])
   }
+}
 </script>
 
 <style scoped lang="sass">
