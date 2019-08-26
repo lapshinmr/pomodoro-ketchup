@@ -12,30 +12,30 @@ const TAB_TITLE_DEFAULT = 'Pomodoros Ketchup'
 const COLOR_THEMES = {
   green: {
     superLight: '#F1F8E2',
-    light: '#C0DF81',
+    light: '#D2E8A6',
     primary: '#98CA32',
-    dark: '#59761E',
+    dark: '#719627',
     superDark: '#263409'
   },
   blue: {
     superLight: '#E7F3EF',
-    light: '#79BEA8',
-    primary: '#448D76',
-    dark: '#23483C',
+    light: '#A9D6C7',
+    primary: '#72C0A7',
+    dark: '#3D7F6A',
     superDark: '#093426'
   },
   red: {
     superLight: '#FFE5DC',
-    light: '#FE9772',
-    primary: '#FD4D0C',
-    dark: '#A22C02',
+    light: '#FFC3AE',
+    primary: '#FD8458',
+    dark: '#D63900',
     superDark: '#341509'
   },
   yellow: {
     superLight: '#FFFCDC',
-    light: '#FEF590',
-    primary: '#FDED2A',
-    dark: '#C0B002',
+    light: '#F1EA9D',
+    primary: '#E1D447',
+    dark: '#AA9D18',
     superDark: '#343009'
   }
 }

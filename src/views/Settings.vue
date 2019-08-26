@@ -44,17 +44,9 @@
                  v-model.lazy.text="notificationBody"
           >
         </div>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div v-if="notificationPermission === 'granted'">
-            <p class="mb-0 text-success">
-              Notifications allowed
-            </p>
-            <small class="mt-0 form-text text-muted">
-              To block notification use browser settings.
-            </small>
-          </div>
+        <div class="mb-3">
           <div v-if="notificationPermission === 'denied'">
-            <p class="mb-0 text-danger">
+            <p class="mb-0">
               Notification blocked
             </p>
             <small class="mt-0 form-text text-muted">
@@ -63,12 +55,15 @@
           </div>
           <button v-if="notificationPermission !== 'granted' && notificationPermission !== 'denied'"
                   id="notification"
-                  class="btn btn-outline-success"
+                  class="btn btn-success btn-block rounded-0"
                   @click="notify"
           >
             Turn on notification
           </button>
-          <div class="slider flex-grow-1 d-flex align-content-center justify-content-between ml-3">
+          <small v-if="notificationPermission === 'granted'">
+            Notification sound volume
+          </small>
+          <div v-if="notificationPermission === 'granted'" class="slider flex-grow-1 d-flex align-content-center justify-content-between">
             <input
               class="flex-fill"
               type="range"
@@ -373,11 +368,16 @@ export default {
       cursor: pointer
       background-color: var(--light)
       color: var(--super-dark)
+      transition: all 0.15s
 
     input:checked + label
-      transition: all 0.15s
       background-color: var(--dark)
       color: var(--super-light)
+
+    label, input:checked + label
+      &:hover
+        background-color: var(--super-dark)
+        color: var(--super-light)
 
   .slider
     height: 40px
@@ -389,7 +389,7 @@ export default {
       margin: 15px 0
       height: 10px
       border-radius: 5px
-      background: var(--light)
+      background: var(--primary)
       outline: none
       opacity: 0.7
       -webkit-transition: .2s
