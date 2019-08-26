@@ -9,12 +9,15 @@ function save (key, data) {
   localStorage.setItem(key, data)
 }
 
-function load (key, parse = false) {
-  if (parse) {
-    return JSON.parse(localStorage.getItem(key))
-  } else {
-    return localStorage.getItem(key)
+function load (key, defValue=null) {
+  let value = localStorage.getItem(key);
+  try {
+    value = JSON.parse(value);
+  } catch {}
+  if ((defValue || defValue === 0 || defValue === false) && value === null) {
+    value = defValue;
   }
+  return value
 }
 
 function remove (key) {
@@ -130,20 +133,19 @@ export default new Vuex.Store({
   },
   actions: {
     loadVars ({ commit, state, dispatch }) {
-      let initTime = load('initTime', true) || cons.POMODORO_DEFAULT
-      let endTime = load('endTime') || Date.now()
-      let isPause = load('isPause', true) || false
-      let isTimerTitle = load('isTimerTitle', true) || true
-      let pomodorosTotal = load('pomodorosTotal', true) || 0
-      let pomodorosGoal = load('pomodorosGoal', true) || cons.POMODOROS_GOAL_DEFAULT
-      let goalIndicatorFormat = load('goalIndicatorFormat', true) || cons.GOAL_INDICATOR_FORMAT_DEFAULT
-      let isReversedProgressBar = load('isReversedProgressBar', true) || false
-      let notificationTitle = load('notificationTitle') || cons.NOTIFICATION_TITLE_DEFAULT
-      let notificationBody = load('notificationBody') || cons.NOTIFICATION_BODY_DEFAULT
-      let notificationSound = load('notificationSound') || cons.NOTIFICATION_SOUND_DEFAULT
-      let notificationVolume = load('notificationVolume') || cons.NOTIFICATION_VOLUME_DEFAULT
-      console.log(notificationVolume)
-      let colorTheme = load('colorTheme') || cons.COLOR_THEME_DEFAULT
+      let initTime = load('initTime', cons.POMODORO_DEFAULT);
+      let endTime = load('endTime', Date.now());
+      let isPause = load('isPause', false);
+      let isTimerTitle = load('isTimerTitle', true);
+      let pomodorosTotal = load('pomodorosTotal', 0);
+      let pomodorosGoal = load('pomodorosGoal', cons.POMODOROS_GOAL_DEFAULT) ;
+      let goalIndicatorFormat = load('goalIndicatorFormat', cons.GOAL_INDICATOR_FORMAT_DEFAULT);
+      let isReversedProgressBar = load('isReversedProgressBar', true);
+      let notificationTitle = load('notificationTitle', cons.NOTIFICATION_TITLE_DEFAULT);
+      let notificationBody = load('notificationBody', cons.NOTIFICATION_BODY_DEFAULT);
+      let notificationSound = load('notificationSound', cons.NOTIFICATION_SOUND_DEFAULT);
+      let notificationVolume = load('notificationVolume', cons.NOTIFICATION_VOLUME_DEFAULT)
+      let colorTheme = load('colorTheme', cons.COLOR_THEME_DEFAULT)
       commit('SET_INIT_TIME', initTime)
       commit('SET_TIMER_TITLE_FLAG', isTimerTitle)
       commit('SET_POMODOROS_TOTAL', pomodorosTotal)
@@ -161,7 +163,6 @@ export default new Vuex.Store({
       } else {
         curTime = Math.floor((endTime - Date.now()) / 1000)
       }
-      console.log(curTime, isPause)
       if (curTime > 0 && curTime < state.initTime) {
         commit('SET_TIME', curTime)
         if (!isPause) {

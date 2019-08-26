@@ -10,7 +10,6 @@
             <input type="text"
                    id="pomodoro"
                    class="form-control"
-                   placeholder="25:00"
                    v-model.lazy.string="initTime"
             >
           </div>
@@ -21,7 +20,6 @@
             <input type="text"
                    id="goal"
                    class="form-control"
-                   placeholder="70"
                    v-model.lazy.number="pomodorosGoal"
             >
           </div>
@@ -33,7 +31,6 @@
           <input type="text"
                  id="title"
                  class="form-control"
-                 placeholder="Time is over."
                  v-model.lazy.text="notificationTitle"
           >
         </div>
@@ -44,7 +41,6 @@
           <input type="text"
                  id="message"
                  class="form-control"
-                 placeholder="Well done!"
                  v-model.lazy.text="notificationBody"
           >
         </div>
@@ -86,7 +82,7 @@
           </div>
         </div>
         <div id="sounds" class="mb-3">
-          <div v-for="(soundName, index) in storeNotificationSounds"
+          <div v-for="(soundName, index) in notificationSounds"
                class="flex-fill"
                :class="{'ml-3': index !== 0}"
           >
@@ -98,7 +94,7 @@
               v-model="notificationSound"
               @click="playSound(soundName)"
             >
-            <label :for="'sound' + index" :style="buttonStyle(soundName === notificationSound)">
+            <label :for="'sound' + index">
               Sound {{ index + 1 }}
             </label>
           </div>
@@ -107,23 +103,19 @@
           <div id="title-timer" class="flex-fill">
             <input type="checkbox"
                    id="title-timer-check"
-                   class="form-check-input"
                    v-model="isTimerTitle"
-                   @click="switchTimerTitleFlag"
             >
-            <label for="title-timer-check" :style="buttonStyle(isTimerTitle)">
-              Tab timer
+            <label for="title-timer-check">
+              Title timer
             </label>
           </div>
           <div id="progress-bar" class="flex-fill ml-3">
             <input type="checkbox"
                    id="progress-bar-check"
-                   class=""
                    v-model="isReversedProgressBar"
-                   @click="switchProgressBarFlag"
             >
-            <label for="progress-bar-check" :style="buttonStyle(isReversedProgressBar)">
-              Revers progress
+            <label for="progress-bar-check">
+              Reverse timer bar
             </label>
           </div>
         </div>
@@ -139,17 +131,13 @@
                :value="index"
                v-model.number="goalIndicatorFormat"
             >
-            <label
-              :for="'indicator' + index"
-
-              :style="buttonStyle(index === goalIndicatorFormat)"
-            >
+            <label :for="'indicator' + index">
               {{ text }}
             </label>
           </div>
         </div>
         <div id="themes" class="mb-3">
-          <div v-for="(color, colorName, index) in storeColorThemes"
+          <div v-for="(color, colorName, index) in colorThemes"
                class="flex-fill"
                :class="{'ml-3': index !== 0}"
           >
@@ -160,8 +148,9 @@
               :value="colorName"
               v-model="colorTheme"
             >
-            <label :for="'color' + index" :style="buttonStyle(colorName === colorTheme)"
-            >{{ colorName | capitalize }}</label>
+            <label :for="'color' + index">
+              {{ colorName | capitalize }}
+            </label>
           </div>
         </div>
       </div>
@@ -172,6 +161,7 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { secondsToTime } from '../store'
+import { COLOR_THEMES, NOTIFICATION_SOUNDS } from '@/constants'
 
 const isNumber = function (value) {
   return /^\d+$/.test(value)
@@ -201,87 +191,103 @@ const stringToTimeSeconds = function (value) {
 export default {
   data () {
     return {
-      initTime: '',
-      pomodorosGoal: 0,
-      goalIndicatorFormat: null,
-      isTimerTitle: false,
-      isReversedProgressBar: false,
-      notificationTitle: '',
-      notificationBody: '',
-      notificationSound: '',
-      notificationPermission: '',
-      colorTheme: '',
-      notificationVolume: 100
+      notificationPermission: Notification.permission,
+      notificationSounds: NOTIFICATION_SOUNDS,
+      colorThemes: COLOR_THEMES
     }
   },
   computed: {
-    ...mapState({
-      'storeInitTime': 'initTime',
-      'storeCurTime': 'curTime',
-      'storePomodorosGoal': 'pomodorosGoal',
-      'storeGoalIndicatorFormat': 'goalIndicatorFormat',
-      'storeIsTimerTitle': 'isTimerTitle',
-      'storeIsReversedProgressBar': 'isReversedProgressBar',
-      'storeNotificationTitle': 'notificationTitle',
-      'storeNotificationBody': 'notificationBody',
-      'storeColorTheme': 'colorTheme',
-      'storeColorThemes': 'colorThemes',
-      'storeNotificationSounds': 'notificationSounds',
-      'storeNotificationSound': 'notificationSound',
-      'storeNotificationVolume': 'notificationVolume'
-    })
-  },
-  created () {
-    this.notificationPermission = Notification.permission
-    this.initTime = secondsToTime(this.storeInitTime)
-    this.curTime = this.storeCurTime
-    this.pomodorosGoal = this.storePomodorosGoal
-    this.goalIndicatorFormat = this.storeGoalIndicatorFormat
-    this.isTimerTitle = this.storeIsTimerTitle
-    this.isReversedProgressBar = this.storeIsReversedProgressBar
-    this.notificationTitle = this.storeNotificationTitle
-    this.notificationBody = this.storeNotificationBody
-    this.colorTheme = this.storeColorTheme
-    this.notificationSound = this.storeNotificationSound
-    this.notificationVolume = this.storeNotificationVolume
-  },
-  watch: {
-    initTime: function () {
-      let initTimeSeconds = stringToTimeSeconds(this.initTime)
-      if (!initTimeSeconds) {
-        this.initTime = secondsToTime(this.storeInitTime)
-        return
+    pomodorosGoal: {
+      get() {
+        return this.$store.state.pomodorosGoal
+      },
+      set(pomodorosGoal) {
+        if (!isNumber(pomodorosGoal)) {
+          return
+        }
+        return this.setPomodorosGoal(pomodorosGoal)
       }
-      this.initTime = secondsToTime(initTimeSeconds)
-      if (this.storeInitTime === this.storeCurTime) {
-        this.setTime(initTimeSeconds)
+    },
+    initTime: {
+      get() {
+        return secondsToTime(this.$store.state.initTime)
+      },
+      set(initTimeString) {
+        let initTimeSeconds = stringToTimeSeconds(initTimeString);
+        if (!initTimeSeconds) { // if bad user input
+          return secondsToTime(this.$store.state.initTime)
+        } else {
+          if (this.$store.state.initTime === this.$store.state.curTime) {
+            this.setTime(initTimeSeconds)
+          }
+          this.setInitTime(initTimeSeconds)
+          return secondsToTime(initTimeSeconds)
+        }
       }
-      this.setInitTime(initTimeSeconds)
     },
-    pomodorosGoal: function () {
-      if (!isNumber(this.pomodorosGoal)) {
-        this.pomodorosGoal = this.storePomodorosGoal
-        return
+    isTimerTitle: {
+      get() {
+        return this.$store.state.isTimerTitle
+      },
+      set(isTimerTitle) {
+        this.switchTimerTitleFlag()
       }
-      this.setPomodorosGoal(this.pomodorosGoal)
     },
-    goalIndicatorFormat: function () {
-      this.setGoalIndicatorFormat(this.goalIndicatorFormat)
+    isReversedProgressBar: {
+      get() {
+        return this.$store.state.isReversedProgressBar
+      },
+      set(isTimerTitle) {
+        this.switchProgressBarFlag()
+      }
     },
-    notificationTitle: function () {
-      this.setNotificationTitle(this.notificationTitle)
+    goalIndicatorFormat: {
+      get() {
+        return this.$store.state.goalIndicatorFormat
+      },
+      set(goalIndicatorFormat) {
+        this.setGoalIndicatorFormat(goalIndicatorFormat)
+      }
     },
-    notificationBody: function () {
-      this.setNotificationBody(this.notificationBody)
+    notificationTitle: {
+      get() {
+        return this.$store.state.notificationTitle
+      },
+      set(notificationTitle) {
+        this.setNotificationTitle(notificationTitle)
+      }
     },
-    colorTheme: function () {
-      this.setColorTheme(this.colorTheme)
+    notificationBody: {
+      get() {
+        return this.$store.state.notificationBody
+      },
+      set(notificationBody) {
+        this.setNotificationBody(notificationBody)
+      }
     },
-    notificationSound: function () {
-      this.setNotificationSound(this.notificationSound)
+    colorTheme: {
+      get() {
+        return this.$store.state.colorTheme
+      },
+      set(colorTheme) {
+        this.setColorTheme(colorTheme)
+      }
     },
-    notificationVolume: function () {
-      this.setNotificationVolume(this.notificationVolume)
+    notificationSound: {
+      get() {
+        return this.$store.state.notificationSound
+      },
+      set(notificationSound) {
+        this.setNotificationSound(notificationSound)
+      }
+    },
+    notificationVolume: {
+      get() {
+        return this.$store.state.notificationVolume
+      },
+      set(notificationVolume) {
+        this.setNotificationVolume(notificationVolume)
+      }
     }
   },
   methods: {
@@ -290,8 +296,8 @@ export default {
     ]),
     ...mapActions([
       'setInitTime',
-      'setTime',
       'setPomodorosGoal',
+      'setTime',
       'switchTimerTitleFlag',
       'switchProgressBarFlag',
       'setGoalIndicatorFormat',
@@ -301,14 +307,6 @@ export default {
       'setNotificationSound',
       'setNotificationVolume'
     ]),
-    buttonStyle (condition) {
-      let colorThemeObj = this.storeColorThemes[this.colorTheme]
-      return {
-        'background-color': condition ? colorThemeObj.dark : colorThemeObj.light,
-        // 'box-shadow': condition ? '0 0 0.5rem 0.2rem ' + colorThemeObj.dark : 'none',
-        'color': condition ? colorThemeObj.superLight : colorThemeObj.superDark
-      }
-    },
     notify () {
       if (!Notification) {
         alert('Desktop notifications not available in your browser. Try Chromium.')
@@ -373,9 +371,13 @@ export default {
       align-items: center
       margin-bottom: 0
       cursor: pointer
+      background-color: var(--light)
+      color: var(--super-dark)
 
     input:checked + label
       transition: all 0.15s
+      background-color: var(--dark)
+      color: var(--super-light)
 
   .slider
     height: 40px
