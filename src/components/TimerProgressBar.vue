@@ -2,7 +2,7 @@
   <div class="radialProgressBar">
     <svg class="svgprogress" viewBox="0 0 150 150">
       <circle class="progress_background" cx="75" cy="75" r="70" />
-      <circle class="progress_bar" :style="progressValue" cx="75" cy="75" r="70" />
+      <circle class="progress_bar" :style="progressValue" cx="75" cy="75" r="70" transform="rotate(-90 75 75)" />
     </svg>
     <div class="inner d-flex justify-content-center align-items-center">
       <slot></slot>
