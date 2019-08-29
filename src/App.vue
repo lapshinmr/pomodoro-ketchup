@@ -106,6 +106,12 @@ export default {
     @media (max-height: 400px)
       display: none
 
+  .github-corner
+    position: absolute
+    top: 0
+    right: 0
+    z-index: 1001
+
   #nav a
     font-weight: bold
     font-size: 20px

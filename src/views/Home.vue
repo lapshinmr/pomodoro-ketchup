@@ -27,7 +27,7 @@ export default {
   methods: {
     isHorizontal () {
       return window.innerWidth / window.innerHeight > 1 && window.innerWidth > 768
-    },
+    }
   }
 }
 </script>
