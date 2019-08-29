@@ -1,15 +1,10 @@
 <template>
   <div class="pomodoros-progress-bar" :style="progressBarHeight">
+    <slot></slot>  
     <div class="pomodoros-buttons d-flex justify-content-around mb-2">
-      <button class="btn btn-success btn-sm" @click="addPomodoro">
-        Add
-      </button>
-      <button class="btn btn-success btn-sm ml-2" @click="removePomodoro">
-        Remove
-      </button>
-      <button class="btn btn-success btn-sm ml-2" @click="setPomodorosTotal(0)">
-        Reset
-      </button>
+      <button class="btn btn-success" @click="addPomodoro">Add</button>
+      <button class="btn btn-success" @click="removePomodoro">Remove</button>
+      <button class="btn btn-success" @click="setPomodorosTotal(0)">Reset</button>
     </div>
   </div>
 </template>
@@ -57,5 +52,14 @@ export default {
     position: absolute
     bottom: 0
     right: 5px
+
+    @media (max-height: 400px)
+      display: none!important
+
+    .btn
+      padding: .5vh 1.5vh
+      font-size: 2vh
+      &:not(:first-child)
+        margin-left: 0.5vh
 
 </style>

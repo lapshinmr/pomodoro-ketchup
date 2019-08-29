@@ -1,7 +1,5 @@
 <template>
-  <div class="d-flex indicator"
-       :style="indicatorPosition"
-  >
+  <div class="text-center indicator" :style="indicatorPosition">
     {{ indicatorText }}
   </div>
 </template>
@@ -11,6 +9,7 @@ import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'pomodoros-progress-bar',
+  props: ['isHorizontal'],
   computed: {
     ...mapState([
       'pomodorosTotal',
@@ -21,28 +20,21 @@ export default {
       return this.pomodorosTotal / this.pomodorosGoal
     },
     indicatorPosition () {
-      let fontSize = 20
-      let gap = this.ratio <= 0.5 ? 5 : fontSize + 5
-      if (this.isDesktop) {
-        let pos = (this.ratio < 1 ? this.ratio : 1) * 100
-        gap = this.ratio <= 0.5 ? gap : -gap
+      if (this.isHorizontal) {
+        let fontSize = 20
+        let gap = this.ratio <= 0.5 ? 5 : - fontSize - 5
         return {
-          'position': 'fixed',
-          'left': '10px',
-          'bottom': `calc(${pos}% + ${gap}px)`
+          position: 'absolute',
+          left: '10px',
+          top: gap + 'px'
         }
       } else {
-        return this.ratio <= 0.5 ? {
-          'position': 'absolute',
-          'top': `calc(100% + ${gap}px)`
-        } : {
-          'position': 'absolute',
-          'top': `calc(-${gap}px)`
+        return {
+          position: 'absolute',
+          bottom: '105%',
+          width: '100%'
         }
       }
-    },
-    isDesktop () {
-      return window.innerWidth >= 768
     },
     indicatorText () {
       let formatFirst = this.pomodorosTotal + ' of ' + this.pomodorosGoal
@@ -70,8 +62,12 @@ export default {
 
   .indicator
     color: var(--dark)
-    font-size: 20px
     line-height: 20px
     transition: all 0.3s
+    font-size: 20px
+
+    @media (max-height: 400px)
+      font-size: 16px
+
 
 </style>

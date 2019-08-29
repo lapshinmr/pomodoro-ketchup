@@ -14,7 +14,7 @@ const COLOR_THEMES = {
     superLight: '#F1F8E2',
     light: '#D2E8A6',
     primary: '#98CA32',
-    dark: '#719627',
+    dark: '#688A24',
     superDark: '#263409'
   },
   blue: {

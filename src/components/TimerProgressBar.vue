@@ -4,7 +4,7 @@
       <circle class="progress_background" cx="75" cy="75" r="70" />
       <circle class="progress_bar" :style="progressValue" cx="75" cy="75" r="70" />
     </svg>
-    <div class="inner">
+    <div class="inner d-flex justify-content-center align-items-center">
       <slot></slot>
     </div>
   </div>
@@ -40,38 +40,37 @@ export default {
 
   .radialProgressBar
     position: relative
-    width: 90vw
-    height: 90vw
+    min-height: 75vh
+    max-height: 75vh
+    min-width: 90vw
+    max-width: 90vw
 
-    @media (min-width: 576px)
-      width: 80vw
-      height: 80vw
-
-    @media (min-width: 768px)
-      width: 60vw
-      height: 60vw
-
-    @media (min-width: 992px)
-      width: 50vw
-      height: 50vw
-
-    @media (min-width: 1200px)
-      width: 40vw
-      height: 40vw
+    @media (max-height: 400px)
+      min-height: 95vh
+      max-height: 95vh
+      min-width: 95vw
+      max-width: 95vw
 
     .inner
       position: absolute
-      top: 50%
       left: 50%
+      top: 50%
       transform: translate(-50%, -50%)
+      font-size: 15vh
+      @media (max-height: 400px), (max-width: 400px)
+        font-size: 70px
 
     .svgprogress
       position: absolute
-      top: 50%
       left: 50%
-      width: 100%
+      top: 50%
+      transform: translate(-50%, -50%)
       height: 100%
-      transform: translate(-50%, -50%) rotate(-90deg)
+      width: 100%
+
+      svg
+        height: 100%
+        width: 100%
 
       circle
         stroke-width: 10

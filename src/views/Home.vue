@@ -1,14 +1,15 @@
 <template>
-  <div>
-    <pomodoros-progress-bar></pomodoros-progress-bar>
-    <div class="content-container d-flex align-items-center justify-content-center">
-      <div class="rounded-progress-bar d-flex align-content-center justify-content-center">
-        <timer-progress-bar>
-          <timer></timer>
-        </timer-progress-bar>
-        <pomodoros-progress-indicator></pomodoros-progress-indicator>
-      </div>
-    </div>
+  <div class="content-container d-flex align-items-center justify-content-center">
+    <pomodoros-progress-bar>
+        <pomodoros-progress-indicator v-if="isHorizontal()" :is-horizontal="isHorizontal()">
+        </pomodoros-progress-indicator>
+    </pomodoros-progress-bar>
+    <timer-progress-bar>
+      <timer>
+        <pomodoros-progress-indicator v-if="!isHorizontal()" :is-horizontal="isHorizontal()">
+        </pomodoros-progress-indicator>
+      </timer>
+    </timer-progress-bar>
   </div>
 </template>
 
@@ -22,6 +23,11 @@ export default {
   name: 'home',
   components: {
     Timer, TimerProgressBar, PomodorosProgressBar, PomodorosProgressIndicator
+  },
+  methods: {
+    isHorizontal () {
+      return window.innerWidth / window.innerHeight > 1 && window.innerWidth > 768
+    },
   }
 }
 </script>
@@ -29,9 +35,8 @@ export default {
 <style lang="sass" scoped>
 
   .content-container
-    min-height: 100vh
-
-  .rounded-progress-bar
     position: relative
+    width: 100%
+    height: 100%
 
 </style>

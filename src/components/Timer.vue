@@ -1,12 +1,13 @@
 <template>
   <div>
+    <slot></slot>
     <div class="timer">
-      {{ CUR_TIME_FORMATTED }}
+        {{ CUR_TIME_FORMATTED }}
     </div>
-    <div class="d-flex buttons mt-3">
+    <div class="d-flex buttons">
       <button class="btn btn-success" @click="runTimer">Play</button>
-      <button class="btn btn-success ml-1 ml-xm-2" @click="pauseTimer">Pause</button>
-      <button class="btn btn-success ml-1 ml-xm-2" @click="resetTimer">Reset</button>
+      <button class="btn btn-success" @click="pauseTimer">Pause</button>
+      <button class="btn btn-success" @click="resetTimer">Reset</button>
     </div>
   </div>
 </template>
@@ -34,62 +35,28 @@ export default {
 <style scoped lang="sass">
 
   .timer
-    position: relative
     color: var(--dark)
-
-    font-size: 5.5rem
     line-height: 100%
-
-    @media (min-width: 360px)
-      font-size: 6rem
-
-    @media (min-width: 411px)
-      font-size: 7rem
-
-    @media (min-width: 576px)
-      font-size: 8rem
-
-    @media (min-width: 768px)
-      font-size: 8rem
-
-    @media (min-width: 992px)
-      font-size: 9rem
-
-    @media (min-width: 1200px)
-      font-size: 9rem
 
   .buttons
     position: absolute
     top: 100%
     left: 50%
     transform: translateX(-50%)
+    margin-top: 1rem
+    @media (max-height: 400px), (max-width: 400px)
+      margin-top: 0.5rem
 
     .btn
-      padding: .25rem .5rem
-      font-size: .875rem
+      padding: .75vh 1.75vh
+      font-size: 2.25vh
+      &:not(:first-child)
+        margin-left: 0.5vh
 
-      @media (min-width: 360px)
-        padding: .375rem .75rem
-        font-size: 1rem
-
-      @media (min-width: 411px)
-        padding: .375rem .75rem
-        font-size: 1rem
-
-      @media (min-width: 576px)
-        padding: .5rem 1rem
-        font-size: 1.25rem
-
-      @media (min-width: 768px)
-        padding: .5rem 1rem
-        font-size: 1.25rem
-
-      @media (min-width: 992px)
-        padding: .5rem 1rem
-        font-size: 1.25rem
-
-      @media (min-width: 1200px)
-        padding: .5rem 1rem
-        font-size: 1.25rem
+      @media (max-height: 400px), (max-width: 400px)
+        padding: 0.2rem 0.4rem
+        font-size: 12px
+        &:not(:first-child)
+          margin-left: 0.25rem
 
 </style>
