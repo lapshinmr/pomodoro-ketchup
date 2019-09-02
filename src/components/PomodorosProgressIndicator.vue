@@ -22,7 +22,7 @@ export default {
     indicatorPosition () {
       if (this.isHorizontal) {
         let fontSize = 20
-        let gap = this.ratio <= 0.5 ? 5 : - fontSize - 5
+        let gap = this.ratio <= 0.5 ? - fontSize - 5 : 5
         return {
           position: 'absolute',
           left: '10px',
