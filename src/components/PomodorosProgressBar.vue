@@ -1,10 +1,8 @@
 <template>
   <div class="pomodoros-progress-bar" :style="progressBarHeight">
-    <slot></slot>  
-    <div class="pomodoros-buttons d-flex justify-content-around mb-2">
-      <button class="btn btn-success" @click="addPomodoro">Add</button>
-      <button class="btn btn-success" @click="removePomodoro">Remove</button>
-      <button class="btn btn-success" @click="setPomodorosTotal(0)">Reset</button>
+    <slot></slot>
+    <div class="pomodoros-buttons mb-2">
+      <button v-if="pomodorosTotal" class="btn btn-link" @click="setPomodorosTotal(0)">Reset</button>
     </div>
   </div>
 </template>
@@ -31,8 +29,6 @@ export default {
   },
   methods: {
     ...mapActions([
-      'addPomodoro',
-      'removePomodoro',
       'setPomodorosTotal'
     ])
   }
@@ -59,7 +55,10 @@ export default {
     .btn
       padding: .5vh 1.5vh
       font-size: 2vh
+      color: var(--super-dark)
       &:not(:first-child)
         margin-left: 0.5vh
+      &:hover
+        color: var(--dark)
 
 </style>

@@ -1,6 +1,8 @@
 <template>
-  <div class="text-center indicator" :style="indicatorPosition">
-    {{ indicatorText }}
+  <div class="indicator d-flex align-items-center justify-content-center text-center" :style="indicatorPosition">
+    <button class="btn btn-link pomodoro-button" @click="addPomodoro">⊕</button>
+    <span class="indicator-text">{{ indicatorText }}</span>
+    <button class="btn btn-link pomodoro-button" @click="removePomodoro">⊖</button>
   </div>
 </template>
 
@@ -64,10 +66,29 @@ export default {
     color: var(--dark)
     line-height: 20px
     transition: all 0.3s
-    font-size: 20px
+    font-size: 6%
+    z-index: 1000
 
     @media (max-height: 400px)
-      font-size: 16px
+      font-size: 7%
+
+    .pomodoro-button
+      color: var(--dark)
+      display: inline-block
+      line-height: 1
+      font-size: 120%
+      padding: 0
+      transition: all 0.3s
+      cursor: pointer
+
+      &:hover
+        color: var(--super-dark)
+
+      &:first-child
+        margin: 0 0.5rem
+
+      &:last-child
+        margin: 0 0.5rem
 
 
 </style>

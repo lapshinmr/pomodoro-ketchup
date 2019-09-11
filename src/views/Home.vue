@@ -6,7 +6,10 @@
     </pomodoros-progress-bar>
     <timer-progress-bar>
       <timer>
-        <pomodoros-progress-indicator v-if="!isHorizontal()" :is-horizontal="isHorizontal()">
+        <pomodoros-progress-indicator
+          v-if="!isHorizontal()"
+          :is-horizontal="isHorizontal()"
+        >
         </pomodoros-progress-indicator>
       </timer>
     </timer-progress-bar>
