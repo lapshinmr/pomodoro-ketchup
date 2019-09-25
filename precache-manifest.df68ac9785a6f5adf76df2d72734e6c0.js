@@ -12,8 +12,8 @@ self.__precacheManifest = [
     "url": "/media/sound1.afb5369c.mp3"
   },
   {
-    "revision": "4e9f64ba8ae7cab0663a",
-    "url": "/js/app.e5307b89.js"
+    "revision": "1f8646d79adf4d31f591",
+    "url": "/js/app.6f9c213b.js"
   },
   {
     "revision": "8f0570f0235f16980095",
@@ -36,7 +36,7 @@ self.__precacheManifest = [
     "url": "/js/about.0c562418.js"
   },
   {
-    "revision": "52c08a7014813664091fbd0ab6ce9b92",
+    "revision": "0684c8df1178240fd43cdc73bf49cac7",
     "url": "/index.html"
   },
   {
@@ -44,8 +44,8 @@ self.__precacheManifest = [
     "url": "/css/chunk-11c0654e.e5929c9b.css"
   },
   {
-    "revision": "4e9f64ba8ae7cab0663a",
-    "url": "/css/app.648a6a65.css"
+    "revision": "1f8646d79adf4d31f591",
+    "url": "/css/app.d0741a08.css"
   },
   {
     "revision": "8a6056bd34cfd7a17f1299662ddb24b5",
