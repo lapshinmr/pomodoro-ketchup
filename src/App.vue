@@ -28,9 +28,6 @@
     </a>
     <div id="nav" class="text-center">
       <router-link to="/">Home</router-link> |
-      <!--
-      <router-link to="/about">About</router-link> |
-      -->
       <router-link to="/settings">Settings</router-link>
     </div>
     <router-view />
@@ -89,7 +86,7 @@ export default {
   #root
     height: 100%
     width: 100%
-    font-family: 'Avenir', Helvetica, Arial, sans-serif
+    font-family: Arial, sans-serif
     -webkit-font-smoothing: antialiased
     -moz-osx-font-smoothing: grayscale
     background-color: var(--super-light)
@@ -100,7 +97,7 @@ export default {
     left: 0
     right: 0
     top: 3vh
-    z-index: 1000
+    z-index: 500
 
   #nav, .github-corner
     @media (max-height: 400px)
@@ -110,7 +107,7 @@ export default {
     position: absolute
     top: 0
     right: 0
-    z-index: 1001
+    z-index: 1000
 
   #nav a
     font-weight: bold

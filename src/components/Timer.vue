@@ -1,7 +1,9 @@
 <template>
   <div>
-    <slot></slot>
-    <div class="timer">
+    <div class="slot">
+      <slot></slot>
+    </div>
+    <div class="timer d-flex justify-content-center align-items-center">
         {{ CUR_TIME_FORMATTED }}
     </div>
     <div class="d-flex justify-content-around buttons">
@@ -34,26 +36,25 @@ export default {
 
 <style scoped lang="sass">
 
+  .slot
+    position: absolute
+    bottom: 100%
+    width: 100%
+
   .timer
     color: var(--dark)
-    line-height: 100%
-    font-size: 32%
+    line-height: 1em
+    font-size: 30%
 
   .buttons
-    width: 70%
-    @media (max-height: 400px)
-      width: 80%
     position: absolute
     top: 100%
     left: 50%
     transform: translateX(-50%)
-    margin-top: 1rem
-    margin-top: 2%
+    width: 70%
 
     .btn
       padding: 2% 6%
       font-size: 4%
-      @media (max-height: 400px)
-        font-size: 5%
 
 </style>

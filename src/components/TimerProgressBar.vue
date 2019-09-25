@@ -55,7 +55,6 @@ export default {
       max-height: 95vh
       min-width: 95vw
       max-width: 95vw
-      font-size: 95vw
       font-size: 95vh
 
     .inner
@@ -63,11 +62,6 @@ export default {
       left: 50%
       top: 50%
       transform: translate(-50%, -50%)
-      //font-size: 25vw
-      //@media (min-aspect-ratio: 75/90)
-      //  font-size: 20vh
-      //@media (max-height: 400px), (max-width: 400px)
-      //  font-size: 30vh
 
     .svgprogress
       position: absolute

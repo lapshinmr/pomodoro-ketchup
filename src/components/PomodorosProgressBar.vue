@@ -1,9 +1,8 @@
 <template>
-  <div class="pomodoros-progress-bar" :style="progressBarHeight">
-    <slot></slot>
-    <div class="pomodoros-buttons mb-2">
-      <button v-if="pomodorosTotal" class="btn btn-link" @click="setPomodorosTotal(0)">Reset</button>
-    </div>
+  <div
+    class="pomodoros-progress-bar"
+    :style="progressBarHeight"
+  >
   </div>
 </template>
 
@@ -44,21 +43,5 @@ export default {
     transition: 0.3s
     background-color: var(--light)
 
-  .pomodoros-buttons
-    position: absolute
-    bottom: 0
-    right: 5px
-
-    @media (max-height: 400px)
-      display: none!important
-
-    .btn
-      padding: .5vh 1.5vh
-      font-size: 2vh
-      color: var(--super-dark)
-      &:not(:first-child)
-        margin-left: 0.5vh
-      &:hover
-        color: var(--dark)
 
 </style>
