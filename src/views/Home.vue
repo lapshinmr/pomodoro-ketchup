@@ -1,14 +1,14 @@
 <template>
   <div class="content-container d-flex align-items-center justify-content-center">
-    <pomodoros-progress-bar></pomodoros-progress-bar>
-    <timer-progress-bar>
-      <timer>
-        <pomodoros-progress-indicator></pomodoros-progress-indicator>
-      </timer>
-    </timer-progress-bar>
+    <pomodoros-bar></pomodoros-bar>
+    <timer-bar>
+      <timer-time>
+        <pomodoros-indicator></pomodoros-indicator>
+      </timer-time>
+    </timer-bar>
     <button
       v-if="pomodorosTotal"
-      class="reset-button btn btn-link"
+      class="pomodoros-reset-button btn btn-link"
       @click="setPomodorosTotal(0)"
     >
       Reset
@@ -17,21 +17,21 @@
 </template>
 
 <script>
-import Timer from '@/components/Timer.vue'
-import TimerProgressBar from '@/components/TimerProgressBar.vue'
-import PomodorosProgressBar from '@/components/PomodorosProgressBar.vue'
-import PomodorosProgressIndicator from '@/components/PomodorosProgressIndicator.vue'
+import TimerTime from '@/components/TimerTime.vue'
+import TimerBar from '@/components/TimerBar.vue'
+import PomodorosBar from '@/components/PomodorosBar.vue'
+import PomodorosIndicator from '@/components/PomodorosIndicator.vue'
 import { mapState } from 'vuex'
 
 export default {
   name: 'home',
   components: {
-    Timer, TimerProgressBar, PomodorosProgressBar, PomodorosProgressIndicator
+    TimerTime, TimerBar, PomodorosBar, PomodorosIndicator
   },
   computed: {
     ...mapState([
-      'pomodorosTotal',
-    ]),
+      'pomodorosTotal'
+    ])
   }
 }
 </script>
@@ -43,7 +43,7 @@ export default {
     width: 100%
     height: 100%
 
-  .reset-button
+  .pomodoros-reset-button
     position: absolute
     bottom: 0
     right: 0

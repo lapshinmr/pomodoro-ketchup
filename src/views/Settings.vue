@@ -8,7 +8,6 @@
               Pomodoro duration
             </small>
             <input type="text"
-                   id="pomodoro"
                    class="form-control"
                    v-model.lazy.string="initTime"
             >
@@ -18,7 +17,6 @@
               Pomodoros goal
             </small>
             <input type="text"
-                   id="goal"
                    class="form-control"
                    v-model.lazy.number="pomodorosGoal"
             >
@@ -29,7 +27,6 @@
             Notification title
           </small>
           <input type="text"
-                 id="title"
                  class="form-control"
                  v-model.lazy.text="notificationTitle"
           >
@@ -39,7 +36,6 @@
             Notification message
           </small>
           <input type="text"
-                 id="message"
                  class="form-control"
                  v-model.lazy.text="notificationBody"
           >
@@ -54,7 +50,6 @@
             </small>
           </div>
           <button v-if="notificationPermission !== 'granted' && notificationPermission !== 'denied'"
-                  id="notification"
                   class="btn btn-success btn-block rounded-0"
                   @click="notify"
           >
@@ -76,7 +71,7 @@
             </span>
           </div>
         </div>
-        <div id="sounds" class="mb-3">
+        <div class="settings-button mb-3">
           <div v-for="(soundName, index) in notificationSounds"
                class="flex-fill"
                :class="{'ml-3': index !== 0}"
@@ -94,8 +89,8 @@
             </label>
           </div>
         </div>
-        <div class="d-flex mb-3">
-          <div id="title-timer" class="flex-fill">
+        <div class="settings-button d-flex mb-3">
+          <div class="flex-fill">
             <input type="checkbox"
                    id="title-timer-check"
                    v-model="isTimerTitle"
@@ -104,7 +99,7 @@
               Title timer
             </label>
           </div>
-          <div id="progress-bar" class="flex-fill ml-3">
+          <div class="setttings-button flex-fill ml-3">
             <input type="checkbox"
                    id="progress-bar-check"
                    v-model="isReversedProgressBar"
@@ -114,7 +109,7 @@
             </label>
           </div>
         </div>
-        <div id="indicators" class="mb-3">
+        <div class="settings-button mb-3">
           <div v-for="(text, index) in ['30 of 60', '50%', '30 of 60 (50%)']"
                class="flex-fill"
                :class="{'ml-3': index !== 0}"
@@ -131,9 +126,9 @@
             </label>
           </div>
         </div>
-        <div id="themes" class="mb-3">
+        <div class="settings-button mb-3">
           <div v-for="(color, colorName, index) in colorThemes"
-               class="flex-fill"
+               class=" flex-fill"
                :class="{'ml-3': index !== 0}"
           >
             <input
@@ -346,7 +341,7 @@ export default {
     @media (min-width: 321px)
       padding-top: 100px
 
-  #themes, #sounds, #indicators, #progress-bar, #title-timer
+  .settings-button
     height: 40px
     display: flex
     justify-content: center
