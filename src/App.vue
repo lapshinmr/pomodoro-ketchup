@@ -45,6 +45,7 @@ export default {
 </script>
 
 <style lang="sass">
+
   html
     padding: 0
     margin: 0
@@ -68,6 +69,10 @@ export default {
     background-color: var(--super-light)
     color: var(--super-dark)
 
+  .navigation, .github-corner
+    @media (max-height: 400px)
+      display: none
+
   .navigation
     position: absolute
     left: 0
@@ -75,31 +80,26 @@ export default {
     top: 3vh
     z-index: 500
 
-  .navigation, .github-corner
-    @media (max-height: 400px)
-      display: none
+    a
+      font-weight: bold
+      font-size: 20px
+      color: var(--super-dark)
 
-
-  .navigation a
-    font-weight: bold
-    font-size: 20px
-    color: var(--super-dark)
-
-  .navigation a.router-link-exact-active
-    color: var(--dark)
+      &.router-link-exact-active
+        color: var(--dark)
 
   .btn-success
     color: var(--super-light)
     border-color: var(--dark)
     background-color: var(--dark)
 
-  .btn-success:hover
-    color: var(--super-light)
-    border-color: var(--super-dark)
-    background-color: var(--super-dark)
+    &:hover
+      color: var(--super-light)
+      border-color: var(--super-dark)
+      background-color: var(--super-dark)
 
-  .btn-success:focus, .btn-success.focus
-    box-shadow: none
+    &:focus, &.focus
+      box-shadow: none
 
   .btn-success:not(:disabled):not(.disabled):active,
   .btn-success:not(:disabled):not(.disabled).active,
@@ -116,11 +116,12 @@ export default {
   .btn-link
     color: var(--dark)
 
-  .btn-link:hover
-    color: var(--super-dark)
-    text-decoration: none
+    &:hover
+      color: var(--super-dark)
+      text-decoration: none
 
-  .btn-link:focus
-    outline: none
-    text-decoration: none
+    &:focus
+      outline: none
+      text-decoration: none
+
 </style>

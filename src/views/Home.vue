@@ -50,7 +50,8 @@ export default {
     z-index: 1000
     font-size: 4vh
     color: var(--dark)
+
     &:hover
       color: var(--super-dark)
-
+      
 </style>
