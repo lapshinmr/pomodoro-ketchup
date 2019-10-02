@@ -1,8 +1,8 @@
 <template>
   <div class="indicator d-flex align-items-center justify-content-center text-center">
-    <button class="indicator__button btn btn-link" @click="addPomodoro">⊕</button>
-    <span class="indicator__text">{{ indicatorText }}</span>
     <button class="indicator__button btn btn-link" @click="removePomodoro">⊖</button>
+    <span class="indicator__text">{{ indicatorText }}</span>
+    <button class="indicator__button btn btn-link" @click="addPomodoro">⊕</button>
   </div>
 </template>
 
@@ -33,35 +33,32 @@ export default {
     ...mapActions([
       'addPomodoro',
       'removePomodoro',
-      'setPomodorosTotal'
     ])
   }
 }
 </script>
 
 <style scoped lang="sass">
+.indicator
+  color: var(--dark)
+  transition: all 0.3s
+  font-size: 6%
 
-  .indicator
+  .indicator__button
     color: var(--dark)
+    display: inline-block
+    line-height: 1
+    font-size: 100%
+    padding: 0
     transition: all 0.3s
-    font-size: 6%
+    cursor: pointer
 
-    .indicator__button
-      color: var(--dark)
-      display: inline-block
-      line-height: 1
-      font-size: 100%
-      padding: 0
-      transition: all 0.3s
-      cursor: pointer
+    &:hover
+      color: var(--super-dark)
 
-      &:hover
-        color: var(--super-dark)
+    &:first-child
+      margin: 0 0.5rem
 
-      &:first-child
-        margin: 0 0.5rem
-
-      &:last-child
-        margin: 0 0.5rem
-
+    &:last-child
+      margin: 0 0.5rem
 </style>

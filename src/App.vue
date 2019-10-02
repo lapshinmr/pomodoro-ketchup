@@ -45,83 +45,81 @@ export default {
 </script>
 
 <style lang="sass">
+html
+  padding: 0
+  margin: 0
+  height: 100vh
+  width: 100vw
 
-  html
-    padding: 0
-    margin: 0
-    height: 100vh
-    width: 100vw
+body
+  position: relative
+  padding: 0
+  margin: 0
+  height: 100%
+  width: 100%
+  line-height: 1
 
-  body
-    position: relative
-    padding: 0
-    margin: 0
-    height: 100%
-    width: 100%
-    line-height: 1
+.root
+  height: 100%
+  width: 100%
+  font-family: Arial, sans-serif
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+  background-color: var(--super-light)
+  color: var(--super-dark)
 
-  .root
-    height: 100%
-    width: 100%
-    font-family: Arial, sans-serif
-    -webkit-font-smoothing: antialiased
-    -moz-osx-font-smoothing: grayscale
-    background-color: var(--super-light)
+.navigation, .github-corner
+  @media (max-height: 400px)
+    display: none
+
+.navigation
+  position: absolute
+  left: 0
+  right: 0
+  top: 3vh
+  z-index: 500
+
+  a
+    font-weight: bold
+    font-size: 20px
     color: var(--super-dark)
 
-  .navigation, .github-corner
-    @media (max-height: 400px)
-      display: none
+    &.router-link-exact-active
+      color: var(--dark)
 
-  .navigation
-    position: absolute
-    left: 0
-    right: 0
-    top: 3vh
-    z-index: 500
+.btn-success
+  color: var(--super-light)
+  border-color: var(--dark)
+  background-color: var(--dark)
 
-    a
-      font-weight: bold
-      font-size: 20px
-      color: var(--super-dark)
-
-      &.router-link-exact-active
-        color: var(--dark)
-
-  .btn-success
+  &:hover
     color: var(--super-light)
-    border-color: var(--dark)
-    background-color: var(--dark)
+    border-color: var(--super-dark)
+    background-color: var(--super-dark)
 
-    &:hover
-      color: var(--super-light)
-      border-color: var(--super-dark)
-      background-color: var(--super-dark)
-
-    &:focus, &.focus
-      box-shadow: none
-
-  .btn-success:not(:disabled):not(.disabled):active,
-  .btn-success:not(:disabled):not(.disabled).active,
-  .show > .btn-success.dropdown-toggle
-      color: var(--super-light)
-      background-color: var(--dark)
-      border-color: var(--dark)
-
-  .btn-success:not(:disabled):not(.disabled):active:focus,
-  .btn-success:not(:disabled):not(.disabled).active:focus,
-  .show > .btn-success.dropdown-toggle:focus
+  &:focus, &.focus
     box-shadow: none
 
-  .btn-link
-    color: var(--dark)
+.btn-success:not(:disabled):not(.disabled):active,
+.btn-success:not(:disabled):not(.disabled).active,
+.show > .btn-success.dropdown-toggle
+    color: var(--super-light)
+    background-color: var(--dark)
+    border-color: var(--dark)
 
-    &:hover
-      color: var(--super-dark)
-      text-decoration: none
+.btn-success:not(:disabled):not(.disabled):active:focus,
+.btn-success:not(:disabled):not(.disabled).active:focus,
+.show > .btn-success.dropdown-toggle:focus
+  box-shadow: none
 
-    &:focus
-      outline: none
-      text-decoration: none
+.btn-link
+  color: var(--dark)
 
+  &:hover
+    color: var(--super-dark)
+    text-decoration: none
+
+  &:focus
+    outline: none
+    text-decoration: none
 </style>

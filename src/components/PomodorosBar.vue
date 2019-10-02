@@ -31,12 +31,10 @@ export default {
 </script>
 
 <style scoped lang="sass">
-
-  .pomodoros-progress-bar
-    position: fixed
-    bottom: 0
-    width: 100vw
-    transition: 0.3s
-    background-color: var(--light)
-
+.pomodoros-progress-bar
+  position: fixed
+  bottom: 0
+  width: 100vw
+  transition: 0.3s
+  background-color: var(--light)
 </style>

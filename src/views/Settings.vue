@@ -324,96 +324,95 @@ export default {
 </script>
 
 <style scoped lang="sass">
+.mb-3
+  margin-bottom: 0.75rem!important
+.ml-3
+  margin-left: 0.5rem!important
+
+@media (min-width: 321px)
   .mb-3
-    margin-bottom: 0.75rem!important
+    margin-bottom: 1rem!important
   .ml-3
-    margin-left: 0.5rem!important
+    margin-left: 1rem!important
+
+.container
+  padding-top: 70px
 
   @media (min-width: 321px)
-    .mb-3
-      margin-bottom: 1rem!important
-    .ml-3
-      margin-left: 1rem!important
+    padding-top: 100px
 
-  .container
-    padding-top: 70px
+.settings-button
+  height: 40px
+  display: flex
+  justify-content: center
+  align-items: center
 
-    @media (min-width: 321px)
-      padding-top: 100px
+  div
+    height: 100%
 
-  .settings-button
-    height: 40px
+  input
+    display: none
+
+  label
+    height: 100%
+    width: 100%
     display: flex
     justify-content: center
     align-items: center
+    margin-bottom: 0
+    cursor: pointer
+    background-color: var(--light)
+    color: var(--super-dark)
+    transition: all 0.15s
 
-    div
-      height: 100%
+  input:checked + label
+    background-color: var(--dark)
+    color: var(--super-light)
 
-    input
-      display: none
-
-    label
-      height: 100%
-      width: 100%
-      display: flex
-      justify-content: center
-      align-items: center
-      margin-bottom: 0
-      cursor: pointer
-      background-color: var(--light)
-      color: var(--super-dark)
-      transition: all 0.15s
-
-    input:checked + label
-      background-color: var(--dark)
+  label, input:checked + label
+    &:hover
+      background-color: var(--super-dark)
       color: var(--super-light)
 
-    label, input:checked + label
-      &:hover
-        background-color: var(--super-dark)
-        color: var(--super-light)
+.slider
+  height: 40px
 
-  .slider
+  input
+    -webkit-appearance: none
+    appearance: none
+    width: 100%
+    margin: 15px 0
+    height: 10px
+    border-radius: 5px
+    background: var(--primary)
+    outline: none
+    opacity: 0.7
+    -webkit-transition: .2s
+    transition: opacity .2s
+
+  input:hover
+    opacity: 1
+
+  input::-webkit-slider-thumb
+    -webkit-appearance: none
+    appearance: none
+    width: 25px
+    height: 25px
+    border-radius: 50%
+    background: var(--dark)
+    cursor: pointer
+
+  input::-moz-range-thumb
+    width: 25px
+    height: 25px
+    border-radius: 50%
+    background: var(--dark)
+    cursor: pointer
+
+  span
+    width: 70px
     height: 40px
-
-    input
-      -webkit-appearance: none
-      appearance: none
-      width: 100%
-      margin: 15px 0
-      height: 10px
-      border-radius: 5px
-      background: var(--primary)
-      outline: none
-      opacity: 0.7
-      -webkit-transition: .2s
-      transition: opacity .2s
-
-    input:hover
-      opacity: 1
-
-    input::-webkit-slider-thumb
-      -webkit-appearance: none
-      appearance: none
-      width: 25px
-      height: 25px
-      border-radius: 50%
-      background: var(--dark)
-      cursor: pointer
-
-    input::-moz-range-thumb
-      width: 25px
-      height: 25px
-      border-radius: 50%
-      background: var(--dark)
-      cursor: pointer
-
-    span
-      width: 70px
-      height: 40px
-      font-size: 1.5rem
-      line-height: 40px
-      text-align: right
-
+    font-size: 1.5rem
+    line-height: 40px
+    text-align: right
 </style>

@@ -21,7 +21,7 @@ import TimerTime from '@/components/TimerTime.vue'
 import TimerBar from '@/components/TimerBar.vue'
 import PomodorosBar from '@/components/PomodorosBar.vue'
 import PomodorosIndicator from '@/components/PomodorosIndicator.vue'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'home',
@@ -32,26 +32,29 @@ export default {
     ...mapState([
       'pomodorosTotal'
     ])
+  },
+  methods: {
+    ...mapActions([
+      'setPomodorosTotal'
+    ])
   }
 }
 </script>
 
 <style lang="sass" scoped>
+.content-container
+  position: relative
+  width: 100%
+  height: 100%
 
-  .content-container
-    position: relative
-    width: 100%
-    height: 100%
+.pomodoros-reset-button
+  position: absolute
+  bottom: 0
+  right: 0
+  z-index: 1000
+  font-size: 4vh
+  color: var(--dark)
 
-  .pomodoros-reset-button
-    position: absolute
-    bottom: 0
-    right: 0
-    z-index: 1000
-    font-size: 4vh
-    color: var(--dark)
-
-    &:hover
-      color: var(--super-dark)
-      
+  &:hover
+    color: var(--super-dark)
 </style>

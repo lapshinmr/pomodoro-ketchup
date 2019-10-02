@@ -35,28 +35,25 @@ export default {
 </script>
 
 <style scoped lang="sass">
+.timer
+  .timer__slot
+    position: absolute
+    bottom: 100%
+    width: 100%
 
-  .timer
+  .timer__time
+    color: var(--dark)
+    line-height: 1em
+    font-size: 30%
 
-    .timer__slot
-      position: absolute
-      bottom: 100%
-      width: 100%
+  .timer__buttons
+    position: absolute
+    top: 100%
+    left: 50%
+    transform: translateX(-50%)
+    width: 70%
 
-    .timer__time
-      color: var(--dark)
-      line-height: 1em
-      font-size: 30%
-
-    .timer__buttons
-      position: absolute
-      top: 100%
-      left: 50%
-      transform: translateX(-50%)
-      width: 70%
-
-      .timer__button
-        padding: 2% 6%
-        font-size: 4%
-        
+    .timer__button
+      padding: 2% 6%
+      font-size: 4%
 </style>
