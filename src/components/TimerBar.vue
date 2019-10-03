@@ -17,12 +17,12 @@ export default {
   name: 'timer-bar',
   computed: {
     ...mapState([
-      'curTime',
-      'initTime',
+      'timeLeft',
+      'timeInit',
       'isReversedProgressBar'
     ]),
     progressValue () {
-      let ratio = this.curTime / this.initTime
+      let ratio = this.timeLeft / this.timeInit
       if (this.isReversedProgressBar) {
         ratio = (1 - ratio)
       }

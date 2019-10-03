@@ -149,7 +149,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { secondsToTime } from '../store'
 import { COLOR_THEMES, NOTIFICATION_SOUNDS } from '@/constants'
 
@@ -200,14 +200,14 @@ export default {
     },
     initTime: {
       get() {
-        return secondsToTime(this.$store.state.initTime)
+        return secondsToTime(this.$store.state.timeInit)
       },
       set(initTimeString) {
         let initTimeSeconds = stringToTimeSeconds(initTimeString);
         if (!initTimeSeconds) { // if bad user input
-          return secondsToTime(this.$store.state.initTime)
+          return secondsToTime(this.$store.state.timeInit)
         } else {
-          if (this.$store.state.initTime === this.$store.state.curTime) {
+          if (this.$store.state.timeInit === this.$store.state.timeInit) {
             this.setTime(initTimeSeconds)
           }
           this.setInitTime(initTimeSeconds)

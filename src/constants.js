@@ -1,15 +1,15 @@
-const REFRESH_TIME = 1000
-const POMODORO_DEFAULT = 25 * 60
-const POMODOROS_GOAL_DEFAULT = 70
-const GOAL_INDICATOR_FORMAT_DEFAULT = 2
-const NOTIFICATION_TITLE_DEFAULT = 'Time is over.'
-const NOTIFICATION_BODY_DEFAULT = 'Well done!'
-const NOTIFICATION_SOUND_DEFAULT = 'sound1.mp3'
-const NOTIFICATION_VOLUME_DEFAULT = 100
-const COLOR_THEME_DEFAULT = 'green'
-const TAB_TITLE_DEFAULT = 'Pomodoros Ketchup'
+export const REFRESH_TIME = 1000
+export const POMODORO_DEFAULT = 25 * 60
+export const POMODOROS_GOAL_DEFAULT = 70
+export const GOAL_INDICATOR_FORMAT_DEFAULT = 2
+export const NOTIFICATION_TITLE_DEFAULT = 'Time is over.'
+export const NOTIFICATION_BODY_DEFAULT = 'Well done!'
+export const NOTIFICATION_SOUND_DEFAULT = 'sound1.mp3'
+export const NOTIFICATION_VOLUME_DEFAULT = 100
+export const COLOR_THEME_DEFAULT = 'green'
+export const TAB_TITLE_DEFAULT = 'Pomodoros Ketchup'
 
-const COLOR_THEMES = {
+export const COLOR_THEMES = {
   green: {
     superLight: '#F1F8E2',
     light: '#D2E8A6',
@@ -40,24 +40,9 @@ const COLOR_THEMES = {
   }
 }
 
-const NOTIFICATION_SOUNDS = [
+export const NOTIFICATION_SOUNDS = [
   'sound1.mp3',
   'sound2.mp3',
   'sound3.mp3',
   'sound4.mp3'
 ]
-
-export {
-  REFRESH_TIME,
-  POMODORO_DEFAULT,
-  POMODOROS_GOAL_DEFAULT,
-  GOAL_INDICATOR_FORMAT_DEFAULT,
-  NOTIFICATION_TITLE_DEFAULT,
-  NOTIFICATION_BODY_DEFAULT,
-  NOTIFICATION_SOUND_DEFAULT,
-  NOTIFICATION_SOUNDS,
-  NOTIFICATION_VOLUME_DEFAULT,
-  COLOR_THEME_DEFAULT,
-  TAB_TITLE_DEFAULT,
-  COLOR_THEMES
-}

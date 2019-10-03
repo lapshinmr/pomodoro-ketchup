@@ -1,9 +1,9 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import * as cons from '@/constants'
-import { COLOR_THEMES, NOTIFICATION_SOUNDS } from '@/constants'
+import Vue from 'vue';
+import Vuex from 'vuex';
+import * as cons from '@/constants';
 
 Vue.use(Vuex)
+
 
 function save (key, data) {
   localStorage.setItem(key, data)
@@ -20,10 +20,6 @@ function load (key, defValue=null) {
   return value
 }
 
-function remove (key) {
-  localStorage.removeItem(key)
-}
-
 export function secondsToTime (value) {
   let minutes = Math.floor(value / 60)
   let seconds = value % 60
@@ -32,32 +28,68 @@ export function secondsToTime (value) {
   return `${isMinutesZero}${minutes}:${isSecondsZero}${seconds}`
 }
 
-export default new Vuex.Store({
-  state: {
-    initTime: 0,
-    curTime: 0,
-    endTime: null,
-    timerId: null,
+const loadState = function () {
+  const initState = {
+    timeInit: cons.POMODORO_DEFAULT,
+    timeLeft: cons.POMODORO_DEFAULT,
+    timeEnd: Date.now(),
     isPause: false,
     pomodorosTotal: 0,
-    pomodorosGoal: 0,
-    goalIndicatorFormat: 0,
+    pomodorosGoal: cons.POMODOROS_GOAL_DEFAULT,
+    goalIndicatorFormat: cons.GOAL_INDICATOR_FORMAT_DEFAULT,
     isTimerTitle: true,
-    isReversedProgressBar: false,
-    notificationTitle: '',
-    notificationBody: '',
-    notificationSound: '',
-    notificationSounds: NOTIFICATION_SOUNDS,
-    notificationVolume: 0,
-    colorTheme: '',
-    colorThemes: COLOR_THEMES
+    isReversedProgressBar: true,
+    notificationTitle: cons.NOTIFICATION_TITLE_DEFAULT,
+    notificationBody: cons.NOTIFICATION_BODY_DEFAULT,
+    notificationSound: cons.NOTIFICATION_SOUND_DEFAULT,
+    notificationVolume: cons.NOTIFICATION_VOLUME_DEFAULT,
+    colorTheme: cons.COLOR_THEME_DEFAULT
+  }
+  let data = JSON.parse(localStorage.getItem('data'));
+  if (!data) {
+    localStorage.setItem('data', JSON.stringify(initState))
+  } else {
+    let timeLeft
+    if (data.isPause) {
+      timeLeft = data.timeLeft
+    } else {
+      timeLeft = Math.floor((data.timeEnd - Date.now()) / 1000)
+    }
+    if (timeLeft > 0 && timeLeft != state.timeInit && !isPause) {
+      dispatch('runTimer')
+    }
+  }
+  return initState
+}
+
+const updateLocalStorage = store => {
+  // called when the store is initialized
+  store.subscribe((mutation, state) => {
+    console.log(mutation.type, mutation.payload)
+    let ignore = [
+      'DECREASE_TIME',
+      'SET_TIMER_ID',
+    ]
+    if (ignore.indexOf(mutation.type) === -1) {
+      console.log('CHANGE STATE')
+      localStorage.setItem('data', JSON.stringify(state))
+    }
+  })
+}
+
+export default new Vuex.Store({
+  plugins: [updateLocalStorage],
+  state: {
+    ...loadState(),
+    timerId: null,
+    isSettingsMode: false
   },
   getters: {
     CUR_TIME_FORMATTED (state) {
-      return secondsToTime(state.curTime)
+      return secondsToTime(state.timeLeft)
     },
     COLORS (state) {
-      let colors = state.colorThemes[state.colorTheme]
+      let colors = cons.COLOR_THEMES[state.colorTheme]
       return {
         '--super-light': colors.superLight,
         '--light': colors.light,
@@ -69,16 +101,16 @@ export default new Vuex.Store({
   },
   mutations: {
     SET_INIT_TIME (state, payload) {
-      state.initTime = payload
+      state.timeInit = payload
     },
-    SET_TIME (state, payload) {
-      state.curTime = payload
+    SET_LEFT_TIME (state, payload) {
+      state.timeLeft = payload
     },
     SET_END_TIME (state) {
-      state.endTime = Date.now() + state.curTime * cons.REFRESH_TIME
+      state.timeEnd = Date.now() + state.timeLeft * cons.REFRESH_TIME
     },
     DECREASE_TIME (state) {
-      state.curTime -= cons.REFRESH_TIME / 1000
+      state.timeLeft -= cons.REFRESH_TIME / 1000
     },
     SET_TIMER_ID (state, payload) {
       state.timerId = payload
@@ -133,71 +165,54 @@ export default new Vuex.Store({
   },
   actions: {
     loadVars ({ commit, state, dispatch }) {
-      let initTime = load('initTime', cons.POMODORO_DEFAULT);
-      let endTime = load('endTime', Date.now());
-      let isPause = load('isPause', false);
-      let isTimerTitle = load('isTimerTitle', true);
-      let pomodorosTotal = load('pomodorosTotal', 0);
-      let pomodorosGoal = load('pomodorosGoal', cons.POMODOROS_GOAL_DEFAULT) ;
-      let goalIndicatorFormat = load('goalIndicatorFormat', cons.GOAL_INDICATOR_FORMAT_DEFAULT);
-      let isReversedProgressBar = load('isReversedProgressBar', true);
-      let notificationTitle = load('notificationTitle', cons.NOTIFICATION_TITLE_DEFAULT);
-      let notificationBody = load('notificationBody', cons.NOTIFICATION_BODY_DEFAULT);
-      let notificationSound = load('notificationSound', cons.NOTIFICATION_SOUND_DEFAULT);
-      let notificationVolume = load('notificationVolume', cons.NOTIFICATION_VOLUME_DEFAULT)
-      let colorTheme = load('colorTheme', cons.COLOR_THEME_DEFAULT)
-      commit('SET_INIT_TIME', initTime)
-      commit('SET_TIMER_TITLE_FLAG', isTimerTitle)
-      commit('SET_POMODOROS_TOTAL', pomodorosTotal)
-      commit('SET_POMODOROS_GOAL', pomodorosGoal)
-      commit('SET_GOAL_INDICATOR_FORMAT', goalIndicatorFormat)
-      commit('SET_PROGRESS_BAR_FLAG', isReversedProgressBar)
-      commit('SET_NOTIFICATION_TITLE', notificationTitle)
-      commit('SET_NOTIFICATION_BODY', notificationBody)
-      commit('SET_NOTIFICATION_SOUND', notificationSound)
-      commit('SET_NOTIFICATION_VOLUME', notificationVolume)
-      commit('SET_COLOR_THEME', colorTheme)
-      let curTime
-      if (isPause) {
-        curTime = load('curTime') || 0
-      } else {
-        curTime = Math.floor((endTime - Date.now()) / 1000)
-      }
-      if (curTime > 0 && curTime < state.initTime) {
-        commit('SET_TIME', curTime)
-        if (!isPause) {
-          dispatch('runTimer')
-        }
-      } else {
-        commit('SET_TIME', initTime)
-      }
+      //let timeInit = load('timeInit', cons.POMODORO_DEFAULT);
+      //let timeEnd = load('timeEnd', Date.now());
+      //let isPause = load('isPause', false);
+      //let isTimerTitle = load('isTimerTitle', true);
+      //let pomodorosTotal = load('pomodorosTotal', 0);
+      //let pomodorosGoal = load('pomodorosGoal', cons.POMODOROS_GOAL_DEFAULT) ;
+      //let goalIndicatorFormat = load('goalIndicatorFormat', cons.GOAL_INDICATOR_FORMAT_DEFAULT);
+      //let isReversedProgressBar = load('isReversedProgressBar', true);
+      //let notificationTitle = load('notificationTitle', cons.NOTIFICATION_TITLE_DEFAULT);
+      //let notificationBody = load('notificationBody', cons.NOTIFICATION_BODY_DEFAULT);
+      //let notificationSound = load('notificationSound', cons.NOTIFICATION_SOUND_DEFAULT);
+      //let notificationVolume = load('notificationVolume', cons.NOTIFICATION_VOLUME_DEFAULT)
+      //let colorTheme = load('colorTheme', cons.COLOR_THEME_DEFAULT)
+      //commit('SET_INIT_TIME', timeInit)
+      //commit('SET_TIMER_TITLE_FLAG', isTimerTitle)
+      //commit('SET_POMODOROS_TOTAL', pomodorosTotal)
+      //commit('SET_POMODOROS_GOAL', pomodorosGoal)
+      //commit('SET_GOAL_INDICATOR_FORMAT', goalIndicatorFormat)
+      //commit('SET_PROGRESS_BAR_FLAG', isReversedProgressBar)
+      //commit('SET_NOTIFICATION_TITLE', notificationTitle)
+      //commit('SET_NOTIFICATION_BODY', notificationBody)
+      //commit('SET_NOTIFICATION_SOUND', notificationSound)
+      //commit('SET_NOTIFICATION_VOLUME', notificationVolume)
+      //commit('SET_COLOR_THEME', colorTheme)
     },
     setInitTime ({ commit }, payload) {
       commit('SET_INIT_TIME', payload)
-      save('initTime', payload)
     },
     setTime ({ commit, state }, payload) {
-      commit('SET_TIME', payload)
+      commit('SET_LEFT_TIME', payload)
     },
     setPomodorosGoal ({ commit }, payload) {
       commit('SET_POMODOROS_GOAL', payload)
-      save('pomodorosGoal', payload)
     },
     saveEndTime ({ commit, state }) {
       commit('SET_END_TIME')
-      save('endTime', state.endTime)
     },
     runTimer ({ commit, dispatch, state }) {
       if (state.timerId) {
         return
-      } else if (!state.timeId && state.curTime === 0) {
-        dispatch('setTime', state.initTime)
+      } else if (!state.timeId && state.timeLeft === 0) {
+        dispatch('setTime', state.timeInit)
       }
       dispatch('saveEndTime')
       let timerId = setInterval(() => {
-        if (state.endTime <= Date.now() && state.timerId) {
+        if (state.timeEnd <= Date.now() && state.timerId) {
           clearInterval(state.timerId)
-          commit('SET_TIME', 0)
+          commit('SET_LEFT_TIME', 0)
           commit('SET_TIMER_ID', null)
           dispatch('addPomodoro')
           if (Notification.permission === 'granted') {
@@ -213,7 +228,6 @@ export default new Vuex.Store({
           if (state.isPause) {
             commit('SET_PAUSE', false)
             save('isPause', false)
-            remove('curTime')
           }
         }
       }, cons.REFRESH_TIME)
@@ -223,61 +237,45 @@ export default new Vuex.Store({
       clearInterval(state.timerId)
       commit('SET_TIMER_ID', null)
       commit('SET_PAUSE', true)
-      save('isPause', true)
-      save('curTime', state.curTime)
     },
     resetTimer ({ commit, state, dispatch }) {
       clearInterval(state.timerId)
-      remove('endTime')
       commit('SET_TIMER_ID', null)
-      dispatch('setTime', state.initTime)
+      dispatch('setTime', state.timeInit)
       commit('SET_PAUSE', false)
-      save('isPause', false)
-      remove('curTime')
     },
     setPomodorosTotal ({ commit, state }, payload) {
       commit('SET_POMODOROS_TOTAL', payload)
-      save('pomodorosTotal', state.pomodorosTotal)
     },
     addPomodoro ({ commit, state }) {
       commit('ADD_POMODORO')
-      save('pomodorosTotal', state.pomodorosTotal)
     },
     removePomodoro ({ commit, state }) {
       commit('REMOVE_POMODORO')
-      save('pomodorosTotal', state.pomodorosTotal)
     },
     switchTimerTitleFlag ({ commit, state }) {
       commit('SWITCH_TIMER_TITLE_FLAG')
-      save('isTimerTitle', state.isTimerTitle)
     },
     setGoalIndicatorFormat ({ commit }, payload) {
       commit('SET_GOAL_INDICATOR_FORMAT', payload)
-      save('goalIndicatorFormat', payload)
     },
     switchProgressBarFlag ({ commit, state }) {
       commit('SWITCH_PROGRESS_BAR_FLAG')
-      save('isReversedProgressBar', state.isReversedProgressBar)
     },
     setNotificationTitle ({ commit }, payload) {
       commit('SET_NOTIFICATION_TITLE', payload)
-      save('notificationTitle', payload)
     },
     setNotificationBody ({ commit }, payload) {
       commit('SET_NOTIFICATION_BODY', payload)
-      save('notificationBody', payload)
     },
     setColorTheme ({ commit }, payload) {
       commit('SET_COLOR_THEME', payload)
-      save('colorTheme', payload)
     },
     setNotificationSound ({ commit }, payload) {
       commit('SET_NOTIFICATION_SOUND', payload)
-      save('notificationSound', payload)
     },
     setNotificationVolume ({ commit }, payload) {
       commit('SET_NOTIFICATION_VOLUME', payload)
-      save('notificationVolume', payload)
     }
   }
 })
