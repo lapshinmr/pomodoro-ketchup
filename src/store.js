@@ -38,7 +38,7 @@ const loadState = function () {
 
 const updateLocalStorage = store => {
   store.subscribe((mutation, state) => {
-    if (mutation.type === 'DECREASE_TIME') {
+    if (mutation.type !== 'DECREASE_TIME') {
       localStorage.setItem('data', JSON.stringify(state))
     }
   })
