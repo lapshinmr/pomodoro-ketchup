@@ -4,22 +4,6 @@ import * as cons from '@/constants';
 
 Vue.use(Vuex)
 
-
-function save (key, data) {
-  localStorage.setItem(key, data)
-}
-
-function load (key, defValue=null) {
-  let value = localStorage.getItem(key);
-  try {
-    value = JSON.parse(value);
-  } catch {}
-  if ((defValue || defValue === 0 || defValue === false) && value === null) {
-    value = defValue;
-  }
-  return value
-}
-
 export function secondsToTime (value) {
   let minutes = Math.floor(value / 60)
   let seconds = value % 60
@@ -29,49 +13,32 @@ export function secondsToTime (value) {
 }
 
 const loadState = function () {
-  const initState = {
-    timeInit: cons.POMODORO_DEFAULT,
-    timeLeft: cons.POMODORO_DEFAULT,
-    timeEnd: Date.now(),
-    isPause: false,
-    pomodorosTotal: 0,
-    pomodorosGoal: cons.POMODOROS_GOAL_DEFAULT,
-    goalIndicatorFormat: cons.GOAL_INDICATOR_FORMAT_DEFAULT,
-    isTimerTitle: true,
-    isReversedProgressBar: true,
-    notificationTitle: cons.NOTIFICATION_TITLE_DEFAULT,
-    notificationBody: cons.NOTIFICATION_BODY_DEFAULT,
-    notificationSound: cons.NOTIFICATION_SOUND_DEFAULT,
-    notificationVolume: cons.NOTIFICATION_VOLUME_DEFAULT,
-    colorTheme: cons.COLOR_THEME_DEFAULT
-  }
-  let data = JSON.parse(localStorage.getItem('data'));
-  if (!data) {
-    localStorage.setItem('data', JSON.stringify(initState))
-  } else {
-    let timeLeft
-    if (data.isPause) {
-      timeLeft = data.timeLeft
-    } else {
-      timeLeft = Math.floor((data.timeEnd - Date.now()) / 1000)
+  let stateData = JSON.parse(localStorage.getItem('data'));
+  if (!stateData) {
+    stateData = {
+      timeInit: cons.POMODORO_DEFAULT,
+      timeLeft: cons.POMODORO_DEFAULT,
+      timeEnd: Date.now(),
+      isPause: false,
+      pomodorosTotal: 0,
+      pomodorosGoal: cons.POMODOROS_GOAL_DEFAULT,
+      goalIndicatorFormat: cons.GOAL_INDICATOR_FORMAT_DEFAULT,
+      isTimerTitle: true,
+      isReversedProgressBar: true,
+      notificationTitle: cons.NOTIFICATION_TITLE_DEFAULT,
+      notificationBody: cons.NOTIFICATION_BODY_DEFAULT,
+      notificationSound: cons.NOTIFICATION_SOUND_DEFAULT,
+      notificationVolume: cons.NOTIFICATION_VOLUME_DEFAULT,
+      colorTheme: cons.COLOR_THEME_DEFAULT
     }
-    if (timeLeft > 0 && timeLeft != state.timeInit && !isPause) {
-      dispatch('runTimer')
-    }
+    localStorage.setItem('data', JSON.stringify(stateData))
   }
-  return initState
+  return stateData
 }
 
 const updateLocalStorage = store => {
-  // called when the store is initialized
   store.subscribe((mutation, state) => {
-    console.log(mutation.type, mutation.payload)
-    let ignore = [
-      'DECREASE_TIME',
-      'SET_TIMER_ID',
-    ]
-    if (ignore.indexOf(mutation.type) === -1) {
-      console.log('CHANGE STATE')
+    if (mutation.type === 'DECREASE_TIME') {
       localStorage.setItem('data', JSON.stringify(state))
     }
   })
@@ -164,32 +131,6 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    loadVars ({ commit, state, dispatch }) {
-      //let timeInit = load('timeInit', cons.POMODORO_DEFAULT);
-      //let timeEnd = load('timeEnd', Date.now());
-      //let isPause = load('isPause', false);
-      //let isTimerTitle = load('isTimerTitle', true);
-      //let pomodorosTotal = load('pomodorosTotal', 0);
-      //let pomodorosGoal = load('pomodorosGoal', cons.POMODOROS_GOAL_DEFAULT) ;
-      //let goalIndicatorFormat = load('goalIndicatorFormat', cons.GOAL_INDICATOR_FORMAT_DEFAULT);
-      //let isReversedProgressBar = load('isReversedProgressBar', true);
-      //let notificationTitle = load('notificationTitle', cons.NOTIFICATION_TITLE_DEFAULT);
-      //let notificationBody = load('notificationBody', cons.NOTIFICATION_BODY_DEFAULT);
-      //let notificationSound = load('notificationSound', cons.NOTIFICATION_SOUND_DEFAULT);
-      //let notificationVolume = load('notificationVolume', cons.NOTIFICATION_VOLUME_DEFAULT)
-      //let colorTheme = load('colorTheme', cons.COLOR_THEME_DEFAULT)
-      //commit('SET_INIT_TIME', timeInit)
-      //commit('SET_TIMER_TITLE_FLAG', isTimerTitle)
-      //commit('SET_POMODOROS_TOTAL', pomodorosTotal)
-      //commit('SET_POMODOROS_GOAL', pomodorosGoal)
-      //commit('SET_GOAL_INDICATOR_FORMAT', goalIndicatorFormat)
-      //commit('SET_PROGRESS_BAR_FLAG', isReversedProgressBar)
-      //commit('SET_NOTIFICATION_TITLE', notificationTitle)
-      //commit('SET_NOTIFICATION_BODY', notificationBody)
-      //commit('SET_NOTIFICATION_SOUND', notificationSound)
-      //commit('SET_NOTIFICATION_VOLUME', notificationVolume)
-      //commit('SET_COLOR_THEME', colorTheme)
-    },
     setInitTime ({ commit }, payload) {
       commit('SET_INIT_TIME', payload)
     },
@@ -199,22 +140,30 @@ export default new Vuex.Store({
     setPomodorosGoal ({ commit }, payload) {
       commit('SET_POMODOROS_GOAL', payload)
     },
-    saveEndTime ({ commit, state }) {
-      commit('SET_END_TIME')
-    },
-    runTimer ({ commit, dispatch, state }) {
-      if (state.timerId) {
-        return
-      } else if (!state.timeId && state.timeLeft === 0) {
-        dispatch('setTime', state.timeInit)
+    playTimer ({ commit, dispatch, state }, playFromButton=false) {
+      // Timer can be run on button click and page reload
+      switch (true) {
+        case !playFromButton && state.isPause:
+          return;
+        case !playFromButton && !state.isPause:
+          let timeLeft = Math.floor((state.timeEnd - Date.now()) / 1000);
+          state.timeLeft = timeLeft >= 0 ? timeLeft : 0
+          break;
+        case playFromButton && state.timerId !== null:
+          return
+        case playFromButton && state.timeLeft === 0:
+          dispatch('setTime', state.timeInit)
+          break;
       }
-      dispatch('saveEndTime')
+      commit('SET_PAUSE', false)
+      commit('SET_END_TIME')
       let timerId = setInterval(() => {
         if (state.timeEnd <= Date.now() && state.timerId) {
           clearInterval(state.timerId)
           commit('SET_LEFT_TIME', 0)
           commit('SET_TIMER_ID', null)
           dispatch('addPomodoro')
+
           if (Notification.permission === 'granted') {
             new Notification(state.notificationTitle, {
               body: state.notificationBody
@@ -223,12 +172,9 @@ export default new Vuex.Store({
             audio.volume = state.notificationVolume / 100
             audio.play()
           }
+
         } else {
           commit('DECREASE_TIME')
-          if (state.isPause) {
-            commit('SET_PAUSE', false)
-            save('isPause', false)
-          }
         }
       }, cons.REFRESH_TIME)
       commit('SET_TIMER_ID', timerId)
@@ -240,9 +186,9 @@ export default new Vuex.Store({
     },
     resetTimer ({ commit, state, dispatch }) {
       clearInterval(state.timerId)
-      commit('SET_TIMER_ID', null)
       dispatch('setTime', state.timeInit)
-      commit('SET_PAUSE', false)
+      commit('SET_TIMER_ID', null)
+      commit('SET_PAUSE', true)
     },
     setPomodorosTotal ({ commit, state }, payload) {
       commit('SET_POMODOROS_TOTAL', payload)

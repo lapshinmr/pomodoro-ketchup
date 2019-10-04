@@ -149,7 +149,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { secondsToTime } from '../store'
 import { COLOR_THEMES, NOTIFICATION_SOUNDS } from '@/constants'
 
@@ -281,9 +281,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'SET_THEME'
-    ]),
     ...mapActions([
       'setInitTime',
       'setPomodorosGoal',

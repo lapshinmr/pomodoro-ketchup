@@ -31,13 +31,11 @@ export default {
     }
   },
   created () {
-    this.loadVars()
+    this.playTimer()
   },
   methods: {
     ...mapActions([
-      'setPomodorosGoal',
-      'setTime',
-      'loadVars'
+      'playTimer',
     ])
   }
 
