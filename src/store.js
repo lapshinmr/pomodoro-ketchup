@@ -12,6 +12,17 @@ export function secondsToTime (value) {
   return `${isMinutesZero}${minutes}:${isSecondsZero}${seconds}`
 }
 
+export function playNotification (state) {
+  if (Notification.permission === 'granted') {
+    new Notification(state.notificationTitle, {
+      body: state.notificationBody
+    })
+    var audio = new Audio(require('@/assets/' + state.notificationSound))
+    audio.volume = state.notificationVolume / 100
+    audio.play()
+  }
+}
+
 const loadState = function () {
   let stateData = JSON.parse(localStorage.getItem('data'));
   if (!stateData) {
@@ -19,7 +30,7 @@ const loadState = function () {
       timeInit: cons.POMODORO_DEFAULT,
       timeLeft: cons.POMODORO_DEFAULT,
       timeEnd: Date.now(),
-      isPause: false,
+      isPause: true,
       pomodorosTotal: 0,
       pomodorosGoal: cons.POMODOROS_GOAL_DEFAULT,
       goalIndicatorFormat: cons.GOAL_INDICATOR_FORMAT_DEFAULT,
@@ -140,44 +151,47 @@ export default new Vuex.Store({
     setPomodorosGoal ({ commit }, payload) {
       commit('SET_POMODOROS_GOAL', payload)
     },
-    playTimer ({ commit, dispatch, state }, playFromButton=false) {
-      // Timer can be run on button click and page reload
-      switch (true) {
-        case !playFromButton && state.isPause:
-          return;
-        case !playFromButton && !state.isPause:
-          let timeLeft = Math.floor((state.timeEnd - Date.now()) / 1000);
-          state.timeLeft = timeLeft >= 0 ? timeLeft : 0
-          break;
-        case playFromButton && state.timerId !== null:
-          return
-        case playFromButton && state.timeLeft === 0:
-          dispatch('setTime', state.timeInit)
-          break;
-      }
-      commit('SET_PAUSE', false)
-      commit('SET_END_TIME')
+    runTimer({ commit, dispatch, state}) {
       let timerId = setInterval(() => {
-        if (state.timeEnd <= Date.now() && state.timerId) {
+        if (state.timeLeft <= 0 && state.timerId) {
           clearInterval(state.timerId)
           commit('SET_LEFT_TIME', 0)
           commit('SET_TIMER_ID', null)
           dispatch('addPomodoro')
-
-          if (Notification.permission === 'granted') {
-            new Notification(state.notificationTitle, {
-              body: state.notificationBody
-            })
-            var audio = new Audio(require('@/assets/' + state.notificationSound))
-            audio.volume = state.notificationVolume / 100
-            audio.play()
-          }
-
+          playNotification(state);
         } else {
+          if (state.timeLeft > 0 && !state.timerId) {
+            commit('SET_TIMER_ID', timerId)
+          }
           commit('DECREASE_TIME')
         }
       }, cons.REFRESH_TIME)
-      commit('SET_TIMER_ID', timerId)
+    },
+    startTimer ({ commit, dispatch, state }, playFromButton=false) {
+      // Timer can be run on button click and page reload
+      let canStart;
+      switch (true) {
+        case !playFromButton && state.isPause:
+          canStart = false;
+          break
+        case playFromButton && state.timerId !== null:
+          canStart = false;
+          break
+        case !playFromButton && !state.isPause && state.timerId !== null:
+          let timeLeft = Math.floor((state.timeEnd - Date.now()) / 1000);
+          state.timeLeft = timeLeft >= 0 ? timeLeft : 0
+          break;
+        case playFromButton && state.timeLeft === 0:
+          dispatch('setTime', state.timeInit)
+          break;
+        default:
+          canStart = true;
+      }
+      commit('SET_PAUSE', false)
+      commit('SET_END_TIME')
+      if (canStart) {
+        dispatch('runTimer')
+      }
     },
     pauseTimer ({ commit, state }) {
       clearInterval(state.timerId)
