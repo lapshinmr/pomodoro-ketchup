@@ -31,11 +31,11 @@ export default {
     }
   },
   created () {
-    this.playTimer()
+    this.startTimer()
   },
   methods: {
     ...mapActions([
-      'playTimer',
+      'startTimer',
     ])
   }
 

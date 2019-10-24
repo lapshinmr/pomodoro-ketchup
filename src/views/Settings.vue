@@ -208,7 +208,7 @@ export default {
           return secondsToTime(this.$store.state.timeInit)
         } else {
           if (this.$store.state.timeInit === this.$store.state.timeInit) {
-            this.setTime(initTimeSeconds)
+            this.setLeftTime(initTimeSeconds)
           }
           this.setInitTime(initTimeSeconds)
           return secondsToTime(initTimeSeconds)
@@ -284,7 +284,7 @@ export default {
     ...mapActions([
       'setInitTime',
       'setPomodorosGoal',
-      'setTime',
+      'setLeftTime',
       'switchTimerTitleFlag',
       'switchProgressBarFlag',
       'setGoalIndicatorFormat',

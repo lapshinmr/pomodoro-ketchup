@@ -7,7 +7,7 @@
         {{ CUR_TIME_FORMATTED }}
     </div>
     <div class="timer__buttons d-flex justify-content-around">
-      <button class="timer__button btn btn-success" @click="playTimer(playFromButton=true)">Play</button>
+      <button class="timer__button btn btn-success" @click="startTimer(playFromButton=true)">Play</button>
       <button class="timer__button btn btn-success" @click="pauseTimer">Pause</button>
       <button class="timer__button btn btn-success" @click="resetTimer">Reset</button>
     </div>
@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'playTimer',
+      'startTimer',
       'pauseTimer',
       'resetTimer'
     ])

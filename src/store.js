@@ -59,7 +59,6 @@ export default new Vuex.Store({
   plugins: [updateLocalStorage],
   state: {
     ...loadState(),
-    timerId: null,
     isSettingsMode: false
   },
   getters: {
@@ -145,52 +144,53 @@ export default new Vuex.Store({
     setInitTime ({ commit }, payload) {
       commit('SET_INIT_TIME', payload)
     },
-    setTime ({ commit, state }, payload) {
+    setLeftTime ({ commit }, payload) {
       commit('SET_LEFT_TIME', payload)
     },
     setPomodorosGoal ({ commit }, payload) {
       commit('SET_POMODOROS_GOAL', payload)
     },
-    runTimer({ commit, dispatch, state}) {
+    createTimerInterval({ commit, dispatch, state}) {
       let timerId = setInterval(() => {
-        if (state.timeLeft <= 0 && state.timerId) {
-          clearInterval(state.timerId)
+        if (state.timerId !== timerId) {
+          commit('SET_TIMER_ID', timerId)
+        }
+        if (state.timeLeft <= 0) {
           commit('SET_LEFT_TIME', 0)
-          commit('SET_TIMER_ID', null)
+          dispatch('pauseTimer')
           dispatch('addPomodoro')
           playNotification(state);
         } else {
-          if (state.timeLeft > 0 && !state.timerId) {
-            commit('SET_TIMER_ID', timerId)
-          }
           commit('DECREASE_TIME')
         }
       }, cons.REFRESH_TIME)
     },
     startTimer ({ commit, dispatch, state }, playFromButton=false) {
       // Timer can be run on button click and page reload
-      let canStart;
+      let canStart = false;
       switch (true) {
         case !playFromButton && state.isPause:
-          canStart = false;
           break
         case playFromButton && state.timerId !== null:
-          canStart = false;
           break
         case !playFromButton && !state.isPause && state.timerId !== null:
           let timeLeft = Math.floor((state.timeEnd - Date.now()) / 1000);
           state.timeLeft = timeLeft >= 0 ? timeLeft : 0
+          canStart = true;
           break;
-        case playFromButton && state.timeLeft === 0:
-          dispatch('setTime', state.timeInit)
+        case playFromButton:
+          if (state.timeLeft === 0) {
+            dispatch('setLeftTime', state.timeInit)
+          }
+          canStart = true;
           break;
         default:
-          canStart = true;
+          canStart = false;
       }
-      commit('SET_PAUSE', false)
-      commit('SET_END_TIME')
       if (canStart) {
-        dispatch('runTimer')
+        commit('SET_PAUSE', false)
+        commit('SET_END_TIME')
+        dispatch('createTimerInterval')
       }
     },
     pauseTimer ({ commit, state }) {
@@ -200,7 +200,7 @@ export default new Vuex.Store({
     },
     resetTimer ({ commit, state, dispatch }) {
       clearInterval(state.timerId)
-      dispatch('setTime', state.timeInit)
+      dispatch('setLeftTime', state.timeInit)
       commit('SET_TIMER_ID', null)
       commit('SET_PAUSE', true)
     },
