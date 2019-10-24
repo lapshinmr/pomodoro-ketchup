@@ -207,7 +207,7 @@ export default {
         if (!initTimeSeconds) { // if bad user input
           return secondsToTime(this.$store.state.timeInit)
         } else {
-          if (this.$store.state.timeInit === this.$store.state.timeInit) {
+          if (this.$store.state.timeInit === this.$store.state.timeLeft) {
             this.setLeftTime(initTimeSeconds)
           }
           this.setInitTime(initTimeSeconds)
