@@ -11,10 +11,10 @@
 </template>
 
 <script>
-import TimerTitle from '@/components/TimerTitle.vue'
-import GithubLink from '@/components/GithubLink.vue'
-import { mapState, mapGetters, mapActions } from 'vuex'
-import { TAB_TITLE_DEFAULT } from './constants'
+import TimerTitle from '@/components/TimerTitle.vue';
+import GithubLink from '@/components/GithubLink.vue';
+import { mapState, mapGetters, mapActions } from 'vuex';
+import { TAB_TITLE_DEFAULT } from './constants';
 
 export default {
   components: { TimerTitle, GithubLink },
