@@ -19,10 +19,8 @@
     >
       <i class="fas fa-cog"></i>
     </button>
-    <theme-colors
-      v-if="isSettingsMode"
-      class="theme-settings"
-    ></theme-colors>
+    <color-settings v-if="isSettingsMode" class="color-settings"></color-settings>
+    <sound-settings v-if="isSettingsMode" class="sound-settings"></sound-settings>
   </div>
 </template>
 
@@ -31,13 +29,14 @@ import TimerTime from '@/components/TimerTime.vue'
 import TimerBar from '@/components/TimerBar.vue'
 import PomodorosBar from '@/components/PomodorosBar.vue'
 import PomodorosIndicator from '@/components/PomodorosIndicator.vue'
-import ThemeColors from '@/components/settings/ThemeColors.vue'
+import ColorSettings from '@/components/settings/ColorSettings.vue'
+import SoundSettings from '@/components/settings/SoundSettings.vue'
 import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'home',
   components: {
-    TimerTime, TimerBar, PomodorosBar, PomodorosIndicator, ThemeColors
+    TimerTime, TimerBar, PomodorosBar, PomodorosIndicator, ColorSettings, SoundSettings
   },
   data() {
     return {
@@ -65,8 +64,9 @@ export default {
 
 .settings-button
   position: absolute
-  top: 0
-  left: 0
+  top: 1vh
+  left: 2vh
+  padding: 0
   z-index: 1000
   font-size: 6vh
   color: var(--dark)
@@ -83,9 +83,14 @@ export default {
   &:hover
     color: var(--super-dark)
 
-.theme-settings
+.color-settings
   position: absolute
-  top: 60px
-  left: 15px
+  top: 10vh
+  left: 2.5vh
+
+.sound-settings
+  position: absolute
+  top: 2.75vh
+  left: 9vh
 
 </style>

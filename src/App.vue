@@ -72,10 +72,10 @@ body
 
 .navigation
   position: absolute
-  left: 0
-  right: 0
+  left: 50%
   top: 3vh
   z-index: 500
+  transform: translateX(-50%)
 
   a
     font-weight: bold
