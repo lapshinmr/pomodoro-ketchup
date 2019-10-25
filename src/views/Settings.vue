@@ -56,24 +56,6 @@
             Turn on notification
           </button>
         </div>
-        <div class="settings-button mb-3">
-          <div v-for="(soundName, index) in notificationSounds"
-               class="flex-fill"
-               :class="{'ml-3': index !== 0}"
-          >
-            <input
-              type="radio"
-              name="sound"
-              :id="'sound' + index"
-              :value="soundName"
-              v-model="notificationSound"
-              @click="playSound(soundName)"
-            >
-            <label :for="'sound' + index">
-              Sound {{ index + 1 }}
-            </label>
-          </div>
-        </div>
         <div class="settings-button d-flex mb-3">
           <div class="flex-fill">
             <input type="checkbox"
@@ -111,23 +93,6 @@
             </label>
           </div>
         </div>
-        <div class="settings-button mb-3">
-          <div v-for="(color, colorName, index) in colorThemes"
-               class=" flex-fill"
-               :class="{'ml-3': index !== 0}"
-          >
-            <input
-              type="radio"
-              name="theme"
-              :id="'color' + index"
-              :value="colorName"
-              v-model="colorTheme"
-            >
-            <label :for="'color' + index">
-              {{ colorName | capitalize }}
-            </label>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -136,7 +101,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { secondsToTime } from '../store'
-import { COLOR_THEMES, NOTIFICATION_SOUNDS } from '@/constants'
 
 const isNumber = function (value) {
   return /^\d+$/.test(value)
@@ -167,8 +131,6 @@ export default {
   data () {
     return {
       notificationPermission: Notification.permission,
-      notificationSounds: NOTIFICATION_SOUNDS,
-      colorThemes: COLOR_THEMES
     }
   },
   computed: {
@@ -239,22 +201,6 @@ export default {
       set(notificationBody) {
         this.setNotificationBody(notificationBody)
       }
-    },
-    colorTheme: {
-      get() {
-        return this.$store.state.colorTheme
-      },
-      set(colorTheme) {
-        this.setColorTheme(colorTheme)
-      }
-    },
-    notificationSound: {
-      get() {
-        return this.$store.state.notificationSound
-      },
-      set(notificationSound) {
-        this.setNotificationSound(notificationSound)
-      }
     }
   },
   methods: {
@@ -267,8 +213,6 @@ export default {
       'setGoalIndicatorFormat',
       'setNotificationTitle',
       'setNotificationBody',
-      'setColorTheme',
-      'setNotificationSound',
     ]),
     notify () {
       if (!Notification) {
@@ -281,10 +225,6 @@ export default {
         })
       }
       this.notificationPermission = Notification.permission
-    },
-    playSound (sound) {
-      let audio = new Audio(require('@/assets/' + sound))
-      audio.play()
     }
   },
   filters: {
