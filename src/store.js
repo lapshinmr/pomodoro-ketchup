@@ -18,7 +18,6 @@ export function playNotification (state) {
       body: state.notificationBody
     })
     var audio = new Audio(require('@/assets/' + state.notificationSound))
-    audio.volume = state.notificationVolume / 100
     audio.play()
   }
 }
@@ -39,7 +38,6 @@ const loadState = function () {
       notificationTitle: cons.NOTIFICATION_TITLE_DEFAULT,
       notificationBody: cons.NOTIFICATION_BODY_DEFAULT,
       notificationSound: cons.NOTIFICATION_SOUND_DEFAULT,
-      notificationVolume: cons.NOTIFICATION_VOLUME_DEFAULT,
       colorTheme: cons.COLOR_THEME_DEFAULT
     }
     localStorage.setItem('data', JSON.stringify(stateData))
@@ -132,9 +130,6 @@ export default new Vuex.Store({
     },
     SET_NOTIFICATION_SOUND (state, payload) {
       state.notificationSound = payload
-    },
-    SET_NOTIFICATION_VOLUME (state, payload) {
-      state.notificationVolume = payload
     },
     SET_COLOR_THEME (state, payload) {
       state.colorTheme = payload
@@ -233,9 +228,6 @@ export default new Vuex.Store({
     },
     setNotificationSound ({ commit }, payload) {
       commit('SET_NOTIFICATION_SOUND', payload)
-    },
-    setNotificationVolume ({ commit }, payload) {
-      commit('SET_NOTIFICATION_VOLUME', payload)
     }
   }
 })

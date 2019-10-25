@@ -55,21 +55,6 @@
           >
             Turn on notification
           </button>
-          <small v-if="notificationPermission === 'granted'">
-            Notification sound volume
-          </small>
-          <div v-if="notificationPermission === 'granted'" class="slider flex-grow-1 d-flex align-content-center justify-content-between">
-            <input
-              class="flex-fill"
-              type="range"
-              min="0"
-              max="100"
-              v-model.number="notificationVolume"
-            >
-            <span class="slider-value">
-              {{ notificationVolume }}
-            </span>
-          </div>
         </div>
         <div class="settings-button mb-3">
           <div v-for="(soundName, index) in notificationSounds"
@@ -270,14 +255,6 @@ export default {
       set(notificationSound) {
         this.setNotificationSound(notificationSound)
       }
-    },
-    notificationVolume: {
-      get() {
-        return this.$store.state.notificationVolume
-      },
-      set(notificationVolume) {
-        this.setNotificationVolume(notificationVolume)
-      }
     }
   },
   methods: {
@@ -292,7 +269,6 @@ export default {
       'setNotificationBody',
       'setColorTheme',
       'setNotificationSound',
-      'setNotificationVolume'
     ]),
     notify () {
       if (!Notification) {
@@ -308,7 +284,6 @@ export default {
     },
     playSound (sound) {
       let audio = new Audio(require('@/assets/' + sound))
-      audio.volume = this.notificationVolume / 100
       audio.play()
     }
   },

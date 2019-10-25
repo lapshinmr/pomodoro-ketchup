@@ -39,14 +39,6 @@ export default {
       set(notificationSound) {
         this.setNotificationSound(notificationSound)
       },
-    },
-    notificationVolume: {
-      get() {
-        return this.$store.state.notificationVolume
-      },
-      set(notificationVolume) {
-        this.setNotificationVolume(notificationVolume)
-      }
     }
   },
   methods: {
@@ -57,8 +49,6 @@ export default {
     },
     playSound (sound) {
       let audio = new Audio(require('@/assets/' + sound))
-      console.log(this.notificationVolume)
-      audio.volume = this.notificationVolume / 100
       audio.play()
     }
   }

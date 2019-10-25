@@ -5,7 +5,6 @@ export const GOAL_INDICATOR_FORMAT_DEFAULT = 2
 export const NOTIFICATION_TITLE_DEFAULT = 'Time is over.'
 export const NOTIFICATION_BODY_DEFAULT = 'Well done!'
 export const NOTIFICATION_SOUND_DEFAULT = 'sound1.mp3'
-export const NOTIFICATION_VOLUME_DEFAULT = 100
 export const COLOR_THEME_DEFAULT = 'green'
 export const TAB_TITLE_DEFAULT = 'Pomodoros Ketchup'
 
