@@ -2,8 +2,9 @@
   <div class="content-container d-flex align-items-center justify-content-center">
     <pomodoros-bar></pomodoros-bar>
     <timer-bar>
-      <timer-time>
-        <pomodoros-indicator></pomodoros-indicator>
+      <timer-time :is-settings-mode="isSettingsMode">
+        <pomodoros-indicator v-if="!isSettingsMode"></pomodoros-indicator>
+        <pomodoros-settings v-else></pomodoros-settings>
       </timer-time>
     </timer-bar>
     <button
@@ -17,7 +18,8 @@
       class="settings-button btn btn-link"
       @click="isSettingsMode = !isSettingsMode"
     >
-      <i class="fas fa-cog"></i>
+      <i v-if="!isSettingsMode" class="fas fa-cog"></i>
+      <i v-else class="fas fa-check"></i>
     </button>
     <color-settings v-if="isSettingsMode" class="color-settings"></color-settings>
     <sound-settings v-if="isSettingsMode" class="sound-settings"></sound-settings>
@@ -31,12 +33,14 @@ import PomodorosBar from '@/components/PomodorosBar.vue'
 import PomodorosIndicator from '@/components/PomodorosIndicator.vue'
 import ColorSettings from '@/components/settings/ColorSettings.vue'
 import SoundSettings from '@/components/settings/SoundSettings.vue'
+import PomodorosSettings from '@/components/settings/PomodorosSettings.vue'
 import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'home',
   components: {
-    TimerTime, TimerBar, PomodorosBar, PomodorosIndicator, ColorSettings, SoundSettings
+    TimerTime, TimerBar, PomodorosBar, PomodorosIndicator, ColorSettings, SoundSettings,
+    PomodorosSettings
   },
   data() {
     return {

@@ -9,7 +9,7 @@
             </small>
             <input type="text"
                    class="form-control"
-                   v-model.lazy.string="initTime"
+                   v-model.lazy.string="timeInit"
             >
           </div>
           <div class="flex-fill ml-3">
@@ -117,7 +117,7 @@ const stringToTimeSeconds = function (value) {
   }
   let digitLimits = [9, 9, 5, 9]
   let digitCheck = value.split('').every(function (value, index) {
-    return value < digitLimits[4 - length + index]
+    return value <= digitLimits[4 - length + index]
   })
   if (!digitCheck) {
     return false
@@ -131,6 +131,7 @@ export default {
   data () {
     return {
       notificationPermission: Notification.permission,
+
     }
   },
   computed: {
@@ -142,23 +143,22 @@ export default {
         if (!isNumber(pomodorosGoal)) {
           return
         }
-        return this.setPomodorosGoal(pomodorosGoal)
+        this.setPomodorosGoal(pomodorosGoal)
       }
     },
-    initTime: {
+    timeInit: {
       get() {
         return secondsToTime(this.$store.state.timeInit)
       },
-      set(initTimeString) {
-        let initTimeSeconds = stringToTimeSeconds(initTimeString);
+      set(timeInit) {
+        let initTimeSeconds = stringToTimeSeconds(timeInit);
         if (!initTimeSeconds) { // if bad user input
-          return secondsToTime(this.$store.state.timeInit)
+          return
         } else {
           if (this.$store.state.timeInit === this.$store.state.timeLeft) {
             this.setLeftTime(initTimeSeconds)
           }
           this.setInitTime(initTimeSeconds)
-          return secondsToTime(initTimeSeconds)
         }
       }
     },
