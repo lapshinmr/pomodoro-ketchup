@@ -78,4 +78,5 @@ export default {
       &.timer-bar__progress
         transition: all 0.3s
         stroke: var(--dark)
+
 </style>

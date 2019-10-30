@@ -2,26 +2,6 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-10 col-md-8 offset-sm-1 offset-md-2">
-        <div class="mb-3 d-flex">
-          <div class="flex-fill">
-            <small class="form-text">
-              Pomodoro duration
-            </small>
-            <input type="text"
-                   class="form-control"
-                   v-model.lazy.string="timeInit"
-            >
-          </div>
-          <div class="flex-fill ml-3">
-            <small class="form-text">
-              Pomodoros goal
-            </small>
-            <input type="text"
-                   class="form-control"
-                   v-model.lazy.number="pomodorosGoal"
-            >
-          </div>
-        </div>
         <div class="mb-3">
           <small class="form-text">
             Notification title
@@ -135,33 +115,6 @@ export default {
     }
   },
   computed: {
-    pomodorosGoal: {
-      get() {
-        return this.$store.state.pomodorosGoal
-      },
-      set(pomodorosGoal) {
-        if (!isNumber(pomodorosGoal)) {
-          return
-        }
-        this.setPomodorosGoal(pomodorosGoal)
-      }
-    },
-    timeInit: {
-      get() {
-        return secondsToTime(this.$store.state.timeInit)
-      },
-      set(timeInit) {
-        let initTimeSeconds = stringToTimeSeconds(timeInit);
-        if (!initTimeSeconds) { // if bad user input
-          return
-        } else {
-          if (this.$store.state.timeInit === this.$store.state.timeLeft) {
-            this.setLeftTime(initTimeSeconds)
-          }
-          this.setInitTime(initTimeSeconds)
-        }
-      }
-    },
     isTimerTitle: {
       get() {
         return this.$store.state.isTimerTitle

@@ -7,7 +7,7 @@
       <span v-if="!isSettingsMode" class="timer__string">{{ CUR_TIME_FORMATTED }}</span>
       <timer-settings v-else ></timer-settings>
     </div>
-    <div class="timer__buttons d-flex justify-content-around">
+    <div v-if="!isSettingsMode" class="timer__buttons d-flex justify-content-around">
       <button class="timer__button btn btn-success" @click="startTimer(playFromButton=true)">Play</button>
       <button class="timer__button btn btn-success" @click="pauseTimer">Pause</button>
       <button class="timer__button btn btn-success" @click="resetTimer">Reset</button>
