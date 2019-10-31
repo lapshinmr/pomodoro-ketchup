@@ -36,26 +36,6 @@
             Turn on notification
           </button>
         </div>
-        <div class="settings-button d-flex mb-3">
-          <div class="flex-fill">
-            <input type="checkbox"
-                   id="title-timer-check"
-                   v-model="isTimerTitle"
-            >
-            <label for="title-timer-check">
-              Title timer
-            </label>
-          </div>
-          <div class="setttings-button flex-fill ml-3">
-            <input type="checkbox"
-                   id="progress-bar-check"
-                   v-model="isReversedProgressBar"
-            >
-            <label for="progress-bar-check">
-              Reverse timer bar
-            </label>
-          </div>
-        </div>
         <div class="settings-button mb-3">
           <div v-for="(text, index) in ['30 of 60', '50%', '30 of 60 (50%)']"
                class="flex-fill"
@@ -82,30 +62,6 @@
 import { mapGetters, mapActions } from 'vuex'
 import { secondsToTime } from '../store'
 
-const isNumber = function (value) {
-  return /^\d+$/.test(value)
-}
-
-const stringToTimeSeconds = function (value) {
-  value = value.replace(':', '')
-  if (!isNumber(value)) {
-    return false
-  }
-  let length = value.length
-  if (length < 1 || length > 4) {
-    return false
-  }
-  let digitLimits = [9, 9, 5, 9]
-  let digitCheck = value.split('').every(function (value, index) {
-    return value <= digitLimits[4 - length + index]
-  })
-  if (!digitCheck) {
-    return false
-  }
-  let seconds = value.slice(-2)
-  let minutes = value.slice(0, length - 2)
-  return Number(minutes) * 60 + Number(seconds)
-}
 
 export default {
   data () {
@@ -115,14 +71,6 @@ export default {
     }
   },
   computed: {
-    isTimerTitle: {
-      get() {
-        return this.$store.state.isTimerTitle
-      },
-      set(isTimerTitle) {
-        this.switchTimerTitleFlag()
-      }
-    },
     goalIndicatorFormat: {
       get() {
         return this.$store.state.goalIndicatorFormat
@@ -150,11 +98,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'setInitTime',
-      'setPomodorosGoal',
-      'setLeftTime',
       'switchTimerTitleFlag',
-      'switchProgressBarFlag',
       'setGoalIndicatorFormat',
       'setNotificationTitle',
       'setNotificationBody',

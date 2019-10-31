@@ -1,8 +1,31 @@
 <template>
   <div class="indicator d-flex align-items-center justify-content-center text-center">
-    <button class="indicator__button btn btn-link" @click="removePomodoro">⊖</button>
+    <button
+      v-if="!isSettingsMode"
+      class="indicator__button btn btn-link"
+      @click="removePomodoro"
+    >⊖</button>
+    <button
+      v-else
+      class="indicator__button btn btn-link"
+      @click="goalIndicatorFormat--"
+    >
+      <i class="far fa-arrow-alt-circle-left"></i>
+    </button>
+
     <span class="indicator__text">{{ indicatorText }}</span>
-    <button class="indicator__button btn btn-link" @click="addPomodoro">⊕</button>
+
+    <button
+      v-if="!isSettingsMode"
+      class="indicator__button btn btn-link"
+      @click="addPomodoro">⊕</button>
+    <button
+      v-else
+      class="indicator__button btn btn-link"
+      @click="goalIndicatorFormat++"
+    >
+      <i class="far fa-arrow-alt-circle-right"></i>
+    </button>
   </div>
 </template>
 
@@ -11,6 +34,12 @@ import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'pomodoros-indicator',
+  props: ['is-settings-mode'],
+  data() {
+    return {
+
+    }
+  },
   computed: {
     ...mapState([
       'pomodorosTotal',
@@ -18,21 +47,32 @@ export default {
       'goalIndicatorFormat'
     ]),
     indicatorText () {
-      let formatFirst = this.pomodorosTotal + ' of ' + this.pomodorosGoal
-      let formatSecond = Math.round(this.pomodorosTotal / this.pomodorosGoal * 100) + '%'
-      let result = `${formatFirst} (${formatSecond})`
-      if (this.goalIndicatorFormat === 0) {
-        result = formatFirst
-      } else if (this.goalIndicatorFormat === 1) {
-        result = formatSecond
+      let first = this.pomodorosTotal + ' of ' + this.pomodorosGoal;
+      let second = Math.round(this.pomodorosTotal / this.pomodorosGoal * 100) + '%';
+      let formats = [
+        first, second, `${first} (${second})`
+      ];
+      return formats[this.goalIndicatorFormat]
+    },
+    goalIndicatorFormat: {
+      get() {
+        return this.$store.state.goalIndicatorFormat
+      },
+      set(goalIndicatorFormat) {
+        if (goalIndicatorFormat < 0) {
+          goalIndicatorFormat = 2
+        } else if (goalIndicatorFormat > 2) {
+          goalIndicatorFormat = 0
+        }
+        this.setGoalIndicatorFormat(goalIndicatorFormat)
       }
-      return result
     }
   },
   methods: {
     ...mapActions([
       'addPomodoro',
       'removePomodoro',
+      'setGoalIndicatorFormat'
     ])
   }
 }

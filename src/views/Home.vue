@@ -3,8 +3,8 @@
     <pomodoros-bar></pomodoros-bar>
     <timer-bar>
       <timer-time :is-settings-mode="isSettingsMode">
-        <pomodoros-indicator v-if="!isSettingsMode"></pomodoros-indicator>
-        <pomodoros-settings v-else></pomodoros-settings>
+        <pomodoros-settings v-if="isSettingsMode"></pomodoros-settings>
+        <pomodoros-indicator :is-settings-mode="isSettingsMode"></pomodoros-indicator>
       </timer-time>
       <progress-settings slot="progress-settings" class="progress-settings"></progress-settings>
     </timer-bar>
@@ -15,14 +15,17 @@
     >
       Reset
     </button>
-    <div class="d-flex settings">
+    <div class="d-flex align-items-start settings">
       <button class="settings__button btn btn-link" @click="isSettingsMode = !isSettingsMode">
         <i v-if="!isSettingsMode" class="fas fa-cog"></i>
         <i v-else class="fas fa-check"></i>
       </button>
-      <color-settings></color-settings>
-      <sound-settings></sound-settings>
-      <progress-settings></progress-settings>
+      <div v-if="isSettingsMode" class="d-flex">
+        <color-settings></color-settings>
+        <sound-settings></sound-settings>
+        <progress-settings></progress-settings>
+        <title-settings></title-settings>
+      </div>
     </div>
   </div>
 </template>
@@ -36,13 +39,14 @@ import ColorSettings from '@/components/settings/ColorSettings.vue'
 import SoundSettings from '@/components/settings/SoundSettings.vue'
 import PomodorosSettings from '@/components/settings/PomodorosSettings.vue'
 import ProgressSettings from '@/components/settings/ProgressSettings.vue'
+import TitleSettings from '@/components/settings/TitleSettings.vue'
 import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'home',
   components: {
     TimerTime, TimerBar, PomodorosBar, PomodorosIndicator, ColorSettings, SoundSettings,
-    PomodorosSettings, ProgressSettings
+    PomodorosSettings, ProgressSettings, TitleSettings
   },
   data() {
     return {
@@ -74,12 +78,12 @@ export default {
   top: 0
   padding: 0
   z-index: 1000
-  
+
   .settings__button
     font-size: 6vh
-    color: var(--dark)
+    color: var(--primary)
     &:hover
-      color: var(--super-dark)
+      color: var(--dark)
 
 .pomodoros-reset-button
   position: absolute
