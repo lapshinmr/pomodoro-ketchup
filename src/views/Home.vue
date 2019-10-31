@@ -1,5 +1,7 @@
 <template>
-  <div class="content-container d-flex align-items-center justify-content-center">
+  <div class="content-container d-flex align-items-center justify-content-center"
+    @keyup.esc="isSettingsMode === true ? isSettingsMode = false : ''"
+  >
     <pomodoros-bar></pomodoros-bar>
     <timer-bar>
       <timer-time :is-settings-mode="isSettingsMode">

@@ -36,23 +36,6 @@
             Turn on notification
           </button>
         </div>
-        <div class="settings-button mb-3">
-          <div v-for="(text, index) in ['30 of 60', '50%', '30 of 60 (50%)']"
-               class="flex-fill"
-               :class="{'ml-3': index !== 0}"
-          >
-            <input
-               type="radio"
-               name="goalIndicatorFormat"
-               :id="'indicator' + index"
-               :value="index"
-               v-model.number="goalIndicatorFormat"
-            >
-            <label :for="'indicator' + index">
-              {{ text }}
-            </label>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -71,14 +54,6 @@ export default {
     }
   },
   computed: {
-    goalIndicatorFormat: {
-      get() {
-        return this.$store.state.goalIndicatorFormat
-      },
-      set(goalIndicatorFormat) {
-        this.setGoalIndicatorFormat(goalIndicatorFormat)
-      }
-    },
     notificationTitle: {
       get() {
         return this.$store.state.notificationTitle
@@ -98,8 +73,6 @@ export default {
   },
   methods: {
     ...mapActions([
-      'switchTimerTitleFlag',
-      'setGoalIndicatorFormat',
       'setNotificationTitle',
       'setNotificationBody',
     ]),
@@ -116,11 +89,6 @@ export default {
       this.notificationPermission = Notification.permission
     }
   },
-  filters: {
-    capitalize (value) {
-      return value.charAt(0).toUpperCase() + value.slice(1)
-    }
-  }
 }
 </script>
 
