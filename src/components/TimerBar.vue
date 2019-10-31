@@ -2,7 +2,7 @@
   <div class="timer-bar">
     <svg class="timer-bar__container" viewBox="0 0 150 150">
       <circle class="timer-bar__background" cx="75" cy="75" r="70" />
-      <circle class="timer-bar__progress" :style="progressValue" cx="75" cy="75" r="70" transform="rotate(-90 75 75)" />
+      <circle class="timer-bar__progress" cx="75" cy="75" r="70" transform="rotate(-90 75 75)" :style="progressValue"/>
     </svg>
     <div class="timer-bar__slot d-flex justify-content-center align-items-center">
       <slot></slot>
@@ -15,6 +15,7 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'timer-bar',
+  props: ['isSettingsMode'],
   computed: {
     ...mapState([
       'timeLeft',
@@ -30,7 +31,7 @@ export default {
         'stroke-dasharray': 2 * Math.PI * 70,
         'stroke-dashoffset': 2 * Math.PI * 70 * ratio
       }
-    }
+    },
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex">
+  <div>
     <div v-for="(soundName, index) in notificationSounds">
       <input
         type="radio"

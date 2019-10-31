@@ -123,14 +123,6 @@ export default {
         this.switchTimerTitleFlag()
       }
     },
-    isReversedProgressBar: {
-      get() {
-        return this.$store.state.isReversedProgressBar
-      },
-      set(isTimerTitle) {
-        this.switchProgressBarFlag()
-      }
-    },
     goalIndicatorFormat: {
       get() {
         return this.$store.state.goalIndicatorFormat
