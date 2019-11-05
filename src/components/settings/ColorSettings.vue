@@ -1,25 +1,9 @@
 <template>
-  <div>
-    <div v-for="(color, colorName, index) in colorThemes"
-    >
-      <input
-        type="radio"
-        name="theme"
-        :id="'color' + index"
-        :value="colorName"
-        v-model="colorTheme"
-      >
-      <label
-        :for="'color' + index"
-        :style="label(colorName)"
-      >
-      </label>
-    </div>
-  </div>
+  <div class="color-theme" @click="nextColorTheme"></div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { COLOR_THEMES } from '@/constants'
 
 export default {
@@ -30,48 +14,32 @@ export default {
     }
   },
   computed: {
-    colorTheme: {
-      get() {
-        return this.$store.state.colorTheme
-      },
-      set(colorTheme) {
-        this.setColorTheme(colorTheme)
-      }
-    },
+    ...mapState([
+      'colorTheme'
+    ])
   },
   methods: {
     ...mapActions([
       'setColorTheme'
     ]),
-    label: function(colorName) {
-      console.log("10 10 10 " + this.colorThemes[colorName].dark)
-      return {
-        '--color-background': this.colorTheme === colorName ? this.colorThemes[colorName].dark : this.colorThemes[colorName].primary,
-        '--color-hover': this.colorTheme === colorName ? this.colorThemes[colorName].superDark : this.colorThemes[colorName].dark
-      }
+    nextColorTheme() {
+      let colorThemeList = Object.keys(this.colorThemes).sort();
+      let nextColorThemeIdx = (colorThemeList.indexOf(this.colorTheme) + 1) % colorThemeList.length
+      this.setColorTheme(colorThemeList[nextColorThemeIdx])
     }
   }
 }
 </script>
 
 <style lang="sass" scoped>
-input
-  display: none
-
-label
+.color-theme
   height: 5vh
   width: 5vh
   margin-bottom: 0
   border-radius: 50%
   cursor: pointer
   transition: all 0.15s
-  background-color: var(--color-background)
-
-input:checked + label
-  background-color: var(--color-background)!important
-  box-shadow: 0 0 10px var(--color-hover)
-
-label, input:checked + label
+  background-color: var(--primary)
   &:hover
-    background-color: var(--color-hover)!important
+    background-color: var(--dark)
 </style>
