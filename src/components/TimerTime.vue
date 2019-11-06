@@ -7,27 +7,31 @@
       <span v-if="!isSettingsMode" class="timer__string">{{ CUR_TIME_FORMATTED }}</span>
       <timer-settings v-else ></timer-settings>
     </div>
-    <div class="timer__buttons d-flex justify-content-center">
-      <button
-        v-if="isPause"
-        class="timer__button btn btn-success"
-        @click="startTimer(playFromButton=true)"
-      >
-        Play
-      </button>
-      <button
-        v-if="!isPause"
-        class="timer__button btn btn-success"
-        @click="pauseTimer"
-      >
-        Pause
-      </button>
-      <button
-        class="timer__button btn btn-success ml-2"
-        @click="resetTimer"
-      >
-        Reset
-      </button>
+    <div class="timer__buttons">
+        <button
+          v-if="isPause"
+          class="timer__button btn btn-success"
+          @click="startTimer(playFromButton=true)"
+          key="play"
+        >
+          Play
+        </button>
+        <button
+          v-if="!isPause"
+          class="timer__button btn btn-success"
+          @click="pauseTimer"
+          key="pause"
+        >
+          Pause
+        </button>
+        <button
+          v-if="!isPause || timeInit !== timeLeft"
+          class="timer__button btn btn-success ml-2"
+          @click="resetTimer"
+          key="stop"
+        >
+          Stop
+        </button>
     </div>
   </div>
 </template>
@@ -45,7 +49,9 @@ export default {
   },
   computed: {
     ...mapState([
-      'isPause'
+      'isPause',
+      'timeLeft',
+      'timeInit'
     ]),
     ...mapGetters([
       'CUR_TIME_FORMATTED'
@@ -78,6 +84,8 @@ export default {
     width: 100%
 
   .timer__buttons
+    display: flex
+    justify-content: center
     position: absolute
     top: 100%
     left: 50%
@@ -87,4 +95,7 @@ export default {
     .timer__button
       padding: 2% 6%
       font-size: 4%
+
+.slide-buttons-move
+  transition: transform .3s
 </style>

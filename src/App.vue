@@ -2,11 +2,22 @@
   <div class="root" :style="COLORS">
     <timer-title :title="title"></timer-title>
     <github-link></github-link>
-    <div class="navigation text-center">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/settings">Settings</router-link>
+
+
+    <!--
+    <div class="navigation">
+      <router-link to="/">
+        <i class="fas fa-chevron-circle-left"></i>
+      </router-link> |
+      <router-link to="/statistic" class="settings__element ">
+        <i class="far fa-chart-bar"></i>
+      </router-link>
     </div>
-    <router-view />
+    -->
+
+    <transition name="slide">
+      <router-view />
+    </transition>
   </div>
 </template>
 
@@ -32,6 +43,8 @@ export default {
   },
   created () {
     this.startTimer()
+    console.log(this.$router.currentRoute.name)
+
   },
   methods: {
     ...mapActions([
@@ -72,15 +85,14 @@ body
 
 .navigation
   position: absolute
-  left: 50%
-  top: 3vh
-  z-index: 500
-  transform: translateX(-50%)
+  left: 5px
+  top: 5px
 
   a
     font-weight: bold
     font-size: 20px
     color: var(--super-dark)
+    text-decoration: none
 
     &.router-link-exact-active
       color: var(--dark)
@@ -120,4 +132,30 @@ body
   &:focus
     outline: none
     text-decoration: none
+
+.slide-enter
+    opacity: 0
+
+.slide-enter-active
+    animation: slide-in .3s ease-out forwards
+    transition: opacity .3s
+
+.slide-leave
+
+.slide-leave-active
+    animation: slide-out .3s ease-out forwards
+    transition: opacity .3s
+    opacity: 0
+
+@keyframes slide-in
+  from
+    transform: translateX(-30px)
+  to
+    transform: translateX(0)
+
+@keyframes slide-out
+  from
+    transform: translateX(0px)
+  to
+    transform: translateX(-30px)
 </style>

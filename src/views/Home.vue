@@ -1,6 +1,6 @@
 <template>
   <div class="content-container d-flex align-items-center justify-content-center"
-    @keyup.esc="isSettingsMode === true ? isSettingsMode = false : ''"
+    @keyup.esc="closeSettings"
   >
     <!-- POMODOROS PROGRESS BAR -->
     <pomodoros-bar></pomodoros-bar>
@@ -16,20 +16,20 @@
 
     <!-- SETTINGS -->
     <div class="settings d-flex align-items-start">
-        <div class="settings__element settings__button" @click="isSettingsMode = !isSettingsMode">
-          <i v-if="!isSettingsMode" class="fas fa-cog"></i>
-          <i v-else class="fas fa-times"></i>
+      <div class="settings__element settings__button" @click="isSettingsMode = !isSettingsMode">
+        <i v-if="!isSettingsMode" class="fas fa-cog"></i>
+        <i v-else class="fas fa-times"></i>
+      </div>
+      <transition name="slide">
+        <div v-if="isSettingsMode" class="settings__elements d-flex">
+          <component
+            v-for="item in components"
+            :is="item + '-settings'"
+            :key="item"
+            class="list-item"
+          ></component>
         </div>
-        <transition name="slide">
-          <div v-if="isSettingsMode" class="settings__elements d-flex">
-            <component
-              v-for="item in components"
-              :is="item + '-settings'"
-              :key="item"
-              class="list-item"
-            ></component>
-          </div>
-        </transition>
+      </transition>
     </div>
 
   </div>
@@ -45,24 +45,31 @@ import SoundSettings from '@/components/settings/SoundSettings.vue'
 import PomodorosSettings from '@/components/settings/PomodorosSettings.vue'
 import ProgressSettings from '@/components/settings/ProgressSettings.vue'
 import TitleSettings from '@/components/settings/TitleSettings.vue'
+import NotificationSettings from '@/components/settings/NotificationSettings.vue'
 import { mapState } from 'vuex'
 
 export default {
   name: 'home',
   components: {
     TimerTime, TimerBar, PomodorosBar, PomodorosIndicator, ColorSettings, SoundSettings,
-    PomodorosSettings, ProgressSettings, TitleSettings
+    PomodorosSettings, ProgressSettings, TitleSettings, NotificationSettings
   },
   data() {
     return {
       isSettingsMode: false,
-      components: ['color', 'sound', 'progress', 'title']
+      components: ['color', 'sound', 'progress', 'title', 'notification']
     }
   },
   computed: {
     ...mapState([
       'pomodorosTotal'
     ])
+  },
+  methods: {
+    closeSettings() {
+      console.log('+')
+      isSettingsMode === true ? isSettingsMode = false : ''
+    }
   }
 }
 </script>
@@ -84,6 +91,7 @@ export default {
     margin-right: 10px
 
   .settings__element
+    position: relative
     display: flex
     justify-content: center
     align-items: center
