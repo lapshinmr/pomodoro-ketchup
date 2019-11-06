@@ -5,15 +5,6 @@
     <!-- POMODOROS PROGRESS BAR -->
     <pomodoros-bar></pomodoros-bar>
 
-    <!-- POMODOROS RESET BUTTON -->
-    <button
-      v-if="pomodorosTotal"
-      class="pomodoros-reset-button btn btn-link"
-      @click="setPomodorosTotal(0)"
-    >
-      Reset
-    </button>
-
     <!-- TIMER WITH PROGRESS BAR -->
     <timer-bar>
       <timer-time :is-settings-mode="isSettingsMode">
@@ -54,7 +45,7 @@ import SoundSettings from '@/components/settings/SoundSettings.vue'
 import PomodorosSettings from '@/components/settings/PomodorosSettings.vue'
 import ProgressSettings from '@/components/settings/ProgressSettings.vue'
 import TitleSettings from '@/components/settings/TitleSettings.vue'
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'home',
@@ -71,11 +62,6 @@ export default {
   computed: {
     ...mapState([
       'pomodorosTotal'
-    ])
-  },
-  methods: {
-    ...mapActions([
-      'setPomodorosTotal'
     ])
   }
 }
@@ -101,9 +87,9 @@ export default {
     display: flex
     justify-content: center
     align-items: center
-    height: 5vh
-    width: 5vh
-    margin-bottom: 0
+    height: 6vh
+    width: 6vh
+    font-size: 3.5vh
     margin-left: 3px
     border-radius: 50%
     cursor: pointer
@@ -112,17 +98,6 @@ export default {
     background-color: var(--primary)
     &:hover
       background-color: var(--dark)
-
-.pomodoros-reset-button
-  position: absolute
-  bottom: 0
-  right: 0
-  z-index: 1000
-  font-size: 4vh
-  color: var(--dark)
-  &:hover
-    color: var(--super-dark)
-
 
 .slide-enter
     opacity: 0
