@@ -14,7 +14,7 @@
           @click="startTimer(playFromButton=true)"
           key="play"
         >
-          Play
+          <i class="fas fa-play"></i>
         </button>
         <button
           v-if="!isPause"
@@ -22,7 +22,7 @@
           @click="pauseTimer"
           key="pause"
         >
-          Pause
+          <i class="fas fa-pause"></i>
         </button>
         <button
           v-if="!isPause || timeInit !== timeLeft"
@@ -30,7 +30,7 @@
           @click="resetTimer"
           key="stop"
         >
-          Stop
+          <i class="fas fa-stop"></i>
         </button>
     </div>
   </div>
@@ -93,8 +93,12 @@ export default {
     width: 70%
 
     .timer__button
-      padding: 2% 6%
       font-size: 4%
+      border-radius: 50%
+      display: flex
+      align-items: center
+      justify-content: center
+      padding: 1rem
 
 .slide-buttons-move
   transition: transform .3s
