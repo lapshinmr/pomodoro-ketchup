@@ -18,7 +18,7 @@
     <div class="settings d-flex align-items-start">
         <div class="settings__element settings__button" @click="isSettingsMode = !isSettingsMode">
           <i v-if="!isSettingsMode" class="fas fa-cog"></i>
-          <i v-else class="fas fa-check"></i>
+          <i v-else class="fas fa-times"></i>
         </div>
         <transition name="slide">
           <div v-if="isSettingsMode" class="settings__elements d-flex">

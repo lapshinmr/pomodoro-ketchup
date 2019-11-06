@@ -7,16 +7,33 @@
       <span v-if="!isSettingsMode" class="timer__string">{{ CUR_TIME_FORMATTED }}</span>
       <timer-settings v-else ></timer-settings>
     </div>
-    <div v-if="!isSettingsMode" class="timer__buttons d-flex justify-content-around">
-      <button class="timer__button btn btn-success" @click="startTimer(playFromButton=true)">Play</button>
-      <button class="timer__button btn btn-success" @click="pauseTimer">Pause</button>
-      <button class="timer__button btn btn-success" @click="resetTimer">Reset</button>
+    <div class="timer__buttons d-flex justify-content-center">
+      <button
+        v-if="isPause"
+        class="timer__button btn btn-success"
+        @click="startTimer(playFromButton=true)"
+      >
+        Play
+      </button>
+      <button
+        v-if="!isPause"
+        class="timer__button btn btn-success"
+        @click="pauseTimer"
+      >
+        Pause
+      </button>
+      <button
+        class="timer__button btn btn-success ml-2"
+        @click="resetTimer"
+      >
+        Reset
+      </button>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import TimerSettings from '@/components/settings/TimeSettings.vue'
 
 export default {
@@ -27,6 +44,9 @@ export default {
     console.log(this.isSettingsMode)
   },
   computed: {
+    ...mapState([
+      'isPause'
+    ]),
     ...mapGetters([
       'CUR_TIME_FORMATTED'
     ])
