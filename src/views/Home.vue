@@ -2,14 +2,10 @@
   <div class="content-container d-flex align-items-center justify-content-center"
     @keyup.esc="isSettingsMode === true ? isSettingsMode = false : ''"
   >
+    <!-- POMODOROS PROGRESS BAR -->
     <pomodoros-bar></pomodoros-bar>
-    <timer-bar>
-      <timer-time :is-settings-mode="isSettingsMode">
-        <pomodoros-settings v-if="isSettingsMode"></pomodoros-settings>
-        <pomodoros-indicator :is-settings-mode="isSettingsMode"></pomodoros-indicator>
-      </timer-time>
-      <progress-settings slot="progress-settings" class="progress-settings"></progress-settings>
-    </timer-bar>
+
+    <!-- POMODOROS RESET BUTTON -->
     <button
       v-if="pomodorosTotal"
       class="pomodoros-reset-button btn btn-link"
@@ -17,18 +13,30 @@
     >
       Reset
     </button>
-    <div class="d-flex align-items-start settings">
+
+    <!-- TIMER WITH PROGRESS BAR -->
+    <timer-bar>
+      <timer-time :is-settings-mode="isSettingsMode">
+        <pomodoros-settings v-if="isSettingsMode"></pomodoros-settings>
+        <pomodoros-indicator :is-settings-mode="isSettingsMode"></pomodoros-indicator>
+      </timer-time>
+      <progress-settings slot="progress-settings" class="progress-settings"></progress-settings>
+    </timer-bar>
+
+    <!-- SETTINGS -->
+    <div class="settings d-flex align-items-start">
       <button class="settings__button btn btn-link" @click="isSettingsMode = !isSettingsMode">
         <i v-if="!isSettingsMode" class="fas fa-cog"></i>
         <i v-else class="fas fa-check"></i>
       </button>
-      <div v-if="isSettingsMode" class="d-flex">
+      <div v-if="isSettingsMode" class="settings__elements d-flex">
         <color-settings></color-settings>
         <sound-settings></sound-settings>
         <progress-settings></progress-settings>
         <title-settings></title-settings>
       </div>
     </div>
+    
   </div>
 </template>
 
@@ -68,7 +76,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 .content-container
   position: relative
   width: 100%
@@ -86,6 +94,19 @@ export default {
     color: var(--primary)
     &:hover
       color: var(--dark)
+
+  .settings__elements
+    .settings__element
+      height: 5vh
+      width: 5vh
+      margin-bottom: 0
+      border-radius: 50%
+      cursor: pointer
+      transition: all 0.15s
+      color: var(--super-light)
+      background-color: var(--primary)
+      &:hover
+        background-color: var(--dark)
 
 .pomodoros-reset-button
   position: absolute

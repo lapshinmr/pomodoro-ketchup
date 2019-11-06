@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex justify-content-center align-items-center" @click="isReversedProgressBar = !isReversedProgressBar">
+  <div class="settings__element d-flex justify-content-center align-items-center" @click="isReversedProgressBar = !isReversedProgressBar">
     <i class="fas fa-redo-alt"
       :class="{'fa-flip-horizontal': isReversedProgressBar}"></i>
   </div>
@@ -32,16 +32,4 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-div
-  height: 5vh
-  width: 5vh
-  margin-bottom: 0
-  border-radius: 50%
-  cursor: pointer
-  transition: all 0.15s
-  margin-left: 5px
-  color: var(--super-light)
-  background-color: var(--primary)
-  &:hover
-    background-color: var(--dark)
 </style>
