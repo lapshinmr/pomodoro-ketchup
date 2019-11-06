@@ -1,5 +1,5 @@
 <template>
-  <div class="settings__element d-flex justify-content-center align-items-center" @click="nextSound">
+  <div class="settings__element" @click="nextSound">
     <i class="fas fa-volume-up"></i>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div class="settings__element d-flex justify-content-center align-items-center" @click="nextColorTheme">
+  <div class="settings__element" @click="nextColorTheme">
     <i class="fas fa-palette"></i>
   </div>
 </template>

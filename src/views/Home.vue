@@ -25,18 +25,22 @@
 
     <!-- SETTINGS -->
     <div class="settings d-flex align-items-start">
-      <button class="settings__button btn btn-link" @click="isSettingsMode = !isSettingsMode">
-        <i v-if="!isSettingsMode" class="fas fa-cog"></i>
-        <i v-else class="fas fa-check"></i>
-      </button>
-      <div v-if="isSettingsMode" class="settings__elements d-flex">
-        <color-settings></color-settings>
-        <sound-settings></sound-settings>
-        <progress-settings></progress-settings>
-        <title-settings></title-settings>
-      </div>
+        <div class="settings__element settings__button" @click="isSettingsMode = !isSettingsMode">
+          <i v-if="!isSettingsMode" class="fas fa-cog"></i>
+          <i v-else class="fas fa-check"></i>
+        </div>
+        <transition name="slide">
+          <div v-if="isSettingsMode" class="settings__elements d-flex">
+            <component
+              v-for="item in components"
+              :is="item + '-settings'"
+              :key="item"
+              class="list-item"
+            ></component>
+          </div>
+        </transition>
     </div>
-    
+
   </div>
 </template>
 
@@ -60,7 +64,8 @@ export default {
   },
   data() {
     return {
-      isSettingsMode: false
+      isSettingsMode: false,
+      components: ['color', 'sound', 'progress', 'title']
     }
   },
   computed: {
@@ -84,29 +89,29 @@ export default {
 
 .settings
   position: absolute
-  left: 0
-  top: 0
+  left: 5px
+  top: 5px
   padding: 0
   z-index: 1000
 
   .settings__button
-    font-size: 6vh
-    color: var(--primary)
-    &:hover
-      color: var(--dark)
+    margin-right: 10px
 
-  .settings__elements
-    .settings__element
-      height: 5vh
-      width: 5vh
-      margin-bottom: 0
-      border-radius: 50%
-      cursor: pointer
-      transition: all 0.15s
-      color: var(--super-light)
-      background-color: var(--primary)
-      &:hover
-        background-color: var(--dark)
+  .settings__element
+    display: flex
+    justify-content: center
+    align-items: center
+    height: 5vh
+    width: 5vh
+    margin-bottom: 0
+    margin-left: 3px
+    border-radius: 50%
+    cursor: pointer
+    transition: all 0.15s
+    color: var(--super-light)
+    background-color: var(--primary)
+    &:hover
+      background-color: var(--dark)
 
 .pomodoros-reset-button
   position: absolute
@@ -118,4 +123,30 @@ export default {
   &:hover
     color: var(--super-dark)
 
+
+.slide-enter
+    opacity: 0
+
+.slide-enter-active
+    animation: slide-in .3s ease-out forwards
+    transition: opacity .3s
+
+.slide-leave
+
+.slide-leave-active
+    animation: slide-out .3s ease-out forwards
+    transition: opacity .3s
+    opacity: 0
+
+@keyframes slide-in
+  from
+    transform: translateX(-30px)
+  to
+    transform: translateX(0)
+
+@keyframes slide-out
+  from
+    transform: translateX(0px)
+  to
+    transform: translateX(-30px)
 </style>

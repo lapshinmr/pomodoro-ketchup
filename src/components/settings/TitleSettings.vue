@@ -1,5 +1,5 @@
 <template>
-  <div class="settings__element d-flex justify-content-center align-items-center" @click="isTimerTitle = !isTimerTitle">
+  <div class="settings__element" @click="isTimerTitle = !isTimerTitle">
     <i class="far fa-clock"></i>
   </div>
 </template>

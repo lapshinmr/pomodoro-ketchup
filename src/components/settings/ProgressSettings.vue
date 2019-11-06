@@ -1,5 +1,5 @@
 <template>
-  <div class="settings__element d-flex justify-content-center align-items-center" @click="isReversedProgressBar = !isReversedProgressBar">
+  <div class="settings__element" @click="isReversedProgressBar = !isReversedProgressBar">
     <i class="fas fa-redo-alt"
       :class="{'fa-flip-horizontal': isReversedProgressBar}"></i>
   </div>
