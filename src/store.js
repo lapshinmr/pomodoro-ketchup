@@ -137,6 +137,7 @@ export default new Vuex.Store({
   },
   actions: {
     setInitTime ({ commit }, payload) {
+      console.log(payload)
       commit('SET_INIT_TIME', payload)
     },
     setLeftTime ({ commit }, payload) {

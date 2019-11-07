@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import { secondsToTime } from './store'
 import './registerServiceWorker'
 
 Vue.config.productionTip = false
@@ -9,6 +10,8 @@ Vue.config.productionTip = false
 Vue.filter('capitalize', (value) => {
   return value.charAt(0).toUpperCase() + value.slice(1)
 })
+
+Vue.filter('seconds-to-time', secondsToTime);
 
 new Vue({
   router,

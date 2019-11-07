@@ -8,7 +8,6 @@
     <!-- TIMER WITH PROGRESS BAR -->
     <timer-bar>
       <timer-time :is-settings-mode="isSettingsMode">
-        <pomodoros-settings v-if="isSettingsMode"></pomodoros-settings>
         <pomodoros-indicator :is-settings-mode="isSettingsMode"></pomodoros-indicator>
       </timer-time>
       <progress-settings slot="progress-settings" class="progress-settings"></progress-settings>
@@ -42,7 +41,6 @@ import PomodorosBar from '@/components/PomodorosBar.vue'
 import PomodorosIndicator from '@/components/PomodorosIndicator.vue'
 import ColorSettings from '@/components/settings/ColorSettings.vue'
 import SoundSettings from '@/components/settings/SoundSettings.vue'
-import PomodorosSettings from '@/components/settings/PomodorosSettings.vue'
 import ProgressSettings from '@/components/settings/ProgressSettings.vue'
 import TitleSettings from '@/components/settings/TitleSettings.vue'
 import NotificationSettings from '@/components/settings/NotificationSettings.vue'
@@ -52,7 +50,7 @@ export default {
   name: 'home',
   components: {
     TimerTime, TimerBar, PomodorosBar, PomodorosIndicator, ColorSettings, SoundSettings,
-    PomodorosSettings, ProgressSettings, TitleSettings, NotificationSettings
+    ProgressSettings, TitleSettings, NotificationSettings
   },
   data() {
     return {

@@ -13,8 +13,28 @@
       <i class="far fa-arrow-alt-circle-left"></i>
     </button>
 
-    <span v-if="goalIndicatorFormat !== 3 || isSettingsMode" class="indicator__text">{{ indicatorText }}</span>
-
+    <span v-if="goalIndicatorFormat !== 3 || isSettingsMode" class="indicator__text">
+      <span v-if="goalIndicatorFormat === 0 || goalIndicatorFormat === 2">
+        {{ pomodorosTotal }} of
+        <span v-if="!isSettingsMode"
+            class="indicator__total"
+            contenteditable="false"
+        >{{ pomodorosGoal }}</span>
+        <span v-if="isSettingsMode"
+            class="indicator__total"
+            :class="{'indicator__total_editable': isSettingsMode}"
+            contenteditable="true"
+        >{{ pomodorosGoal }}</span>
+      </span>
+      <span v-if="goalIndicatorFormat === 1 || goalIndicatorFormat === 2">
+        <span v-if="goalIndicatorFormat === 2" class="ml-2">(</span>
+        <span>{{ Math.round(this.pomodorosTotal / this.pomodorosGoal * 100) + '%' }}</span>
+        <span v-if="goalIndicatorFormat === 2">)</span>
+      </span>
+      <span v-if="goalIndicatorFormat === 3">
+        Off
+      </span>
+    </span>
     <button
       v-if="!isSettingsMode && goalIndicatorFormat !== 3"
       class="indicator__button btn btn-link"
@@ -46,14 +66,6 @@ export default {
       'pomodorosGoal',
       'goalIndicatorFormat'
     ]),
-    indicatorText () {
-      let first = this.pomodorosTotal + ' of ' + this.pomodorosGoal;
-      let second = Math.round(this.pomodorosTotal / this.pomodorosGoal * 100) + '%';
-      let formats = [
-        first, second, `${first} (${second})`, 'Off'
-      ];
-      return formats[this.goalIndicatorFormat]
-    },
     goalIndicatorFormat: {
       get() {
         return this.$store.state.goalIndicatorFormat
@@ -66,13 +78,25 @@ export default {
         }
         this.setGoalIndicatorFormat(goalIndicatorFormat)
       }
-    }
+    },
+    pomodorosGoal: {
+      get() {
+        return this.$store.state.pomodorosGoal
+      },
+      set(pomodorosGoal) {
+        if (!parseInt(pomodorosGoal)) {
+          return
+        }
+        this.setPomodorosGoal(pomodorosGoal)
+      }
+    },
   },
   methods: {
     ...mapActions([
       'addPomodoro',
       'removePomodoro',
-      'setGoalIndicatorFormat'
+      'setGoalIndicatorFormat',
+      'setPomodorosGoal'
     ])
   }
 }
@@ -101,4 +125,15 @@ export default {
 
     &:last-child
       margin: 0 0.5rem
+
+  .indicator__text
+
+  .indicator__total
+
+  .indicator__total_editable
+    text-decoration: underline
+    border: none
+    color: var(--dark)
+    outline: none
+
 </style>

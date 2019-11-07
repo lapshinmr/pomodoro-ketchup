@@ -4,8 +4,15 @@
       <slot></slot>
     </div>
     <div class="timer__time d-flex justify-content-center align-items-center">
-      <span v-if="!isSettingsMode" class="timer__string">{{ CUR_TIME_FORMATTED }}</span>
-      <timer-settings v-else ></timer-settings>
+      <span v-if="!isSettingsMode"
+          class="timer__string"
+          contenteditable="false"
+      >{{ timeLeft | seconds-to-time }}</span>
+      <span v-if="isSettingsMode"
+          class="timer__string"
+          contenteditable="true"
+          v-set-time=""
+      >{{ timeInit | seconds-to-time }}</span>
     </div>
     <div class="timer__buttons">
         <button
@@ -37,12 +44,33 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
-import TimerSettings from '@/components/settings/TimeSettings.vue'
+import { secondsToTime } from '../store'
+
+const stringToTimeSeconds = function (value) {
+  value = value.replace(':', '')
+  if (!parseInt(value)) {
+    return false
+  }
+  let length = value.length
+  if (length < 1 || length > 4) {
+    return false
+  }
+  let digitLimits = [9, 9, 5, 9]
+  let digitsCheck = value.split('').every(function (value, index) {
+    return value <= digitLimits[4 - length + index]
+  })
+  if (!digitsCheck) {
+    return false
+  } else {
+    let seconds = value.slice(-2)
+    let minutes = value.slice(0, length - 2)
+    return Number(minutes) * 60 + Number(seconds)
+  }
+}
 
 export default {
   name: 'timer-time',
   props: [ 'isSettingsMode' ],
-  components: { TimerSettings },
   created() {
     console.log(this.isSettingsMode)
   },
@@ -54,14 +82,49 @@ export default {
     ]),
     ...mapGetters([
       'CUR_TIME_FORMATTED'
-    ])
+    ]),
+    initTime: {
+      get() {
+        return secondsToTime(this.$store.state.timeInit)
+      },
+      set(initTimeString) {
+        let initTimeSeconds = stringToTimeSeconds(initTimeString);
+        if (!initTimeSeconds) { // if bad user input
+          //this.$forceUpdate()
+          console.log('+')
+          this.setInitTime(this.$store.state.timeInit)
+        } else {
+          if (this.$store.state.timeInit === this.$store.state.timeLeft) {
+            this.setLeftTime(initTimeSeconds)
+          }
+          this.setInitTime(initTimeSeconds)
+        }
+      }
+    }
   },
   methods: {
     ...mapActions([
       'startTimer',
       'pauseTimer',
-      'resetTimer'
+      'resetTimer',
+      'setLeftTime',
+      'setInitTime'
     ])
+  },
+  directives: {
+    'set-time': {
+      bind(el, binding, vnode) {
+        el.onblur = () => {
+          vnode.context.initTime = el.innerText
+        };
+        el.onkeydown = function(event) {
+          if (event.keyCode === 13) {
+            event.preventDefault()
+            el.blur()
+          }
+        }
+      }
+    }
   }
 }
 </script>
@@ -80,7 +143,16 @@ export default {
     width: 100%
 
   .timer__string
-    width: 100%
+
+  .timer__input
+    width: auto
+    display: inline-block
+    padding: 0px
+    color: var(--dark)
+    text-align: center
+    background-color: transparent
+    border: none
+    outline: none
 
   .timer__buttons
     display: flex
@@ -98,5 +170,6 @@ export default {
       align-items: center
       justify-content: center
       padding: 1rem
+
 
 </style>
