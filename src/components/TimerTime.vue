@@ -7,37 +7,40 @@
       <span v-if="!isSettingsMode"
           class="timer__string"
           contenteditable="false"
+          key="1"
       >{{ timeLeft | seconds-to-time }}</span>
       <span v-if="isSettingsMode"
           class="timer__string"
+          :class="{'timer__string_editable': isSettingsMode}"
           contenteditable="true"
-          v-set-time=""
+          v-set-time
+          key="2"
       >{{ timeInit | seconds-to-time }}</span>
     </div>
     <div class="timer__buttons">
-        <button
-          v-if="isPause"
-          class="timer__button btn btn-success"
-          @click="startTimer(playFromButton=true)"
-          key="play"
-        >
-          <i class="fas fa-play"></i>
-        </button>
-        <button
-          v-if="!isPause"
-          class="timer__button btn btn-success"
-          @click="pauseTimer"
-          key="pause"
-        >
-          <i class="fas fa-pause"></i>
-        </button>
-        <button
-          class="timer__button btn btn-success ml-2"
-          @click="resetTimer"
-          key="stop"
-        >
-          <i class="fas fa-stop"></i>
-        </button>
+      <button
+        v-if="isPause"
+        class="timer__button btn btn-success"
+        @click="startTimer(playFromButton=true)"
+        key="play"
+      >
+        <i class="fas fa-play"></i>
+      </button>
+      <button
+        v-if="!isPause"
+        class="timer__button btn btn-success"
+        @click="pauseTimer"
+        key="pause"
+      >
+        <i class="fas fa-pause"></i>
+      </button>
+      <button
+        class="timer__button btn btn-success ml-2"
+        @click="resetTimer"
+        key="stop"
+      >
+        <i class="fas fa-stop"></i>
+      </button>
     </div>
   </div>
 </template>
@@ -71,33 +74,34 @@ const stringToTimeSeconds = function (value) {
 export default {
   name: 'timer-time',
   props: [ 'isSettingsMode' ],
-  created() {
-    console.log(this.isSettingsMode)
-  },
   computed: {
     ...mapState([
       'isPause',
       'timeLeft',
       'timeInit'
-    ]),
-    ...mapGetters([
-      'CUR_TIME_FORMATTED'
-    ]),
-    initTime: {
-      get() {
-        return secondsToTime(this.$store.state.timeInit)
-      },
-      set(initTimeString) {
-        let initTimeSeconds = stringToTimeSeconds(initTimeString);
-        if (!initTimeSeconds) { // if bad user input
-          //this.$forceUpdate()
-          console.log('+')
-          this.setInitTime(this.$store.state.timeInit)
-        } else {
-          if (this.$store.state.timeInit === this.$store.state.timeLeft) {
-            this.setLeftTime(initTimeSeconds)
+    ])
+  },
+  directives: {
+    'set-time': {
+      bind(el, binding, vnode) {
+        el.onblur = () => {
+          let initTimeSeconds = stringToTimeSeconds(el.innerText);
+          if (!initTimeSeconds) { // if bad user input
+            el.innerText = secondsToTime(vnode.context.$store.state.timeInit)
+          } else {
+            if (vnode.context.$store.state.timeInit === vnode.context.$store.state.timeLeft) {
+              vnode.context.setLeftTime(initTimeSeconds)
+            }
+            vnode.context.setInitTime(initTimeSeconds)
+            el.innerText = secondsToTime(initTimeSeconds)
+            //vnode.context.initTime = el.innerText
           }
-          this.setInitTime(initTimeSeconds)
+        };
+        el.onkeydown = function(event) {
+          if (event.keyCode === 13) {
+            event.preventDefault()
+            el.blur()
+          }
         }
       }
     }
@@ -110,21 +114,6 @@ export default {
       'setLeftTime',
       'setInitTime'
     ])
-  },
-  directives: {
-    'set-time': {
-      bind(el, binding, vnode) {
-        el.onblur = () => {
-          vnode.context.initTime = el.innerText
-        };
-        el.onkeydown = function(event) {
-          if (event.keyCode === 13) {
-            event.preventDefault()
-            el.blur()
-          }
-        }
-      }
-    }
   }
 }
 </script>
@@ -143,6 +132,10 @@ export default {
     width: 100%
 
   .timer__string
+    outline: none
+
+  .timer__string_editable
+    text-decoration: underline
 
   .timer__input
     width: auto

@@ -9,6 +9,8 @@ export function secondsToTime (value) {
   let seconds = value % 60
   let isMinutesZero = minutes < 10 ? '0' : ''
   let isSecondsZero = seconds < 10 ? '0' : ''
+
+  console.log(`${isMinutesZero}${minutes}:${isSecondsZero}${seconds}`)
   return `${isMinutesZero}${minutes}:${isSecondsZero}${seconds}`
 }
 

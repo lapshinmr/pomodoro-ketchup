@@ -43,7 +43,6 @@ export default {
   },
   created () {
     this.startTimer()
-    console.log(this.$router.currentRoute.name)
 
   },
   methods: {
