@@ -25,7 +25,6 @@
           <i class="fas fa-pause"></i>
         </button>
         <button
-          v-if="!isPause || timeInit !== timeLeft"
           class="timer__button btn btn-success ml-2"
           @click="resetTimer"
           key="stop"

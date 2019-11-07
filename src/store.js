@@ -189,9 +189,11 @@ export default new Vuex.Store({
       }
     },
     pauseTimer ({ commit, state }) {
-      clearInterval(state.timerId)
-      commit('SET_TIMER_ID', null)
-      commit('SET_PAUSE', true)
+      if (state.timerId !== null) {
+        clearInterval(state.timerId)
+        commit('SET_TIMER_ID', null)
+        commit('SET_PAUSE', true)
+      }
     },
     resetTimer ({ commit, state, dispatch }) {
       clearInterval(state.timerId)

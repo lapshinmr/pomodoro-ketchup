@@ -5,7 +5,7 @@
       class="pomodoros-progress-bar__reset-button btn btn-link"
       @click="setPomodorosTotal(0)"
     >
-      Reset
+      <i class="fas fa-sync-alt"></i>
     </button>
   </div>
 </template>
