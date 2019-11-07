@@ -99,6 +99,4 @@ export default {
       justify-content: center
       padding: 1rem
 
-.slide-buttons-move
-  transition: transform .3s
 </style>

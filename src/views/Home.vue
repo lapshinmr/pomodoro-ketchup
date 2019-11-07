@@ -1,9 +1,9 @@
 <template>
-  <div class="content-container d-flex align-items-center justify-content-center"
-    @keyup.esc="closeSettings"
-  >
+  <div class="content-container d-flex align-items-center justify-content-center">
     <!-- POMODOROS PROGRESS BAR -->
-    <pomodoros-bar></pomodoros-bar>
+    <transition name="fade">
+      <pomodoros-bar v-if="goalIndicatorFormat !== 3"></pomodoros-bar>
+    </transition>
 
     <!-- TIMER WITH PROGRESS BAR -->
     <timer-bar>
@@ -62,14 +62,9 @@ export default {
   },
   computed: {
     ...mapState([
-      'pomodorosTotal'
+      'pomodorosTotal',
+      'goalIndicatorFormat'
     ])
-  },
-  methods: {
-    closeSettings() {
-      console.log('+')
-      isSettingsMode === true ? isSettingsMode = false : ''
-    }
   }
 }
 </script>
@@ -107,29 +102,4 @@ export default {
     &:hover
       background-color: var(--dark)
 
-.slide-enter
-    opacity: 0
-
-.slide-enter-active
-    animation: slide-in .3s ease-out forwards
-    transition: opacity .3s
-
-.slide-leave
-
-.slide-leave-active
-    animation: slide-out .3s ease-out forwards
-    transition: opacity .3s
-    opacity: 0
-
-@keyframes slide-in
-  from
-    transform: translateX(-30px)
-  to
-    transform: translateX(0)
-
-@keyframes slide-out
-  from
-    transform: translateX(0px)
-  to
-    transform: translateX(-30px)
 </style>

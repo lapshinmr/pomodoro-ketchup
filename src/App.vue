@@ -133,6 +133,18 @@ body
     outline: none
     text-decoration: none
 
+.fade-enter
+  opacity: 0
+
+.fade-enter-active
+  transition: opacity 0.3s
+
+.fade-leave
+
+.fade-leave-active
+  opacity: 0
+  transition: opacity 0.3s
+
 .slide-enter
     opacity: 0
 

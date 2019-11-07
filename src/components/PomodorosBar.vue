@@ -1,12 +1,14 @@
 <template>
   <div class="pomodoros-progress-bar" :style="progressBarHeight">
-    <button
-      v-if="pomodorosTotal"
-      class="pomodoros-progress-bar__reset-button btn btn-link"
-      @click="setPomodorosTotal(0)"
-    >
-      <i class="fas fa-sync-alt"></i>
-    </button>
+    <transition name="fade">
+      <button
+        v-if="pomodorosTotal"
+        class="pomodoros-progress-bar__reset-button btn btn-success"
+        @click="setPomodorosTotal(0)"
+      >
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </transition>
   </div>
 </template>
 
@@ -48,12 +50,15 @@ export default {
 
   .pomodoros-progress-bar__reset-button
     position: absolute
-    bottom: 0
-    right: 0
+    bottom: 5px
+    right: 5px
     z-index: 1000
     font-size: 4vh
-    color: var(--dark)
-    &:hover
-      color: var(--super-dark)
+    border-radius: 50%
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 0.75rem
+    color: var(--super-light)
 
 </style>

@@ -1,26 +1,26 @@
 <template>
   <div class="indicator d-flex align-items-center justify-content-center text-center">
     <button
-      v-if="!isSettingsMode"
+      v-if="!isSettingsMode && goalIndicatorFormat !== 3"
       class="indicator__button btn btn-link"
       @click="removePomodoro"
     >⊖</button>
     <button
-      v-else
+      v-else-if="isSettingsMode"
       class="indicator__button btn btn-link"
       @click="goalIndicatorFormat--"
     >
       <i class="far fa-arrow-alt-circle-left"></i>
     </button>
 
-    <span class="indicator__text">{{ indicatorText }}</span>
+    <span v-if="goalIndicatorFormat !== 3 || isSettingsMode" class="indicator__text">{{ indicatorText }}</span>
 
     <button
-      v-if="!isSettingsMode"
+      v-if="!isSettingsMode && goalIndicatorFormat !== 3"
       class="indicator__button btn btn-link"
       @click="addPomodoro">⊕</button>
     <button
-      v-else
+      v-else-if="isSettingsMode"
       class="indicator__button btn btn-link"
       @click="goalIndicatorFormat++"
     >
@@ -50,7 +50,7 @@ export default {
       let first = this.pomodorosTotal + ' of ' + this.pomodorosGoal;
       let second = Math.round(this.pomodorosTotal / this.pomodorosGoal * 100) + '%';
       let formats = [
-        first, second, `${first} (${second})`
+        first, second, `${first} (${second})`, 'Off'
       ];
       return formats[this.goalIndicatorFormat]
     },
@@ -60,8 +60,8 @@ export default {
       },
       set(goalIndicatorFormat) {
         if (goalIndicatorFormat < 0) {
-          goalIndicatorFormat = 2
-        } else if (goalIndicatorFormat > 2) {
+          goalIndicatorFormat = 3
+        } else if (goalIndicatorFormat > 3) {
           goalIndicatorFormat = 0
         }
         this.setGoalIndicatorFormat(goalIndicatorFormat)
