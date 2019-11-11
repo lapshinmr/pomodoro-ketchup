@@ -169,4 +169,16 @@ body
     transform: translateX(0px)
   to
     transform: translateX(-30px)
+
+.line-enter
+  width: 0%!important
+
+.line-enter-active
+  transition: all 0.3s
+
+.line-leave
+
+.line-leave-active
+  width: 0%!important
+  transition: all 0.3s
 </style>

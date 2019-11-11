@@ -13,6 +13,20 @@ Vue.filter('capitalize', (value) => {
 
 Vue.filter('seconds-to-time', secondsToTime);
 
+Vue.directive('set-editable', {
+  bind(el, binding, vnode) {
+    el.onblur = () => {
+      binding.value(el)
+    };
+    el.onkeydown = function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault()
+        el.blur()
+      }
+    }
+  }
+})
+
 new Vue({
   router,
   store,

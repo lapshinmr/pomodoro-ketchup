@@ -1,30 +1,40 @@
 <template>
   <div class="indicator d-flex align-items-center justify-content-center text-center">
-    <button
-      v-if="!isSettingsMode && goalIndicatorFormat !== 3"
-      class="indicator__button btn btn-link"
-      @click="removePomodoro"
-    >⊖</button>
-    <button
-      v-else-if="isSettingsMode"
-      class="indicator__button btn btn-link"
-      @click="goalIndicatorFormat--"
-    >
-      <i class="far fa-arrow-alt-circle-left"></i>
-    </button>
+    <transition name="fade" mode="out-in">
+      <button
+        v-if="!isSettingsMode && goalIndicatorFormat !== 3"
+        class="indicator__button btn btn-link"
+        @click="removePomodoro"
+      >
+        <i class="fas fa-minus-circle"></i>
+      </button>
+      <button
+        v-else-if="isSettingsMode"
+        class="indicator__button btn btn-link"
+        @click="goalIndicatorFormat--"
+      >
+        <i class="far fa-arrow-alt-circle-left"></i>
+      </button>
+    </transition>
 
     <span v-if="goalIndicatorFormat !== 3 || isSettingsMode" class="indicator__text">
       <span v-if="goalIndicatorFormat === 0 || goalIndicatorFormat === 2">
         {{ pomodorosTotal }} of
-        <span v-if="!isSettingsMode"
-            class="indicator__total"
-            contenteditable="false"
-        >{{ pomodorosGoal }}</span>
-        <span v-if="isSettingsMode"
-            class="indicator__total"
-            :class="{'indicator__total_editable': isSettingsMode}"
-            contenteditable="true"
-        >{{ pomodorosGoal }}</span>
+        <span class="indicator__container">
+          <span v-if="!isSettingsMode"
+              class="indicator__total"
+              contenteditable="false"
+          >{{ pomodorosGoal }}</span>
+          <span v-if="isSettingsMode"
+              class="indicator__total"
+              :class="{'indicator__total_editable': isSettingsMode}"
+              contenteditable="true"
+              v-set-editable="handlePomodorosGoal"
+          >{{ pomodorosGoal }}</span>
+          <transition name="line">
+            <span class="timer__line" v-if="isSettingsMode"></span>
+          </transition>
+        </span>
       </span>
       <span v-if="goalIndicatorFormat === 1 || goalIndicatorFormat === 2">
         <span v-if="goalIndicatorFormat === 2" class="ml-2">(</span>
@@ -38,7 +48,9 @@
     <button
       v-if="!isSettingsMode && goalIndicatorFormat !== 3"
       class="indicator__button btn btn-link"
-      @click="addPomodoro">⊕</button>
+      @click="addPomodoro">
+        <i class="fas fa-plus-circle fa-1x"></i>
+      </button>
     <button
       v-else-if="isSettingsMode"
       class="indicator__button btn btn-link"
@@ -57,7 +69,6 @@ export default {
   props: ['is-settings-mode'],
   data() {
     return {
-
     }
   },
   computed: {
@@ -79,17 +90,6 @@ export default {
         this.setGoalIndicatorFormat(goalIndicatorFormat)
       }
     },
-    pomodorosGoal: {
-      get() {
-        return this.$store.state.pomodorosGoal
-      },
-      set(pomodorosGoal) {
-        if (!parseInt(pomodorosGoal)) {
-          return
-        }
-        this.setPomodorosGoal(pomodorosGoal)
-      }
-    },
   },
   methods: {
     ...mapActions([
@@ -97,7 +97,14 @@ export default {
       'removePomodoro',
       'setGoalIndicatorFormat',
       'setPomodorosGoal'
-    ])
+    ]),
+    handlePomodorosGoal(el) {
+      if (!parseInt(el.innerText)) {
+        el.innerText = this.pomodorosGoal
+        return
+      }
+      this.setPomodorosGoal(el.innerText)
+    }
   }
 }
 </script>
@@ -112,7 +119,7 @@ export default {
     color: var(--dark)
     display: inline-block
     line-height: 1
-    font-size: 100%
+    font-size: 80%
     padding: 0
     transition: all 0.3s
     cursor: pointer
@@ -130,9 +137,18 @@ export default {
 
   .indicator__total
 
+  .indicator__container
+    position: relative
+
+  .timer__line
+    position: absolute
+    bottom: 3%
+    left: 0
+    width: 100%
+    height: 2px
+    background-color: var(--dark)
+
   .indicator__total_editable
-    text-decoration: underline
-    border: none
     color: var(--dark)
     outline: none
 

@@ -13,9 +13,12 @@
           class="timer__string"
           :class="{'timer__string_editable': isSettingsMode}"
           contenteditable="true"
-          v-set-time
+          v-set-editable="handleInitTime"
           key="2"
       >{{ timeInit | seconds-to-time }}</span>
+      <transition name="line">
+        <div class="timer__line" v-if="isSettingsMode"></div>
+      </transition>
     </div>
     <div class="timer__buttons">
       <button
@@ -81,31 +84,6 @@ export default {
       'timeInit'
     ])
   },
-  directives: {
-    'set-time': {
-      bind(el, binding, vnode) {
-        el.onblur = () => {
-          let initTimeSeconds = stringToTimeSeconds(el.innerText);
-          if (!initTimeSeconds) { // if bad user input
-            el.innerText = secondsToTime(vnode.context.$store.state.timeInit)
-          } else {
-            if (vnode.context.$store.state.timeInit === vnode.context.$store.state.timeLeft) {
-              vnode.context.setLeftTime(initTimeSeconds)
-            }
-            vnode.context.setInitTime(initTimeSeconds)
-            el.innerText = secondsToTime(initTimeSeconds)
-            //vnode.context.initTime = el.innerText
-          }
-        };
-        el.onkeydown = function(event) {
-          if (event.keyCode === 13) {
-            event.preventDefault()
-            el.blur()
-          }
-        }
-      }
-    }
-  },
   methods: {
     ...mapActions([
       'startTimer',
@@ -113,7 +91,19 @@ export default {
       'resetTimer',
       'setLeftTime',
       'setInitTime'
-    ])
+    ]),
+    handleInitTime(el) {
+      let initTimeSeconds = stringToTimeSeconds(el.innerText);
+      if (!initTimeSeconds) {
+        el.innerText = secondsToTime(this.timeInit)
+      } else {
+        if (this.timeInit === this.timeLeft) {
+          this.setLeftTime(initTimeSeconds)
+        }
+        this.setInitTime(initTimeSeconds)
+        el.innerText = secondsToTime(initTimeSeconds)
+      }
+    }
   }
 }
 </script>
@@ -126,26 +116,25 @@ export default {
     width: 100%
 
   .timer__time
+    position: relative
     color: var(--dark)
     line-height: 1em
     font-size: 30%
     width: 100%
 
   .timer__string
-    outline: none
+    width: 100%
 
   .timer__string_editable
-    text-decoration: underline
-
-  .timer__input
-    width: auto
-    display: inline-block
-    padding: 0px
-    color: var(--dark)
-    text-align: center
-    background-color: transparent
-    border: none
     outline: none
+
+  .timer__line
+    position: absolute
+    bottom: 3%
+    left: 0
+    width: 100%
+    height: 5px
+    background-color: var(--dark)
 
   .timer__buttons
     display: flex
@@ -163,6 +152,7 @@ export default {
       align-items: center
       justify-content: center
       padding: 1rem
+
 
 
 </style>
