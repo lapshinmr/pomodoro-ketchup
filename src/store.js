@@ -10,7 +10,6 @@ export function secondsToTime (value) {
   let isMinutesZero = minutes < 10 ? '0' : ''
   let isSecondsZero = seconds < 10 ? '0' : ''
 
-  console.log(`${isMinutesZero}${minutes}:${isSecondsZero}${seconds}`)
   return `${isMinutesZero}${minutes}:${isSecondsZero}${seconds}`
 }
 
@@ -139,7 +138,6 @@ export default new Vuex.Store({
   },
   actions: {
     setInitTime ({ commit }, payload) {
-      console.log(payload)
       commit('SET_INIT_TIME', payload)
     },
     setLeftTime ({ commit }, payload) {

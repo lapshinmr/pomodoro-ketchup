@@ -125,7 +125,7 @@ body
   color: var(--dark)
 
   &:hover
-    color: var(--super-dark)
+    color: var(--super-dark)!important
     text-decoration: none
 
   &:focus
