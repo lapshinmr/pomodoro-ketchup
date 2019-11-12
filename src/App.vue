@@ -2,19 +2,30 @@
   <div class="root" :style="COLORS">
     <timer-title :title="title"></timer-title>
     <github-link></github-link>
-    <div class="navigation text-center">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/settings">Settings</router-link>
+
+
+    <!--
+    <div class="navigation">
+      <router-link to="/">
+        <i class="fas fa-chevron-circle-left"></i>
+      </router-link> |
+      <router-link to="/statistic" class="settings__element ">
+        <i class="far fa-chart-bar"></i>
+      </router-link>
     </div>
-    <router-view />
+    -->
+
+    <transition name="slide">
+      <router-view />
+    </transition>
   </div>
 </template>
 
 <script>
-import TimerTitle from '@/components/TimerTitle.vue'
-import GithubLink from '@/components/GithubLink.vue'
-import { mapState, mapGetters, mapActions } from 'vuex'
-import { TAB_TITLE_DEFAULT } from './constants'
+import TimerTitle from '@/components/TimerTitle.vue';
+import GithubLink from '@/components/GithubLink.vue';
+import { mapState, mapGetters, mapActions } from 'vuex';
+import { TAB_TITLE_DEFAULT } from './constants';
 
 export default {
   components: { TimerTitle, GithubLink },
@@ -32,6 +43,7 @@ export default {
   },
   created () {
     this.startTimer()
+
   },
   methods: {
     ...mapActions([
@@ -72,15 +84,14 @@ body
 
 .navigation
   position: absolute
-  left: 0
-  right: 0
-  top: 3vh
-  z-index: 500
+  left: 5px
+  top: 5px
 
   a
     font-weight: bold
     font-size: 20px
     color: var(--super-dark)
+    text-decoration: none
 
     &.router-link-exact-active
       color: var(--dark)
@@ -120,4 +131,54 @@ body
   &:focus
     outline: none
     text-decoration: none
+
+.fade-enter
+  opacity: 0
+
+.fade-enter-active
+  transition: opacity 0.3s
+
+.fade-leave
+
+.fade-leave-active
+  opacity: 0
+  transition: opacity 0.3s
+
+.slide-enter
+    opacity: 0
+
+.slide-enter-active
+    animation: slide-in .3s ease-out forwards
+    transition: opacity .3s
+
+.slide-leave
+
+.slide-leave-active
+    animation: slide-out .3s ease-out forwards
+    transition: opacity .3s
+    opacity: 0
+
+@keyframes slide-in
+  from
+    transform: translateX(-30px)
+  to
+    transform: translateX(0)
+
+@keyframes slide-out
+  from
+    transform: translateX(0px)
+  to
+    transform: translateX(-30px)
+
+.line-enter
+  width: 0%!important
+
+.line-enter-active
+  transition: all 0.3s
+
+.line-leave
+
+.line-leave-active
+  width: 0%!important
+  transition: all 0.3s
 </style>

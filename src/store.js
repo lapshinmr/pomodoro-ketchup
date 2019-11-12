@@ -9,6 +9,8 @@ export function secondsToTime (value) {
   let seconds = value % 60
   let isMinutesZero = minutes < 10 ? '0' : ''
   let isSecondsZero = seconds < 10 ? '0' : ''
+
+  console.log(`${isMinutesZero}${minutes}:${isSecondsZero}${seconds}`)
   return `${isMinutesZero}${minutes}:${isSecondsZero}${seconds}`
 }
 
@@ -18,7 +20,6 @@ export function playNotification (state) {
       body: state.notificationBody
     })
     var audio = new Audio(require('@/assets/' + state.notificationSound))
-    audio.volume = state.notificationVolume / 100
     audio.play()
   }
 }
@@ -39,7 +40,6 @@ const loadState = function () {
       notificationTitle: cons.NOTIFICATION_TITLE_DEFAULT,
       notificationBody: cons.NOTIFICATION_BODY_DEFAULT,
       notificationSound: cons.NOTIFICATION_SOUND_DEFAULT,
-      notificationVolume: cons.NOTIFICATION_VOLUME_DEFAULT,
       colorTheme: cons.COLOR_THEME_DEFAULT
     }
     localStorage.setItem('data', JSON.stringify(stateData))
@@ -133,15 +133,13 @@ export default new Vuex.Store({
     SET_NOTIFICATION_SOUND (state, payload) {
       state.notificationSound = payload
     },
-    SET_NOTIFICATION_VOLUME (state, payload) {
-      state.notificationVolume = payload
-    },
     SET_COLOR_THEME (state, payload) {
       state.colorTheme = payload
     }
   },
   actions: {
     setInitTime ({ commit }, payload) {
+      console.log(payload)
       commit('SET_INIT_TIME', payload)
     },
     setLeftTime ({ commit }, payload) {
@@ -194,9 +192,11 @@ export default new Vuex.Store({
       }
     },
     pauseTimer ({ commit, state }) {
-      clearInterval(state.timerId)
-      commit('SET_TIMER_ID', null)
-      commit('SET_PAUSE', true)
+      if (state.timerId !== null) {
+        clearInterval(state.timerId)
+        commit('SET_TIMER_ID', null)
+        commit('SET_PAUSE', true)
+      }
     },
     resetTimer ({ commit, state, dispatch }) {
       clearInterval(state.timerId)
@@ -233,9 +233,6 @@ export default new Vuex.Store({
     },
     setNotificationSound ({ commit }, payload) {
       commit('SET_NOTIFICATION_SOUND', payload)
-    },
-    setNotificationVolume ({ commit }, payload) {
-      commit('SET_NOTIFICATION_VOLUME', payload)
     }
   }
 })
