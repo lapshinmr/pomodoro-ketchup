@@ -1,63 +1,101 @@
 <template>
   <div class="indicator d-flex align-items-center justify-content-center text-center">
-    <transition name="fade" mode="out-in">
+
+    <transition name="slide-left">
       <button
         v-if="!isSettingsMode && goalIndicatorFormat !== 3"
-        class="indicator__button btn btn-link"
+        class="indicator__button indicator__button_left btn btn-link"
         @click="removePomodoro"
+        key="left-1"
       >
         <i class="fas fa-minus-circle"></i>
       </button>
       <button
         v-else-if="isSettingsMode"
-        class="indicator__button btn btn-link"
-        @click="goalIndicatorFormat--"
+        class="indicator__button indicator__button_left btn btn-link"
+        @click="handleGoalIndicatorFormat--"
+        key="left-2"
       >
         <i class="far fa-arrow-alt-circle-left"></i>
       </button>
     </transition>
 
-    <span v-if="goalIndicatorFormat !== 3 || isSettingsMode" class="indicator__text">
-      <span v-if="goalIndicatorFormat === 0 || goalIndicatorFormat === 2">
-        {{ pomodorosTotal }} of
-        <span class="indicator__container">
-          <span v-if="!isSettingsMode"
-              class="indicator__total"
-              contenteditable="false"
-          >{{ pomodorosGoal }}</span>
-          <span v-if="isSettingsMode"
-              class="indicator__total"
-              :class="{'indicator__total_editable': isSettingsMode}"
-              contenteditable="true"
-              v-set-editable="handlePomodorosGoal"
-          >{{ pomodorosGoal }}</span>
-          <transition name="line">
-            <span class="timer__line" v-if="isSettingsMode"></span>
-          </transition>
-        </span>
-      </span>
-      <span v-if="goalIndicatorFormat === 1 || goalIndicatorFormat === 2">
-        <span v-if="goalIndicatorFormat === 2" class="ml-2">(</span>
-        <span>{{ Math.round(this.pomodorosTotal / this.pomodorosGoal * 100) + '%' }}</span>
-        <span v-if="goalIndicatorFormat === 2">)</span>
-      </span>
-      <span v-if="goalIndicatorFormat === 3">
-        Off
-      </span>
-    </span>
-    <button
-      v-if="!isSettingsMode && goalIndicatorFormat !== 3"
-      class="indicator__button btn btn-link"
-      @click="addPomodoro">
-        <i class="fas fa-plus-circle fa-1x"></i>
+    <div v-if="goalIndicatorFormat !== 3 || isSettingsMode" class="indicator__text">
+
+      <transition :name="slideIndicator" mode="out-in">
+
+        <div v-if="goalIndicatorFormat === 0" class="indicator__format" key="format-0">
+          {{ pomodorosTotal }} of
+          <span class="indicator__container">
+            <span v-if="!isSettingsMode"
+                class="indicator__total"
+                contenteditable="false"
+            >{{ pomodorosGoal }}</span>
+            <span v-if="isSettingsMode"
+                class="indicator__total"
+                :class="{'indicator__total_editable': isSettingsMode}"
+                contenteditable="true"
+                v-set-editable="handlePomodorosGoal"
+            >{{ pomodorosGoal }}</span>
+            <transition name="line">
+              <span class="timer__line" v-if="isSettingsMode"></span>
+            </transition>
+          </span>
+          <span class="ml-2">(</span>
+          <span>{{ Math.round(this.pomodorosTotal / this.pomodorosGoal * 100) + '%' }}</span>
+          <span>)</span>
+        </div>
+
+        <div v-else-if="goalIndicatorFormat === 1" class="indicator__format" key="format-1">
+          {{ pomodorosTotal }} of
+          <span class="indicator__container">
+            <span v-if="!isSettingsMode"
+                class="indicator__total"
+                contenteditable="false"
+            >{{ pomodorosGoal }}</span>
+            <span v-if="isSettingsMode"
+                class="indicator__total"
+                :class="{'indicator__total_editable': isSettingsMode}"
+                contenteditable="true"
+                v-set-editable="handlePomodorosGoal"
+            >{{ pomodorosGoal }}</span>
+            <transition name="line">
+              <span class="timer__line" v-if="isSettingsMode"></span>
+            </transition>
+          </span>
+        </div>
+
+        <div v-else-if="goalIndicatorFormat === 2" class="indicator__format" key="format-2">
+          <span>{{ Math.round(this.pomodorosTotal / this.pomodorosGoal * 100) + '%' }}</span>
+        </div>
+
+        <div v-else-if="goalIndicatorFormat === 3" class="indicator__format" key="format-3">
+          Off
+        </div>
+
+      </transition>
+
+    </div>
+
+    <transition name="slide-right">
+      <button
+        v-if="!isSettingsMode && goalIndicatorFormat !== 3"
+        class="indicator__button indicator__button_right btn btn-link"
+        @click="addPomodoro"
+        key="right-1"
+        >
+          <i class="fas fa-plus-circle fa-1x"></i>
+        </button>
+      <button
+        v-else-if="isSettingsMode"
+        class="indicator__button indicator__button_right btn btn-link"
+        @click="handleGoalIndicatorFormat++"
+        key="right-2"
+      >
+        <i class="far fa-arrow-alt-circle-right"></i>
       </button>
-    <button
-      v-else-if="isSettingsMode"
-      class="indicator__button btn btn-link"
-      @click="goalIndicatorFormat++"
-    >
-      <i class="far fa-arrow-alt-circle-right"></i>
-    </button>
+    </transition>
+
   </div>
 </template>
 
@@ -69,6 +107,7 @@ export default {
   props: ['is-settings-mode'],
   data() {
     return {
+      slideIndicator: 'slide-indicator-left'
     }
   },
   computed: {
@@ -77,17 +116,22 @@ export default {
       'pomodorosGoal',
       'goalIndicatorFormat'
     ]),
-    goalIndicatorFormat: {
+    handleGoalIndicatorFormat: {
       get() {
-        return this.$store.state.goalIndicatorFormat
+        return this.goalIndicatorFormat
       },
-      set(goalIndicatorFormat) {
-        if (goalIndicatorFormat < 0) {
-          goalIndicatorFormat = 3
-        } else if (goalIndicatorFormat > 3) {
-          goalIndicatorFormat = 0
+      set(value) {
+        if (value > this.goalIndicatorFormat) {
+          this.slideIndicator = 'slide-indicator-right'
+        } else {
+          this.slideIndicator = 'slide-indicator-left'
         }
-        this.setGoalIndicatorFormat(goalIndicatorFormat)
+        if (value < 0) {
+          value = 3
+        } else if (value > 3) {
+          value = 0
+        }
+        this.setGoalIndicatorFormat(value)
       }
     },
   },
@@ -111,6 +155,7 @@ export default {
 
 <style scoped lang="sass">
 .indicator
+  position: relative
   color: var(--dark)
   transition: all 0.3s
   font-size: 6%
@@ -124,6 +169,16 @@ export default {
     transition: all 0.3s
     cursor: pointer
 
+  .indicator__button_left
+    position: absolute
+    left: 10%
+
+  .indicator__button_right
+    position: absolute
+    right: 10%
+    &:last-child
+      margin: 0!important
+
     &:hover
       color: var(--super-dark)
 
@@ -134,6 +189,8 @@ export default {
       margin: 0 0.5rem
 
   .indicator__text
+
+  .indicator__format
 
   .indicator__total
 
@@ -151,5 +208,110 @@ export default {
   .indicator__total_editable
     color: var(--dark)
     outline: none
+
+.slide-left-enter
+    opacity: 0
+
+.slide-left-enter-active
+    animation: slide-in-left .5s ease-out forwards
+    transition: opacity .5s
+
+.slide-left-leave
+
+.slide-left-leave-active
+    animation: slide-out-left .5s ease-out forwards
+    transition: opacity .5s
+    opacity: 0
+
+@keyframes slide-in-left
+  from
+    transform: translateX(20px)
+  to
+    transform: translateX(0)
+
+@keyframes slide-out-left
+  from
+    transform: translateX(0px)
+  to
+    transform: translateX(-20px)
+
+.slide-right-enter
+    opacity: 0
+
+.slide-right-enter-active
+    animation: slide-in-right .5s ease-out forwards
+    transition: opacity .5s
+
+.slide-right-leave
+
+.slide-right-leave-active
+    animation: slide-out-right .5s ease-out forwards
+    transition: opacity .5s
+    opacity: 0
+
+
+@keyframes slide-in-right
+  from
+    transform: translateX(-20px)
+  to
+    transform: translateX(0)
+
+@keyframes slide-out-right
+  from
+    transform: translateX(0px)
+  to
+    transform: translateX(20px)
+
+.slide-indicator-left-enter
+  opacity: 0
+
+.slide-indicator-left-enter-active
+    animation: slide-in-indicator-left .2s ease-out forwards
+    transition: opacity .2s
+
+.slide-indicator-left-leave
+
+.slide-indicator-left-leave-active
+    animation: slide-out-indicator-left .2s ease-out forwards
+    transition: opacity .2s
+    opacity: 0
+
+@keyframes slide-in-indicator-left
+  from
+    transform: translateX(50px)
+  to
+    transform: translateX(0)
+
+@keyframes slide-out-indicator-left
+  from
+    transform: translateX(0px)
+  to
+    transform: translateX(-50px)
+
+.slide-indicator-right-enter
+  opacity: 0
+
+.slide-indicator-right-enter-active
+    animation: slide-in-indicator-right .2s ease-out forwards
+    transition: opacity .2s
+
+.slide-indicator-right-leave
+
+.slide-indicator-right-leave-active
+    animation: slide-out-indicator-right .2s ease-out forwards
+    transition: opacity .2s
+    opacity: 0
+
+@keyframes slide-in-indicator-right
+  from
+    transform: translateX(-50px)
+  to
+    transform: translateX(0)
+
+@keyframes slide-out-indicator-right
+  from
+    transform: translateX(0px)
+  to
+    transform: translateX(50px)
 
 </style>

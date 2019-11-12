@@ -140,7 +140,7 @@ export default {
     display: flex
     justify-content: center
     position: absolute
-    top: 100%
+    top: 115%
     left: 50%
     transform: translateX(-50%)
     width: 70%
