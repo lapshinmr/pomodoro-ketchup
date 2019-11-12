@@ -19,6 +19,11 @@
       <transition name="line">
         <div class="timer__line" v-if="isSettingsMode"></div>
       </transition>
+      <transition name="fade">
+        <span v-if="isSettingsMode" class="timer__small">
+          {{ timeLeft | seconds-to-time }}
+        </span>
+      </transition>
     </div>
     <div class="timer__buttons">
       <button
@@ -135,6 +140,13 @@ export default {
     width: 100%
     height: 5px
     background-color: var(--dark)
+
+  .timer__small
+    position: absolute
+    top: 100%
+    right: 0
+    font-size: 25%
+    line-height: 1
 
   .timer__buttons
     display: flex
