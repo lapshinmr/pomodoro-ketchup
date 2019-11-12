@@ -1,7 +1,13 @@
 <template>
   <div class="settings__element" :class="{active: isOpened}">
-    <div class="element__open-area" @click="isOpened = !isOpened">
+    <div v-if="isGranted" class="element__open-area" @click="isOpened = !isOpened">
       <i class="fas fa-bell"></i>
+    </div>
+    <div v-else-if="isDenied">
+      <i class="fas fa-lock"></i>
+    </div>
+    <div v-else @click="notify">
+      <i class="fas fa-bell-slash"></i>
     </div>
     <div
         v-if="isOpened"
@@ -44,9 +50,14 @@ export default {
   name: 'title-settings',
   data() {
     return {
-      permission: Notification.permission,
+      isGranted: false,
+      isDenied: false,
       isOpened: false
     }
+  },
+  created() {
+    this.isGranted = Notification.permission === 'granted'
+    this.isDenied = Notification.permission === 'denied'
   },
   computed: {
     notificationTitle: {
@@ -76,12 +87,12 @@ export default {
         alert('Desktop notifications not available in your browser. Try Chromium.')
         return
       }
-      if (Notification.permission !== 'granted') {
+      if (Notification.permission === 'default') {
         Notification.requestPermission((permission) => {
-          this.notificationPermission = Notification.permission
+          this.isGranted = Notification.permission === 'granted'
+          this.isDenied = Notification.permission === 'denied'
         })
       }
-      this.notificationPermission = Notification.permission
     }
   }
 }
