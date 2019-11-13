@@ -33,7 +33,7 @@ export default {
     ...mapState([
       'pomodorosTotal',
       'pomodorosGoal',
-      'goalIndicatorFormat'
+      'goalIndicatorFormat',
     ]),
     ratio () {
       return this.pomodorosTotal / this.pomodorosGoal
