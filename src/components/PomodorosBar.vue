@@ -120,8 +120,8 @@ export default {
 
   .pomodoros-progress-bar__reset-button
     position: absolute
-    bottom: 5px
-    right: 5px
+    bottom: 10px
+    right: 10px
     z-index: 1000
     font-size: 4vh
     border-radius: 50%

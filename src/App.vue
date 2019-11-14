@@ -1,23 +1,14 @@
 <template>
   <div class="root" :style="COLORS">
+
     <timer-title :title="title"></timer-title>
+
     <github-link></github-link>
 
-
-    <!--
-    <div class="navigation">
-      <router-link to="/">
-        <i class="fas fa-chevron-circle-left"></i>
-      </router-link> |
-      <router-link to="/statistic" class="settings__element ">
-        <i class="far fa-chart-bar"></i>
-      </router-link>
-    </div>
-    -->
-
-    <transition name="slide">
+    <transition name="fade">
       <router-view />
     </transition>
+
   </div>
 </template>
 
@@ -189,4 +180,22 @@ body
 .line-leave-active
   width: 0%!important
   transition: all 0.3s
+
+.settings__element
+  position: relative
+  display: flex
+  justify-content: center
+  align-items: center
+  height: 6vh
+  width: 6vh
+  font-size: 3.5vh
+  margin-left: 3px
+  border-radius: 50%
+  cursor: pointer
+  transition: all 0.15s
+  color: var(--super-light)
+  background-color: var(--primary)
+  text-decoration: none
+  &:hover
+    background-color: var(--dark)
 </style>

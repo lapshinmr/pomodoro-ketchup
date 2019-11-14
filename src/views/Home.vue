@@ -15,7 +15,10 @@
 
     <!-- SETTINGS -->
     <div class="settings d-flex align-items-start">
-      <div class="settings__element settings__button" @click="isSettingsMode = !isSettingsMode">
+      <router-link to="/statistic" class="settings__element">
+        <i class="far fa-chart-bar"></i>
+      </router-link>
+      <div class="settings__element mr-2" @click="isSettingsMode = !isSettingsMode">
         <i v-if="!isSettingsMode" class="fas fa-cog"></i>
         <i v-else class="fas fa-times"></i>
       </div>
@@ -80,24 +83,5 @@ export default {
   padding: 0
   z-index: 1000
 
-  .settings__button
-    margin-right: 10px
-
-  .settings__element
-    position: relative
-    display: flex
-    justify-content: center
-    align-items: center
-    height: 6vh
-    width: 6vh
-    font-size: 3.5vh
-    margin-left: 3px
-    border-radius: 50%
-    cursor: pointer
-    transition: all 0.15s
-    color: var(--super-light)
-    background-color: var(--primary)
-    &:hover
-      background-color: var(--dark)
 
 </style>
