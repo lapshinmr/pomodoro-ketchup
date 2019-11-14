@@ -23,7 +23,7 @@
     </div>
 
     <transition name="fade">
-      <div v-if="goalIndicatorFormat !== 3 || isSettingsMode" class="indicator__text">
+      <div v-if="goalIndicatorFormat !== 3 || isSettingsMode" class="indicator__text noselect">
         <transition :name="slideIndicator" mode="out-in">
 
           <div v-if="goalIndicatorFormat === 0" class="indicator__format" key="format-0">

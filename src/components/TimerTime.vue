@@ -5,7 +5,7 @@
     </div>
     <div class="timer__time d-flex justify-content-center align-items-center">
       <span v-if="!isSettingsMode"
-          class="timer__string"
+          class="timer__string noselect"
           contenteditable="false"
           key="1"
       >{{ timeLeft | seconds-to-time }}</span>
@@ -20,7 +20,7 @@
         <div class="timer__line" v-if="isSettingsMode"></div>
       </transition>
       <transition name="fade">
-        <span v-if="isSettingsMode" class="timer__small">
+        <span v-if="isSettingsMode" class="timer__small noselect">
           {{ timeLeft | seconds-to-time }}
         </span>
       </transition>

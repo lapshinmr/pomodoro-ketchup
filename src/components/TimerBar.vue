@@ -40,7 +40,7 @@ export default {
       return {
         'stroke-dasharray': this.circleLength,
         'stroke-dashoffset': this.circleLength * this.ratio,
-        transition: this.isTansition ? 'all 0.3s' : 'none'
+        transition: this.isTransition ? 'all 0.3s' : 'none'
       }
     },
     line () {
