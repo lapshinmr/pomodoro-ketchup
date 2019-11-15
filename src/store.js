@@ -25,23 +25,36 @@ export function playNotification (state) {
 
 const loadState = function () {
   let stateData = JSON.parse(localStorage.getItem('data'));
+  let defaultData = {
+    timeInit: cons.POMODORO_DEFAULT,
+    timeLeft: cons.POMODORO_DEFAULT,
+    timeEnd: Date.now(),
+    isPause: true,
+    pomodorosTotal: 0,
+    pomodorosGoal: cons.POMODOROS_GOAL_DEFAULT,
+    goalIndicatorFormat: cons.GOAL_INDICATOR_FORMAT_DEFAULT,
+    isTimerTitle: true,
+    isReversedProgressBar: true,
+    notificationTitle: cons.NOTIFICATION_TITLE_DEFAULT,
+    notificationBody: cons.NOTIFICATION_BODY_DEFAULT,
+    notificationSound: cons.NOTIFICATION_SOUND_DEFAULT,
+    colorTheme: cons.COLOR_THEME_DEFAULT,
+    statistic: []
+  }
   if (!stateData) {
-    stateData = {
-      timeInit: cons.POMODORO_DEFAULT,
-      timeLeft: cons.POMODORO_DEFAULT,
-      timeEnd: Date.now(),
-      isPause: true,
-      pomodorosTotal: 0,
-      pomodorosGoal: cons.POMODOROS_GOAL_DEFAULT,
-      goalIndicatorFormat: cons.GOAL_INDICATOR_FORMAT_DEFAULT,
-      isTimerTitle: true,
-      isReversedProgressBar: true,
-      notificationTitle: cons.NOTIFICATION_TITLE_DEFAULT,
-      notificationBody: cons.NOTIFICATION_BODY_DEFAULT,
-      notificationSound: cons.NOTIFICATION_SOUND_DEFAULT,
-      colorTheme: cons.COLOR_THEME_DEFAULT
+    localStorage.setItem('data', JSON.stringify(stateData));
+    stateData = Object.assign({} ,defaultData);
+  } else {
+    let found = false;
+    for (let key in defaultData) {
+      if (!(key in stateData)) {
+        found = true;
+        stateData[key] = defaultData[key];
+      }
+      if (found) {
+        localStorage.setItem('data', JSON.stringify(stateData));
+      }
     }
-    localStorage.setItem('data', JSON.stringify(stateData))
   }
   return stateData
 }
@@ -134,6 +147,28 @@ export default new Vuex.Store({
     },
     SET_COLOR_THEME (state, payload) {
       state.colorTheme = payload
+    },
+    ADD_STATISTIC (state, payload) {
+      state.statistic.push(
+        {
+          value: payload,
+          note: ''
+        }
+      )
+    },
+    EDIT_STATISTIC_VALUE (state, payload) {
+      Vue.set(state.statistic, payload.index, {
+        value: payload.value,
+        note: state.statistic[payload.index].note
+      })
+    },
+    EDIT_STATISTIC_NOTE (state, payload) {
+      state.statistic[payload.index] = {
+        note: payload.note
+      }
+    },
+    REMOVE_STATISTIC (state, payload) {
+      state.statistic.splice(payload, 1)
     }
   },
   actions: {
@@ -231,6 +266,18 @@ export default new Vuex.Store({
     },
     setNotificationSound ({ commit }, payload) {
       commit('SET_NOTIFICATION_SOUND', payload)
+    },
+    addStatistic ({ commit }, payload) {
+      commit('ADD_STATISTIC', payload)
+    },
+    editStatisticValue ({ commit }, payload) {
+      commit('EDIT_STATISTIC_VALUE', payload)
+    },
+    editStatisticNote ({ commit }, payload) {
+      commit('EDIT_STATISTIC_NOTE', payload)
+    },
+    removeStatistic ({ commit }, payload) {
+      commit('REMOVE_STATISTIC', payload)
     }
   }
 })

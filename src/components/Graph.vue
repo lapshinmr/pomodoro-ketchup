@@ -2,15 +2,15 @@
   <div class="graph">
     <svg class="graph__container" :viewBox="'0 0 ' + svgWidth + ' ' + svgHeight">
       <g transform="translate(0, 150) scale(1, -1)">
-        <template v-for="(pomodoros, index) in weeks">
+        <template v-for="(item, index) in statistic">
           <transition name="fade">
             <rect
               class="graph__bar"
               :width="10"
-              :height="pomodoros * barsUnit"
+              :height="item.value * barsUnit"
               :x="barsStep * (index + 1) - 5"
               :y="bottomGap"
-              @click="weeks.splice(index, 1)"
+              @click="removeStatistic(index)"
             />
           </transition>
           <rect
@@ -18,7 +18,7 @@
             :width="10"
             :height="2"
             :x="barsStep * (index + 1) - 5"
-            :y="bottomGap + pomodoros * barsUnit - 2"
+            :y="bottomGap + item.value * barsUnit - 2"
             v-draggable
             :data-index="index"
           />
@@ -26,9 +26,9 @@
             <text
               class="graph__text noselect"
               :x="barsStep * (index + 1)"
-              :y="-(bottomGap + pomodoros * barsUnit + textGap)"
+              :y="-(bottomGap + item.value * barsUnit + textGap)"
             >
-              {{ pomodoros }}
+              {{ item.value }}
             </text>
           </g>
         </template>
@@ -41,7 +41,7 @@
         />
       </g>
     </svg>
-    <div class="settings__element" style="z-index: 10000;"@click="increase">
+    <div class="settings__element" style="z-index: 10000;"@click="commitCurrent">
       +
     </div>
   </div>
@@ -54,30 +54,38 @@ export default {
   data() {
     return {
       test: 10,
-      weeks: [58, 34, 36, 67, 43, 23, 66],
       svgHeight: 150,
       svgWidth: 150,
-      maxBarHeight: 120,
-      textGap: 3,
+      topGap: 8,
+      textGap: 2,
       bottomGap: 5,
-      topGap: 20
     }
   },
   computed: {
     ...mapState([
-      'pomodorosTotal'
+      'pomodorosTotal',
+      'statistic'
     ]),
+    maxBarHeight () {
+      return this.svgHeight - this.bottomGap - this.topGap - this.textGap
+    },
     barsStep () {
-      return this.svgWidth / (this.weeks.length + 1)
+      console.log(this.statistic.length)
+      return this.svgWidth / (this.statistic.length + 1)
     },
     barsUnit () {
-      return this.maxBarHeight / Math.max(...this.weeks)
+      return this.maxBarHeight / Math.max(...this.statistic.map(item => item.value))
     }
   },
   methods: {
-    increase() {
-      console.log(this.pomodorosTotal)
-      this.weeks.push(this.pomodorosTotal)
+    ...mapActions([
+      'addStatistic',
+      'editStatisticValue',
+      'editStatisticNote',
+      'removeStatistic'
+    ]),
+    commitCurrent() {
+      this.addStatistic(this.pomodorosTotal)
     }
   },
   directives: {
@@ -90,16 +98,19 @@ export default {
             document.removeEventListener('mousemove', mousemove);
             return
           };
-          let dy = (initY - e.clientY) * 150 / canvasHeight
-          let dp = Math.ceil(dy / vnode.context.barsUnit)
-          let pomodorosToSet = curPomodoros + dp < 0 ? 0 : curPomodoros + dp
-          vnode.context.$set(vnode.context.weeks, curBarIdx, pomodorosToSet)
+          let dy = (initY - e.clientY) * 150 / canvasHeight;
+          let dp = Math.ceil(dy / vnode.context.barsUnit);
+          let pomodorosToSet = curPomodoros + dp < 0 ? 0 : curPomodoros + dp;
+          vnode.context.editStatisticValue({
+            index: curBarIdx,
+            value: pomodorosToSet
+          });
           return false;
         }
 
         el.addEventListener('mousedown', (e) => {
           curBarIdx = e.currentTarget.getAttribute('data-index')
-          curPomodoros = vnode.context.weeks[curBarIdx]
+          curPomodoros = vnode.context.statistic[curBarIdx].value
           canvasHeight = document.querySelector('.graph__container').clientHeight
           initY = e.clientY
           document.addEventListener('mousemove', mousemove);
@@ -154,7 +165,7 @@ export default {
     stroke-width: 0.2vw
 
   .graph__text
-    font-size: 1.2vh
+    font-size: 8px
     text-align: center
     fill: var(--dark)
     text-anchor: middle
