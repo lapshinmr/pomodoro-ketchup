@@ -149,12 +149,16 @@ export default new Vuex.Store({
       state.colorTheme = payload
     },
     ADD_STATISTIC (state, payload) {
-      state.statistic.push(
-        {
-          value: payload,
-          note: ''
+      let now = new Date();
+      let itemToAd = {
+          value: payload.value,
+          note: `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`
         }
-      )
+      if (payload.index !== undefined) {
+        state.statistic.splice(payload.index, 0, itemToAd)
+      } else {
+        state.statistic.push(itemToAd)
+      }
     },
     EDIT_STATISTIC_VALUE (state, payload) {
       Vue.set(state.statistic, payload.index, {
@@ -163,11 +167,14 @@ export default new Vuex.Store({
       })
     },
     EDIT_STATISTIC_NOTE (state, payload) {
-      state.statistic[payload.index] = {
+      console.log(payload)
+      Vue.set(state.statistic, payload.index, {
+        value: state.statistic[payload.index].value,
         note: payload.note
-      }
+      })
     },
     REMOVE_STATISTIC (state, payload) {
+      console.log('+')
       state.statistic.splice(payload, 1)
     }
   },
