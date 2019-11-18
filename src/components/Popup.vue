@@ -28,10 +28,11 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-.popup
+.popup__container
   position: absolute
-  left: 3.5vh
-  top: 7vh
+  left: 50%
+  top: 50%
+  transform: translate(-50%, -50%)
   width: 40vw
   font-size: 1rem
   background-color: var(--light)
