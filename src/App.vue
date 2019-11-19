@@ -1,25 +1,73 @@
 <template>
-  <div class="root" :style="COLORS">
+  <div class="container-fluid" :style="COLORS">
+    <div class="row">
+      <div class="col-12 fill-screen-height">
+        <timer-title :title="title"></timer-title>
 
-    <timer-title :title="title"></timer-title>
+        <github-link></github-link>
 
-    <github-link></github-link>
+        <div class="navigation d-flex">
+          <router-link to="/" v-if="$router.currentRoute.path !== '/'" class="btn-round">
+            <i class="far fa-clock"></i>
+          </router-link>
+          <router-link to="/statistic" v-else class="btn-round">
+            <i class="far fa-chart-bar"></i>
+          </router-link>
 
-    <transition name="fade">
-      <router-view />
-    </transition>
+          <!-- SETTINGS -->
+          <button class="btn-round" @click="isSettingsMode = !isSettingsMode">
+            <i v-if="!isSettingsMode" class="fas fa-cog"></i>
+            <i v-else class="fas fa-times"></i>
+          </button>
+          <transition name="slide">
+            <div v-if="isSettingsMode" class="settings__elements d-flex ml-2">
+              <component
+                v-for="item in components"
+                :is="item + '-settings'"
+                :key="item"
+                class="list-item"
+                :is-settings-mode="isSettingsMode"
+              ></component>
+            </div>
+          </transition>
+        </div>
 
+        <transition name="fade" mode="out-in">
+          <router-view />
+        </transition>
+
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import TimerTitle from '@/components/TimerTitle.vue';
 import GithubLink from '@/components/GithubLink.vue';
+import ColorSettings from '@/components/settings/ColorSettings.vue'
+import SoundSettings from '@/components/settings/SoundSettings.vue'
+import ProgressSettings from '@/components/settings/ProgressSettings.vue'
+import TitleSettings from '@/components/settings/TitleSettings.vue'
+import NotificationSettings from '@/components/settings/NotificationSettings.vue'
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { TAB_TITLE_DEFAULT } from './constants';
 
 export default {
-  components: { TimerTitle, GithubLink },
+  components: {
+    TimerTitle,
+    GithubLink,
+    ColorSettings,
+    SoundSettings,
+    ProgressSettings,
+    TitleSettings,
+    NotificationSettings
+  },
+  data() {
+    return {
+      isSettingsMode: false,
+      components: ['color', 'sound', 'progress', 'title', 'notification']
+    }
+  },
   computed: {
     ...mapState([
       'isTimerTitle'
@@ -34,7 +82,6 @@ export default {
   },
   created () {
     this.startTimer()
-
   },
   methods: {
     ...mapActions([
@@ -46,46 +93,28 @@ export default {
 </script>
 
 <style lang="sass">
-html
-  padding: 0
-  margin: 0
-  height: 100vh
-  width: 100vw
-
 body
-  position: relative
-  padding: 0
-  margin: 0
-  height: 100%
-  width: 100%
-  line-height: 1
-
-.root
-  height: 100%
-  width: 100%
   font-family: Arial, sans-serif
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
   background-color: var(--super-light)
   color: var(--super-dark)
-
-.navigation, .github-corner
-  @media (max-height: 400px)
-    display: none
+  margin: 0
+  padding: 0
 
 .navigation
   position: absolute
   left: 5px
   top: 5px
+  padding: 0
+  z-index: 1000
 
-  a
-    font-weight: bold
-    font-size: 20px
-    color: var(--super-dark)
-    text-decoration: none
+// COMMON TOOLS
+.fill-screen-height
+  height: 100vh
 
-    &.router-link-exact-active
-      color: var(--dark)
+.fill-screen-width
+  width: 100vw
 
 .btn-success
   color: var(--super-light)
@@ -123,6 +152,35 @@ body
     outline: none
     text-decoration: none
 
+.btn-round
+  position: relative
+  display: flex
+  justify-content: center
+  align-items: center
+  width: 6vh
+  height: 6vh
+  font-size: 3.5vh
+  margin-left: 3px
+  border: none
+  border-radius: 50%
+  cursor: pointer
+  transition: all 0.15s
+  color: var(--super-light)
+  background-color: var(--dark)
+  &:hover
+    background-color: var(--primary)
+    color: var(--super-light)
+    text-decoration: none
+  &:first-child
+    margin-left: 0
+  &:focus
+    outline: none
+
+.btn-large
+  width: 8vh
+  height: 8vh
+
+
 .noselect
   -webkit-touch-callout: none
   -webkit-user-select: none
@@ -131,6 +189,8 @@ body
   -ms-user-select: none
   user-select: none
 
+
+// TRANSITIONS
 .fade-enter
   opacity: 0
 
@@ -181,21 +241,4 @@ body
   width: 0%!important
   transition: all 0.3s
 
-.settings__element
-  position: relative
-  display: flex
-  justify-content: center
-  align-items: center
-  height: 6vh
-  width: 6vh
-  font-size: 3.5vh
-  margin-left: 3px
-  border-radius: 50%
-  cursor: pointer
-  transition: all 0.15s
-  color: var(--super-light)
-  background-color: var(--primary)
-  text-decoration: none
-  &:hover
-    background-color: var(--dark)
 </style>

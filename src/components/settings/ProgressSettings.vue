@@ -1,5 +1,5 @@
 <template>
-  <div class="settings__element" @click="isReversedProgressBar = !isReversedProgressBar">
+  <div class="btn-round" @click="isReversedProgressBar = !isReversedProgressBar">
     <i class="fas fa-redo-alt"
       :class="{'fa-flip-horizontal': isReversedProgressBar}"></i>
   </div>

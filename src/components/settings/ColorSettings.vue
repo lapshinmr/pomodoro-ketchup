@@ -1,5 +1,5 @@
 <template>
-  <div class="settings__element" @click="nextColorTheme">
+  <div class="btn-round" @click="nextColorTheme">
     <i class="fas fa-palette"></i>
   </div>
 </template>

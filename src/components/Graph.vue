@@ -1,6 +1,7 @@
 <template>
   <div class="graph">
-    <popup v-if="isOpened" :toggle-popup="togglePopup" :isOpened="isOpened">
+
+    <popup v-if="isOpened" class="graph__popup" :toggle-popup="togglePopup" :isOpened="isOpened">
       <button type="button" class="close" aria-label="Close" @click="isOpened = false">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -35,87 +36,121 @@
         >Add bar</button>
       </div>
     </popup>
+
     <svg class="graph__container" :viewBox="'0 0 ' + svgWidth + ' ' + svgHeight">
       <g transform="translate(0, 150) scale(1, -1)">
         <template v-for="(item, index) in statisticRanged">
-          <transition name="fade">
-            <rect
-              class="graph__bar"
-              :width="barWidth"
-              :height="item.value * barsUnit"
-              :x="barsStep * (index + 1) - barWidth / 2"
-              :y="barStart"
-              @click="activatePopup(index)"
-            />
-          </transition>
+          <!-- BAR -->
+          <rect
+            class="graph__bar"
+            :width="barWidth"
+            :height="item.value * barsUnit"
+            :x="barsStep * (index + 1) - barWidth / 2"
+            :y="bottomSpace"
+            @click="activatePopup(index)"
+          />
+          <!-- BAR CONTROL LINE -->
           <rect
             class="graph__control-line"
             :width="barWidth"
             :height="2"
             :x="barsStep * (index + 1) - barWidth / 2"
-            :y="barStart + item.value * barsUnit - 2"
+            :y="bottomSpace + item.value * barsUnit - 2"
             v-draggable
             :data-index="index"
           />
           <g transform="scale(1, -1)">
             <text
-              class="graph__text noselect"
+              class="graph__counter noselect"
+              :style="{'font-size': barCounterFont + 'px'}"
               :x="barsStep * (index + 1)"
-              :y="-(barStart + item.value * barsUnit + textGap)"
+              :y="-(bottomSpace + item.value * barsUnit + barCounterTextGap)"
             >
               {{ item.value }}
             </text>
-          </g>
-          <g transform="scale(1, -1)">
+
+            <!--
             <text
               class="graph__note noselect"
+              :style="{'font-size': barCounterFont - 1 + 'px'}"
               :x="barsStep * (index + 1) + barWidth / 4"
-              :y="-(underlineSpace - underlineTopGap)"
-              :transform="'rotate(-45, ' + (barsStep * (index + 1) + barWidth / 4) + ', ' + ( - (underlineSpace - underlineTopGap) ) + ')'"
+              :y="-(bottomSpace - underlineTopGap)"
+              :transform="'rotate(-60, ' + (barsStep * (index + 1) + barWidth / 4) + ', ' + ( - (bottomSpace - underlineTopGap) ) + ')'"
             >
               {{ item.note }}
             </text>
+            -->
           </g>
         </template>
 
+        <!-- LINES -->
         <line
-          class="graph__axis"
+          class="graph__average"
+          :style="{'stroke-width': meanWidth + 'px'}"
           :x1="0"
           :x2="graphWidth"
-          :y1="underlineSpace"
-          :y2="underlineSpace"
+          :y1="stats.mean * barsUnit + bottomSpace"
+          :y2="stats.mean * barsUnit + bottomSpace"
         />
+        <g transform="scale(1, -1)">
+          <text
+            class="noselect"
+            :style="{'font-size': barCounterFont + 'px'}"
+            :x="graphWidth"
+            :y="- ( stats.mean * barsUnit + bottomSpace + barCounterFont )"
+          >
+            <tspan :x="graphWidth" :dy="barCounterFont + 'px'">
+              {{ stats.mean.toFixed(2) }}
+            </tspan>
+            <tspan :x="graphWidth" :dy="barCounterFont + 'px'">
+              {{ (stats.delta > 0 ? '+' : '') + (stats.delta).toFixed(2) }}
+            </tspan>
+          </text>
+        </g>
 
+        <!-- CURRENT PROGRESS -->
         <rect
           class="graph__add"
           :width="barWidth"
           :height="pomodorosTotal * barsUnit"
           :x="svgWidth - barWidth"
-          :y="barStart"
+          :y="bottomSpace"
           @click="commitCurrent"
         />
         <g transform="scale(1, -1)">
           <text
             class="graph__add-text noselect"
             :x="svgWidth - barWidth / 2"
-            :y="-(barStart + pomodorosTotal * barsUnit + textGap)"
+            :y="-(bottomSpace + pomodorosTotal * barsUnit + barCounterTextGap)"
           >
             {{ pomodorosTotal }}
           </text>
           <text
             class="graph__add-note noselect"
             :x="svgWidth - barWidth / 2"
-            :y="-(underlineSpace - underlineTopGap)"
+            :y="-(bottomSpace)"
           >
             progress
           </text>
         </g>
 
+        <!-- AXIS -->
+        <line
+          class="graph__axis"
+          :style="{'stroke-width': axisWidth + 'px'}"
+          :x1="0"
+          :x2="graphWidth"
+          :y1="bottomSpace - axisGap"
+          :y2="bottomSpace - axisGap"
+        />
+
+
+        <!-- VIEW CONTROL
         <g transform="scale(1, -1)">
           <text
             class="graph__move graph__move--left noselect"
             :x="0"
-            :y="-( barStart + maxBarHeight / 2)"
+            :y="-( bottomSpace + maxBarHeight / 2)"
             @click="moveLeft"
           >
             &#xf053;
@@ -123,10 +158,61 @@
           <text
             class="graph__move graph__move--right noselect"
             :x="graphWidth"
-            :y="-( barStart + maxBarHeight / 2 )"
+            :y="-( bottomSpace + maxBarHeight / 2 )"
             @click="moveRight"
           >
             &#xf054;
+          </text>
+        </g>
+         -->
+
+        <!-- MINI BARS -->
+        <template v-for="(item, index) in statistic">
+          <rect
+            class="graph__bar"
+            :width="miniBarWidth"
+            :height="item.value * miniBarsUnit"
+            :x="miniBarsStep * index"
+            :y="statsSpace"
+          />
+        </template>
+
+        <rect
+          class="graph__scale-area"
+          :width="miniBarWidth * (range[1] - range[0])"
+          :height="bottomSpace - 2 * axisGap - statsSpace"
+          :x="miniBarsStep * range[0]"
+          :y="statsSpace"
+        />
+        <rect
+          class="graph__scale-control"
+          :width="2"
+          :height="bottomSpace - 2 * axisGap - statsSpace"
+          :x="miniBarsStep * range[0]"
+          :y="statsSpace"
+          @click="moveLeft"
+        />
+        <rect
+          class="graph__scale-control"
+          :width="2"
+          :height="bottomSpace - 2 * axisGap - statsSpace"
+          :x="miniBarsStep * range[1] "
+          :y="statsSpace"
+          @click="moveRight"
+        />
+
+        <!-- STATS -->
+        <g transform="scale(1, -1)">
+          <!-- Total -->
+          <text
+            class="noselect"
+            :style="{'font-size': barCounterFont + 'px'}"
+            style=""
+            :x="0"
+            :y="0"
+          >
+              Total: {{ stats.sumNew }}
+            </tspan>
           </text>
         </g>
 
@@ -145,21 +231,29 @@ export default {
     return {
       isOpened: false,
       activeBarIdx: null,
+
+      // SIZES
       svgHeight: 150,
       svgWidth: 150,
       graphWidth: 120,
-      barWidth: 5,
-      topBarGap: 8,
-      bottomBarGap: 5,
-      textGap: 2,
-      underlineSpace: 35,
-      underlineTopGap: 5,
+
+      barsSpace: 120,
+      bottomSpace: 30,
+
+      barWidth: 3,
+      axisWidth: 0.5,
+      meanWidth: 0.5,
+
+      barCounterTextGap: 2,
+      axisGap: 5,
+      statsSpace: 5,
+
+      barCounterFont: 5,
+
+      // VIEW
       scale: 10,
       offset: 0
     }
-  },
-  created() {
-    console.log(this.statisticRanged)
   },
   computed: {
     ...mapState([
@@ -167,10 +261,7 @@ export default {
       'statistic'
     ]),
     maxBarHeight () {
-      return this.svgHeight - this.barStart - this.topBarGap - this.textGap
-    },
-    barStart () {
-      return this.bottomBarGap + this.underlineSpace
+      return this.barsSpace - this.barCounterFont - this.barCounterTextGap
     },
     barsStep () {
       return this.graphWidth / (this.statisticRanged.length + 1)
@@ -178,6 +269,16 @@ export default {
     barsUnit () {
       let allValues = [...this.statisticRanged.map(item => item.value), this.pomodorosTotal]
       return this.maxBarHeight / Math.max(...allValues)
+    },
+    miniBarsUnit () {
+      let allValues = [...this.statistic.map(item => item.value), this.pomodorosTotal]
+      return ( this.bottomSpace - 2 * this.axisGap - this.statsSpace) / Math.max(...allValues)
+    },
+    miniBarWidth () {
+      return this.svgWidth / (this.statistic.length)
+    },
+    miniBarsStep () {
+      return this.svgWidth / (this.statistic.length)
     },
     popupData () {
       return {
@@ -195,6 +296,24 @@ export default {
     offsetReversed () {
       let result = this.statistic.length - this.offset - this.scale
       return result < 0 ? 0 : result
+    },
+    stats () {
+      let statistic = this.statistic.map(item => item.value);
+      let statisticNew = [...statistic, this.pomodorosTotal];
+      let sum = statistic.reduce((result, value) => result += value );
+      let sumNew = statisticNew.reduce((result, value) => result += value );
+      let mean = ( sum / statistic.length )
+      let meanNew = ( sumNew / statisticNew.length )
+      let delta = meanNew - mean
+      return {
+        sum, sumNew, mean, meanNew, delta
+      }
+    },
+    pomodorosMean () {
+      return (this.pomodorosSum / this.statistic.length).toFixed(2)
+    },
+    pomodorosAverageNew () {
+      return (this.pomodorosSum / this.statistic.length).toFixed(2)
     },
     barValue: {
       get() {
@@ -294,6 +413,35 @@ export default {
           return false;
         })
       }
+    },
+    'draggable-scale': {
+      bind(el, binding, vnode) {
+        let canvasHeight, initY, curPomodoros, curBarIdx;
+
+        function mousemove(e) {
+          if (e.buttons === 0) {
+            document.removeEventListener('mousemove', mousemove);
+            return
+          };
+          let dy = (initY - e.clientY) * 150 / canvasHeight;
+          let dp = Math.ceil(dy / vnode.context.barsUnit);
+          let pomodorosToSet = curPomodoros + dp < 0 ? 0 : curPomodoros + dp;
+          vnode.context.editStatisticValue({
+            index: curBarIdx + vnode.context.offsetReversed,
+            value: pomodorosToSet
+          });
+          return false;
+        }
+
+        el.addEventListener('mousedown', (e) => {
+          curBarIdx = parseInt(e.currentTarget.getAttribute('data-index'))
+          curPomodoros = vnode.context.statisticRanged[curBarIdx].value
+          canvasHeight = document.querySelector('.graph__container').clientHeight
+          initY = e.clientY
+          document.addEventListener('mousemove', mousemove);
+          return false;
+        })
+      }
     }
   }
 }
@@ -301,69 +449,50 @@ export default {
 
 <style lang="sass" scoped>
 .graph
-  position: relative
-  min-height: 75vh
-  max-height: 75vh
-  min-width: 90vw
-  max-width: 90vw
-  font-size: 90vw
-
-  @media (min-aspect-ratio: 75/90)
-    font-size: 75vh
-
-  @media (max-height: 400px)
-    min-height: 95vh
-    max-height: 95vh
-    min-width: 95vw
-    max-width: 95vw
-    font-size: 95vh
+  height: 80vh
 
   .graph__container
-    position: absolute
-    left: 50%
-    top: 50%
-    transform: translate(-50%, -50%)
-    height: 100%
     width: 100%
+    height: 100%
+
+svg
+  rect
+    fill: var(--primary)
+  text
+    fill: var(--dark)
 
   .graph__bar
     fill: var(--primary)
+    opacity: 0.75
     &:hover
       fill: var(--dark)
       cursor: pointer
     &:hover + .graph__control-line
       fill: var(--super-light)
 
-  .graph__text
-    font-size: 8px
+  .graph__counter
     fill: var(--dark)
     text-anchor: middle
 
   .graph__note
-    font-size: 5px
-    fill: var(--dark)
     text-anchor: end
 
   .graph__add
-    fill: var(--primary)
     &:hover
       fill: var(--dark)
       cursor: pointer
 
   .graph__add-text
     font-size: 8px
-    fill: var(--dark)
     text-anchor: middle
 
   .graph__add-note
     font-size: 6px
-    fill: var(--dark)
     text-anchor: middle
 
   .graph__move
     font-size: 6px
     font-family: FontAwesome
-    fill: var(--dark)
     &.graph__move--left
       text-anchor: end
     &.graph__move--right
@@ -373,12 +502,21 @@ export default {
       cursor: pointer
 
   .graph__control-line
-    fill: var(--primary)
     cursor: grab
     &:hover
       fill: var(--dark)
 
-  .graph__axis
+  .graph__axis, .graph__average
     stroke: var(--dark)
-    stroke-width: 0.2vw
+
+  .graph__average
+    stroke-dasharray: 1.5px
+
+  .graph__scale-area
+    fill: var(--dark)
+    opacity: 0.5
+
+  .graph__scale-control
+    fill: var(--super-dark)
+
 </style>

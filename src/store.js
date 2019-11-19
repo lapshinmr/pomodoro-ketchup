@@ -161,21 +161,18 @@ export default new Vuex.Store({
       }
     },
     EDIT_STATISTIC_VALUE (state, payload) {
-      console.log(payload)
       Vue.set(state.statistic, payload.index, {
         value: payload.value,
         note: state.statistic[payload.index].note
       })
     },
     EDIT_STATISTIC_NOTE (state, payload) {
-      console.log(payload)
       Vue.set(state.statistic, payload.index, {
         value: state.statistic[payload.index].value,
         note: payload.note
       })
     },
     REMOVE_STATISTIC (state, payload) {
-      console.log('+')
       state.statistic.splice(payload, 1)
     }
   },

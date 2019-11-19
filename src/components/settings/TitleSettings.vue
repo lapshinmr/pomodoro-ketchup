@@ -1,6 +1,6 @@
 <template>
-  <div class="settings__element" @click="isTimerTitle = !isTimerTitle">
-    <i class="far fa-clock"></i>
+  <div class="btn-round" @click="isTimerTitle = !isTimerTitle">
+    <i class="fas fa-heading"></i>
   </div>
 </template>
 

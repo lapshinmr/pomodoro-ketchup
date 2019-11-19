@@ -28,7 +28,7 @@
     <div class="timer__buttons">
       <button
         v-if="isPause"
-        class="timer__button btn btn-success"
+        class="btn-round btn-large"
         @click="startTimer(playFromButton=true)"
         key="play"
       >
@@ -36,14 +36,14 @@
       </button>
       <button
         v-if="!isPause"
-        class="timer__button btn btn-success"
+        class="btn-round btn-large"
         @click="pauseTimer"
         key="pause"
       >
         <i class="fas fa-pause"></i>
       </button>
       <button
-        class="timer__button btn btn-success ml-2"
+        class="btn-round btn-large ml-2"
         @click="resetTimer"
         key="stop"
       >
@@ -156,15 +156,5 @@ export default {
     left: 50%
     transform: translateX(-50%)
     width: 70%
-
-    .timer__button
-      font-size: 4%
-      border-radius: 50%
-      display: flex
-      align-items: center
-      justify-content: center
-      padding: 1rem
-
-
 
 </style>

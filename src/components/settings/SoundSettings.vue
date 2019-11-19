@@ -1,5 +1,5 @@
 <template>
-  <div class="settings__element" @click="nextSound">
+  <div class="btn-round" @click="nextSound">
     <i class="fas fa-volume-up"></i>
   </div>
 </template>

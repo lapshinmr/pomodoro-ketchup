@@ -1,5 +1,5 @@
 <template>
-  <div class="settings__element" :class="{active: isOpened}">
+  <div class="btn-round" :class="{active: isOpened}">
     <div v-if="isGranted" class="element__open-area" @click="isOpened = !isOpened">
       <i class="fas fa-bell"></i>
     </div>
@@ -129,7 +129,7 @@ export default {
   bottom: 0
 
 .active
-  background-color: var(--dark)!important
+  background-color: var(--primary)!important
 
 
 .fade-enter

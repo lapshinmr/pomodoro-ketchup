@@ -10,7 +10,7 @@
     <transition name="fade">
       <button
         v-if="pomodorosTotal"
-        class="pomodoros-progress-bar__reset-button btn btn-success"
+        class="pomodoros-progress-bar__reset-button btn-round"
         @click="setPomodorosTotal(0)"
       >
         <i class="fas fa-sync-alt"></i>
@@ -116,19 +116,10 @@ export default {
       width: 100%
       background-color: var(--primary)
 
-
-
   .pomodoros-progress-bar__reset-button
     position: absolute
     bottom: 10px
     right: 10px
     z-index: 1000
-    font-size: 4vh
-    border-radius: 50%
-    display: flex
-    align-items: center
-    justify-content: center
-    padding: 0.75rem
-    color: var(--super-light)
 
 </style>
