@@ -61,7 +61,7 @@ export default {
             vnode.context.isTransition = true;
             return
           };
-          curPomodoros = Math.ceil(
+          curPomodoros = Math.floor(
             (rootHeight - e.clientY) / rootHeight * vnode.context.pomodorosGoal
           )
           if (curPomodoros !== vnode.context.pomodorosTotal) {

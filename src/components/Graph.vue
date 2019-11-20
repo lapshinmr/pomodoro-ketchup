@@ -1,5 +1,5 @@
 <template>
-  <div class="graph">
+  <div class="graph d-flex justify-content-center">
 
     <popup v-if="isOpened" class="graph__popup" :toggle-popup="togglePopup" :isOpened="isOpened">
       <button type="button" class="close" aria-label="Close" @click="isOpened = false">
@@ -172,17 +172,18 @@
             class="graph__bar"
             :width="miniBarWidth"
             :height="item.value * miniBarsUnit"
-            :x="miniBarsStep * index"
+            :x="miniBarsStep * index + (miniBarsStep / 2)"
             :y="statsSpace"
           />
         </template>
 
         <rect
           class="graph__scale-area"
-          :width="miniBarWidth * (range[1] - range[0])"
+          :width="miniBarsStep * (range[1] - range[0])"
           :height="bottomSpace - 2 * axisGap - statsSpace"
           :x="miniBarsStep * range[0]"
           :y="statsSpace"
+          v-draggable-scale
         />
         <rect
           class="graph__scale-control"
@@ -190,7 +191,7 @@
           :height="bottomSpace - 2 * axisGap - statsSpace"
           :x="miniBarsStep * range[0]"
           :y="statsSpace"
-          @click="moveLeft"
+          v-scaleable="'left'"
         />
         <rect
           class="graph__scale-control"
@@ -199,6 +200,7 @@
           :x="miniBarsStep * range[1] "
           :y="statsSpace"
           @click="moveRight"
+          v-scaleable="'right'"
         />
 
         <!-- STATS -->
@@ -275,7 +277,7 @@ export default {
       return ( this.bottomSpace - 2 * this.axisGap - this.statsSpace) / Math.max(...allValues)
     },
     miniBarWidth () {
-      return this.svgWidth / (this.statistic.length)
+      return this.svgWidth / (this.statistic.length) * 0.3
     },
     miniBarsStep () {
       return this.svgWidth / (this.statistic.length)
@@ -395,7 +397,7 @@ export default {
             return
           };
           let dy = (initY - e.clientY) * 150 / canvasHeight;
-          let dp = Math.ceil(dy / vnode.context.barsUnit);
+          let dp = Math.floor(dy / vnode.context.barsUnit);
           let pomodorosToSet = curPomodoros + dp < 0 ? 0 : curPomodoros + dp;
           vnode.context.editStatisticValue({
             index: curBarIdx + vnode.context.offsetReversed,
@@ -416,28 +418,72 @@ export default {
     },
     'draggable-scale': {
       bind(el, binding, vnode) {
-        let canvasHeight, initY, curPomodoros, curBarIdx;
+        let canvasWidth, initX, initOffset;
 
         function mousemove(e) {
           if (e.buttons === 0) {
             document.removeEventListener('mousemove', mousemove);
             return
           };
-          let dy = (initY - e.clientY) * 150 / canvasHeight;
-          let dp = Math.ceil(dy / vnode.context.barsUnit);
-          let pomodorosToSet = curPomodoros + dp < 0 ? 0 : curPomodoros + dp;
-          vnode.context.editStatisticValue({
-            index: curBarIdx + vnode.context.offsetReversed,
-            value: pomodorosToSet
-          });
+          let dx = (initX - e.clientX) * 150 / canvasWidth;
+          let dp = Math.floor(dx / vnode.context.miniBarsStep);
+
+          if (initOffset + dp < 0) {
+            vnode.context.offset = 0
+          } else if (initOffset + dp >= vnode.context.statistic.length - vnode.context.scale) {
+            vnode.context.offset = vnode.context.statistic.length - vnode.context.scale
+          } else {
+            vnode.context.offset = initOffset + dp
+          }
           return false;
         }
 
         el.addEventListener('mousedown', (e) => {
-          curBarIdx = parseInt(e.currentTarget.getAttribute('data-index'))
-          curPomodoros = vnode.context.statisticRanged[curBarIdx].value
-          canvasHeight = document.querySelector('.graph__container').clientHeight
-          initY = e.clientY
+          canvasWidth = document.querySelector('.graph__container').clientWidth;
+          initX = e.clientX;
+          initOffset = vnode.context.offset;
+          document.addEventListener('mousemove', mousemove);
+          return false;
+        })
+      }
+    },
+    'scaleable': {
+      bind(el, binding, vnode) {
+        let canvasWidth, initX, initScale, initOffset;
+
+        function mousemove(e) {
+          if (e.buttons === 0) {
+            document.removeEventListener('mousemove', mousemove);
+            return
+          };
+          let dx = (initX - e.clientX) * 150 / canvasWidth;
+          let dp = Math.floor(dx / vnode.context.miniBarsStep);
+          let newScale;
+          if (binding.value === 'left') {
+            newScale = initScale + dp;
+            if ( newScale < 1 || newScale > vnode.context.statistic.length ) { return }
+            vnode.context.scale = newScale;
+          } else {
+            newScale = initScale - dp;
+            if (initOffset + dp < 0) { return }
+            if ( newScale < 1 || newScale > vnode.context.statistic.length ) { return }
+            vnode.context.scale = newScale;
+            if (initOffset + dp < 0) {
+              vnode.context.offset = 0
+            } else if (initOffset + dp >= vnode.context.statistic.length - vnode.context.scale) {
+              vnode.context.offset = vnode.context.statistic.length - vnode.context.scale
+            } else {
+              vnode.context.offset = initOffset + dp
+            }
+          }
+          return false;
+        }
+
+        el.addEventListener('mousedown', (e) => {
+          canvasWidth = document.querySelector('.graph__container').clientWidth;
+          initX = e.clientX;
+          initScale = vnode.context.scale;
+          initOffset = vnode.context.offset;
           document.addEventListener('mousemove', mousemove);
           return false;
         })
@@ -452,7 +498,6 @@ export default {
   height: 80vh
 
   .graph__container
-    width: 100%
     height: 100%
 
 svg

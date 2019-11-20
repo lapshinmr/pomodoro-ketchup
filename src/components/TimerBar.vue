@@ -89,7 +89,7 @@ export default {
               degree = degree + 270
               break
           }
-          let curTime = Math.ceil(vnode.context.timeInit * (1 - degree / 360))
+          let curTime = Math.floor(vnode.context.timeInit * (1 - degree / 360))
           if (curTime !== vnode.context.timeLeft && curTime % 10 === 0) {
             if (curTime === 0) {
               curTime = vnode.context.timeInit
