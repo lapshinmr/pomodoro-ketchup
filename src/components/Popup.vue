@@ -1,6 +1,7 @@
 <template>
-  <div class="popup" :style="location">
+  <div class="popup noselect" :style="location">
     <slot name="note"></slot>
+    <slot name="count"></slot>
   </div>
 
 </template>

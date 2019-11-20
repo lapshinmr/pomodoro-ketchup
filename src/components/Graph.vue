@@ -42,6 +42,10 @@
         <div class="" slot="note">
           {{ statistic[activeBarIdx].note }}
         </div>
+        <div class="" slot="count">
+          {{ statistic[activeBarIdx].value }}
+          pomodoro{{ statistic[activeBarIdx].value > 1 ? 's' : '' }}
+        </div>
       </popup>
     </transition>
 
@@ -69,7 +73,7 @@
             v-draggable
             :data-index="index"
           />
-          <g transform="scale(1, -1)">
+          <g v-if="statisticRanged.length < 15" transform="scale(1, -1)">
             <text
               class="graph__counter noselect"
               :style="{'font-size': barCounterFont + 'px'}"
