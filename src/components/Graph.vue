@@ -49,13 +49,12 @@
             :y="bottomSpace"
             @click="activatePopup(index)"
           />
-          <!-- BAR CONTROL LINE -->
           <rect
             class="graph__control-line"
             :width="barWidth"
-            :height="2"
-            :x="barsStep * (index + 1) - barWidth / 2"
-            :y="bottomSpace + item.value * barsUnit - 2"
+            :height="controlLineWidth"
+            :x="barsStep * (index + 1) - (1 / 2) * barWidth"
+            :y="bottomSpace + item.value * barsUnit - controlLineWidth"
             v-draggable
             :data-index="index"
           />
@@ -68,22 +67,10 @@
             >
               {{ item.value }}
             </text>
-
-            <!--
-            <text
-              class="graph__note noselect"
-              :style="{'font-size': barCounterFont - 1 + 'px'}"
-              :x="barsStep * (index + 1) + barWidth / 4"
-              :y="-(bottomSpace - underlineTopGap)"
-              :transform="'rotate(-60, ' + (barsStep * (index + 1) + barWidth / 4) + ', ' + ( - (bottomSpace - underlineTopGap) ) + ')'"
-            >
-              {{ item.note }}
-            </text>
-            -->
           </g>
         </template>
 
-        <!-- LINES -->
+        <!-- AVERAGE -->
         <line
           class="graph__average"
           :style="{'stroke-width': meanWidth + 'px'}"
@@ -110,27 +97,37 @@
 
         <!-- CURRENT PROGRESS -->
         <rect
-          class="graph__add"
+          class="graph__bar graph__add"
           :width="barWidth"
           :height="pomodorosTotal * barsUnit"
-          :x="svgWidth - barWidth"
+          :x="svgWidth - 4* barWidth"
           :y="bottomSpace"
-          @click="commitCurrent"
+        />
+        <rect
+          class="graph__control-line"
+          :width="barWidth"
+          :height="controlLineWidth"
+          :x="svgWidth - 4 * barWidth"
+          :y="bottomSpace + pomodorosTotal * barsUnit - controlLineWidth"
+          v-draggable="'progress'"
         />
         <g transform="scale(1, -1)">
           <text
-            class="graph__add-text noselect"
-            :x="svgWidth - barWidth / 2"
+            class="graph__add-counter noselect"
+            :style="{'font-size': barCounterFont + 'px', 'text-anchor': 'middle'}"
+            :x="svgWidth - ( 3 + 1/2 ) * barWidth"
             :y="-(bottomSpace + pomodorosTotal * barsUnit + barCounterTextGap)"
           >
             {{ pomodorosTotal }}
           </text>
           <text
-            class="graph__add-note noselect"
-            :x="svgWidth - barWidth / 2"
-            :y="-(bottomSpace)"
+            class="graph__add-button noselect"
+            :style="{'font-size': barCounterFont + 2 + 'px', 'text-anchor': 'middle'}"
+            :x="svgWidth - ( 3 + 1/2 ) * barWidth"
+            :y="-(bottomSpace - ( 1 + 1/2 ) * axisGap)"
+            @click="commitCurrent"
           >
-            progress
+            add
           </text>
         </g>
 
@@ -144,39 +141,27 @@
           :y2="bottomSpace - axisGap"
         />
 
-
-        <!-- VIEW CONTROL
-        <g transform="scale(1, -1)">
-          <text
-            class="graph__move graph__move--left noselect"
-            :x="0"
-            :y="-( bottomSpace + maxBarHeight / 2)"
-            @click="moveLeft"
-          >
-            &#xf053;
-          </text>
-          <text
-            class="graph__move graph__move--right noselect"
-            :x="graphWidth"
-            :y="-( bottomSpace + maxBarHeight / 2 )"
-            @click="moveRight"
-          >
-            &#xf054;
-          </text>
-        </g>
-         -->
-
         <!-- MINI BARS -->
         <template v-for="(item, index) in statistic">
           <rect
             class="graph__bar"
             :width="miniBarWidth"
             :height="item.value * miniBarsUnit"
-            :x="miniBarsStep * index + (miniBarsStep / 2)"
+            :x="miniBarsStep * index + (miniBarsStep / 2) - (miniBarWidth / 2)"
             :y="statsSpace"
           />
         </template>
 
+        <line
+          class="graph__average"
+          :style="{'stroke-width': meanWidth + 'px'}"
+          :x1="0"
+          :x2="svgWidth"
+          :y1="stats.mean * miniBarsUnit + statsSpace"
+          :y2="stats.mean * miniBarsUnit + statsSpace"
+        />
+
+        <!-- SCALE CONTROL -->
         <rect
           class="graph__scale-area"
           :width="miniBarsStep * (range[1] - range[0])"
@@ -197,9 +182,8 @@
           class="graph__scale-control"
           :width="2"
           :height="bottomSpace - 2 * axisGap - statsSpace"
-          :x="miniBarsStep * range[1] "
+          :x="miniBarsStep * range[1] - miniBarWidth"
           :y="statsSpace"
-          @click="moveRight"
           v-scaleable="'right'"
         />
 
@@ -214,6 +198,26 @@
             :y="0"
           >
               Total: {{ stats.sumNew }}
+            </tspan>
+          </text>
+          <text
+            class="noselect"
+            :style="{'font-size': barCounterFont + 'px', 'text-anchor': 'middle'}"
+            style=""
+            :x="svgWidth / 2"
+            :y="0"
+          >
+              Min: {{ Math.min(...statistic.map(item => item.value)) }}
+            </tspan>
+          </text>
+          <text
+            class="noselect"
+            :style="{'font-size': barCounterFont + 'px', 'text-anchor': 'end'}"
+            style=""
+            :x="svgWidth"
+            :y="0"
+          >
+              Max: {{ Math.max(...statistic.map(item => item.value)) }}
             </tspan>
           </text>
         </g>
@@ -243,6 +247,7 @@ export default {
       bottomSpace: 30,
 
       barWidth: 3,
+      controlLineWidth: 1,
       axisWidth: 0.5,
       meanWidth: 0.5,
 
@@ -354,7 +359,8 @@ export default {
       'addStatistic',
       'editStatisticValue',
       'editStatisticNote',
-      'removeStatistic'
+      'removeStatistic',
+      'setPomodorosTotal'
     ]),
     commitCurrent() {
       this.addStatistic({ value: this.pomodorosTotal })
@@ -374,16 +380,6 @@ export default {
       this.removeStatistic(this.activeBarIdx + this.offsetReversed)
       this.activeBar = null;
       this.isOpened = false;
-    },
-    moveLeft() {
-      if (this.offset < this.statistic.length - this.scale) {
-        this.offset++
-      }
-    },
-    moveRight() {
-      if (this.offset > 0) {
-        this.offset--
-      }
     }
   },
   directives: {
@@ -399,16 +395,24 @@ export default {
           let dy = (initY - e.clientY) * 150 / canvasHeight;
           let dp = Math.floor(dy / vnode.context.barsUnit);
           let pomodorosToSet = curPomodoros + dp < 0 ? 0 : curPomodoros + dp;
-          vnode.context.editStatisticValue({
-            index: curBarIdx + vnode.context.offsetReversed,
-            value: pomodorosToSet
-          });
+          if (binding.value === 'progress') {
+            vnode.context.setPomodorosTotal(pomodorosToSet)
+          } else {
+            vnode.context.editStatisticValue({
+              index: curBarIdx + vnode.context.offsetReversed,
+              value: pomodorosToSet
+            });
+          }
           return false;
         }
 
         el.addEventListener('mousedown', (e) => {
-          curBarIdx = parseInt(e.currentTarget.getAttribute('data-index'))
-          curPomodoros = vnode.context.statisticRanged[curBarIdx].value
+          if (binding.value === 'progress') {
+            curPomodoros = vnode.context.pomodorosTotal;
+          } else {
+            curBarIdx = parseInt(e.currentTarget.getAttribute('data-index'))
+            curPomodoros = vnode.context.statisticRanged[curBarIdx].value
+          }
           canvasHeight = document.querySelector('.graph__container').clientHeight
           initY = e.clientY
           document.addEventListener('mousemove', mousemove);
@@ -494,74 +498,67 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+svg
+  rect
+    fill: var(--primary)
+  text
+    fill: var(--dark)
+  line
+    stroke: var(--dark)
+
 .graph
   height: 80vh
 
   .graph__container
     height: 100%
 
-svg
-  rect
-    fill: var(--primary)
-  text
-    fill: var(--dark)
-
   .graph__bar
     fill: var(--primary)
     opacity: 0.75
+    transition: all 0.15s
     &:hover
       fill: var(--dark)
       cursor: pointer
     &:hover + .graph__control-line
-      fill: var(--super-light)
-
-  .graph__counter
-    fill: var(--dark)
-    text-anchor: middle
-
-  .graph__note
-    text-anchor: end
-
-  .graph__add
-    &:hover
-      fill: var(--dark)
-      cursor: pointer
-
-  .graph__add-text
-    font-size: 8px
-    text-anchor: middle
-
-  .graph__add-note
-    font-size: 6px
-    text-anchor: middle
-
-  .graph__move
-    font-size: 6px
-    font-family: FontAwesome
-    &.graph__move--left
-      text-anchor: end
-    &.graph__move--right
-      text-anchor: start
-    &:hover
       fill: var(--super-dark)
-      cursor: pointer
 
   .graph__control-line
-    cursor: grab
+    cursor: row-resize
+    fill: transparent
     &:hover
       fill: var(--dark)
 
-  .graph__axis, .graph__average
-    stroke: var(--dark)
+  .graph__counter
+    text-anchor: middle
 
+  .graph__add
+    opacity: 1
+
+  .graph__add-counter
+  .graph__add-button
+    cursor: pointer
+    transition: all .15s
+    &:hover
+      fill: var(--primary)
+
+  .graph__axis
   .graph__average
     stroke-dasharray: 1.5px
 
   .graph__scale-area
     fill: var(--dark)
     opacity: 0.5
+    cursor: grab
+    transition: all .15s
+    &:hover ~ .graph__scale-control
+      fill: var(--super-dark)
 
   .graph__scale-control
-    fill: var(--super-dark)
+    fill: transparent
+    transition: all .15s
+    cursor: col-resize
+    opacity: 0.5
+    &:hover
+      fill: var(--super-dark)
 
 </style>
