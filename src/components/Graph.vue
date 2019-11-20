@@ -1,7 +1,7 @@
 <template>
   <div class="graph d-flex justify-content-center">
 
-    <popup v-if="isOpened" class="graph__popup" :toggle-popup="togglePopup" :isOpened="isOpened">
+    <modal v-if="isOpened" class="graph__modal" :toggle-modal="toggleModal" :isOpened="isOpened">
       <button type="button" class="close" aria-label="Close" @click="isOpened = false">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -35,7 +35,15 @@
                 @click="addBar"
         >Add bar</button>
       </div>
-    </popup>
+    </modal>
+
+    <transition name="fade">
+      <popup v-if="isOpenedPopup" :coordinates="{x: popupX, y: popupY}">
+        <div class="" slot="note">
+          {{ statistic[activeBarIdx].note }}
+        </div>
+      </popup>
+    </transition>
 
     <svg class="graph__container" :viewBox="'0 0 ' + svgWidth + ' ' + svgHeight">
       <g transform="translate(0, 150) scale(1, -1)">
@@ -47,7 +55,10 @@
             :height="item.value * barsUnit"
             :x="barsStep * (index + 1) - barWidth / 2"
             :y="bottomSpace"
-            @click="activatePopup(index)"
+            @click="activateModal(index)"
+            @mouseover="popupOpen(index + offsetReversed)"
+            @mouseleave="isOpenedPopup = false"
+            @mousemove="popupMove"
           />
           <rect
             class="graph__control-line"
@@ -149,6 +160,9 @@
             :height="item.value * miniBarsUnit"
             :x="miniBarsStep * index + (miniBarsStep / 2) - (miniBarWidth / 2)"
             :y="statsSpace"
+            @mouseover="popupOpen(index)"
+            @mouseleave="isOpenedPopup = false"
+            @mousemove="popupMove"
           />
         </template>
 
@@ -229,13 +243,17 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import Modal from './Modal.vue';
 import Popup from './Popup.vue';
 
 export default {
-  components: { Popup },
+  components: { Modal, Popup },
   data() {
     return {
       isOpened: false,
+      isOpenedPopup: false,
+      popupX: 0,
+      popupY: 0,
       activeBarIdx: null,
 
       // SIZES
@@ -287,7 +305,7 @@ export default {
     miniBarsStep () {
       return this.svgWidth / (this.statistic.length)
     },
-    popupData () {
+    modalData () {
       return {
         text: this.statisticRanged[this.activeBarIdx].text
       }
@@ -367,14 +385,23 @@ export default {
     },
     addBar() {
       this.addStatistic({ index: this.activeBarIdx + this.offsetReversed + 1, value: 0 })
-      this.togglePopup()
+      this.toggleModal()
     },
-    togglePopup() {
+    toggleModal() {
       this.isOpened = !this.isOpened;
     },
-    activatePopup(index) {
+    activateModal(index) {
       this.activeBarIdx = index;
-      this.togglePopup();
+      this.toggleModal();
+    },
+    popupOpen(index) {
+      this.isOpenedPopup = true;
+      this.activeBarIdx = index;
+
+    },
+    popupMove() {
+      this.popupX = event.clientX;
+      this.popupY = event.clientY;
     },
     removeBar() {
       this.removeStatistic(this.activeBarIdx + this.offsetReversed)
