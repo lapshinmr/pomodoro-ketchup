@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid" :style="COLORS">
+  <div class="container-fluid root" :style="COLORS">
     <div class="row">
       <div class="col-12 fill-screen-height">
         <timer-title :title="title"></timer-title>
@@ -49,6 +49,7 @@ import SoundSettings from '@/components/settings/SoundSettings.vue'
 import ProgressSettings from '@/components/settings/ProgressSettings.vue'
 import TitleSettings from '@/components/settings/TitleSettings.vue'
 import NotificationSettings from '@/components/settings/NotificationSettings.vue'
+import SyncSettings from '@/components/settings/SyncSettings.vue'
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { TAB_TITLE_DEFAULT } from './constants';
 
@@ -60,12 +61,13 @@ export default {
     SoundSettings,
     ProgressSettings,
     TitleSettings,
-    NotificationSettings
+    NotificationSettings,
+    SyncSettings,
   },
   data() {
     return {
       isSettingsMode: false,
-      components: ['color', 'sound', 'progress', 'title', 'notification']
+      components: ['color', 'sound', 'progress', 'title', 'notification', 'sync']
     }
   },
   computed: {

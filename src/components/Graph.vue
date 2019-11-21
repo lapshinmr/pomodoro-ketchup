@@ -97,9 +97,9 @@
         <g transform="scale(1, -1)">
           <text
             class="noselect"
-            :style="{'font-size': barCounterFont + 'px'}"
+            :style="{'font-size': barCounterFont - 1 + 'px'}"
             :x="graphWidth"
-            :y="- ( stats.mean * barsUnit + bottomSpace + barCounterFont )"
+            :y="- ( stats.mean * barsUnit + bottomSpace + 2 * barCounterFont )"
           >
             <tspan :x="graphWidth" :dy="barCounterFont + 'px'">
               {{ stats.mean.toFixed(2) }}
@@ -137,12 +137,12 @@
           </text>
           <text
             class="graph__add-button noselect"
-            :style="{'font-size': barCounterFont + 2 + 'px', 'text-anchor': 'middle'}"
+            :style="{'font-size': barCounterFont + 1 + 'px', 'text-anchor': 'middle'}"
             :x="svgWidth - ( 3 + 1/2 ) * barWidth"
             :y="-(bottomSpace - ( 1 + 1/2 ) * axisGap)"
             @click="commitCurrent"
           >
-            add
+            commit
           </text>
         </g>
 
@@ -225,7 +225,7 @@
             :x="svgWidth / 2"
             :y="0"
           >
-              Min: {{ Math.min(...statistic.map(item => item.value)) }}
+              Min: {{ stats.min }}
             </tspan>
           </text>
           <text
@@ -235,7 +235,7 @@
             :x="svgWidth"
             :y="0"
           >
-              Max: {{ Math.max(...statistic.map(item => item.value)) }}
+              Max: {{ stats.max }}
             </tspan>
           </text>
         </g>
@@ -329,13 +329,18 @@ export default {
     stats () {
       let statistic = this.statistic.map(item => item.value);
       let statisticNew = [...statistic, this.pomodorosTotal];
-      let sum = statistic.reduce((result, value) => result += value );
-      let sumNew = statisticNew.reduce((result, value) => result += value );
-      let mean = ( sum / statistic.length )
-      let meanNew = ( sumNew / statisticNew.length )
-      let delta = meanNew - mean
+      let [ sum, sumNew, mean, meanNew, delta, min, max ] = [0, , 0, , , 0, 0];
+      if (statistic.length > 0) {
+        sum = statistic.reduce((result, value) => result += value );
+        mean = ( sum / statistic.length )
+        min = Math.min(...statistic)
+        max = Math.max(...statistic)
+      }
+      sumNew = statisticNew.reduce((result, value) => result += value );
+      meanNew = ( sumNew / statisticNew.length )
+      delta = meanNew - mean
       return {
-        sum, sumNew, mean, meanNew, delta
+        sum, sumNew, mean, meanNew, delta, min, max
       }
     },
     pomodorosMean () {

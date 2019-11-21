@@ -11,12 +11,7 @@ import { mapState, mapActions } from 'vuex';
 import Graph from '../components/Graph.vue';
 
 export default {
-  components: { Graph },
-  data () {
-    return { }
-  },
-  computed: { },
-  methods: { },
+  components: { Graph }
 }
 </script>
 

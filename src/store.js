@@ -39,7 +39,8 @@ const loadState = function () {
     notificationBody: cons.NOTIFICATION_BODY_DEFAULT,
     notificationSound: cons.NOTIFICATION_SOUND_DEFAULT,
     colorTheme: cons.COLOR_THEME_DEFAULT,
-    statistic: []
+    statistic: [],
+    syncId: null
   }
   if (!stateData) {
     localStorage.setItem('data', JSON.stringify(stateData));
@@ -174,7 +175,10 @@ export default new Vuex.Store({
     },
     REMOVE_STATISTIC (state, payload) {
       state.statistic.splice(payload, 1)
-    }
+    },
+    SET_SYNC_ID (state, payload) {
+      state.syncId = payload
+    },
   },
   actions: {
     setInitTime ({ commit }, payload) {
@@ -283,6 +287,9 @@ export default new Vuex.Store({
     },
     removeStatistic ({ commit }, payload) {
       commit('REMOVE_STATISTIC', payload)
-    }
+    },
+    setSyncId ({ commit }, payload) {
+      commit('SET_SYNC_ID', payload)
+    },
   }
 })

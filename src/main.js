@@ -1,9 +1,10 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
-import { secondsToTime } from './store'
-import './registerServiceWorker'
+import Vue from 'vue';
+import App from './App.vue';
+import axios from 'axios';
+import router from './router';
+import store from './store';
+import { secondsToTime } from './store';
+import './registerServiceWorker';
 
 Vue.config.productionTip = false
 
@@ -26,6 +27,8 @@ Vue.directive('set-editable', {
     }
   }
 })
+
+axios.defaults.baseURL = 'https://pomodoro-ketchup-vue.firebaseio.com';
 
 new Vue({
   router,
