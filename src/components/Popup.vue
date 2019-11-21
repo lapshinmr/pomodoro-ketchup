@@ -25,6 +25,7 @@ export default {
   position: fixed
   color: var(--super-light)
   background-color: var(--super-dark)
+  font-size: 2.5%
   opacity: 0.8
   border-radius: 0.25em
   padding: 0.5em

@@ -1,5 +1,5 @@
 <template>
-  <div class="content-container d-flex align-items-center justify-content-center">
+  <div class="timer-container d-flex align-items-center justify-content-center">
     <!-- POMODOROS PROGRESS BAR -->
     <transition name="fade">
       <pomodoros-bar v-if="goalIndicatorFormat !== 3"></pomodoros-bar>
@@ -46,7 +46,7 @@ export default {
 </script>
 
 <style lang="sass">
-.content-container
+.timer-container
   position: relative
   width: 100%
   height: 100%

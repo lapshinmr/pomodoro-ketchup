@@ -544,6 +544,22 @@ svg
 
 .graph
   height: 80vh
+  position: relative
+  min-height: 75vh
+  max-height: 75vh
+  min-width: 90vw
+  max-width: 90vw
+  font-size: 90vw
+
+  @media (min-aspect-ratio: 75/90)
+    font-size: 75vh
+
+  @media (max-height: 400px)
+    min-height: 95vh
+    max-height: 95vh
+    min-width: 95vw
+    max-width: 95vw
+    font-size: 95vh
 
   .graph__container
     height: 100%

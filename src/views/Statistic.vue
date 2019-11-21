@@ -1,8 +1,6 @@
 <template>
-  <div class="row">
-    <div class="col-md-12 mt-4">
-      <graph></graph>
-    </div>
+  <div class="statistic-container d-flex justify-content-center align-items-center">
+    <graph></graph>
   </div>
 </template>
 
@@ -16,4 +14,8 @@ export default {
 </script>
 
 <style scoped lang="sass">
+.statistic-container
+  position: relative
+  width: 100%
+  height: 100%
 </style>
