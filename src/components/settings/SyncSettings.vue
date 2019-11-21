@@ -81,6 +81,9 @@ export default {
           localStorage.setItem('data', JSON.stringify(data))
           Object.assign(this.$store.state, data)
         })
+        .catch(error => {
+          console.log(error)
+        })
     },
     post() {
       const data = localStorage.getItem('data');

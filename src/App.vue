@@ -99,10 +99,12 @@ body
   font-family: Arial, sans-serif
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
-  background-color: var(--super-light)
-  color: var(--super-dark)
   margin: 0
   padding: 0
+
+.root
+  color: var(--super-dark)
+  background-color: var(--super-light)
 
 .navigation
   position: absolute
