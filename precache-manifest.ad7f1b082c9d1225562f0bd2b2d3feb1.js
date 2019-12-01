@@ -20,20 +20,20 @@ self.__precacheManifest = [
     "url": "/media/sound1.afb5369c.mp3"
   },
   {
-    "revision": "21b1ebdd45abbc0f49f0",
-    "url": "/js/chunk-vendors.c8510bcb.js"
+    "revision": "8b77cbf7a14b49a77dcb",
+    "url": "/js/chunk-vendors.bf09961d.js"
   },
   {
-    "revision": "76e6023f5240126d2bbb",
-    "url": "/js/app.d5ad7f25.js"
+    "revision": "80fef6b5cd50d09e50a7",
+    "url": "/js/app.78a8f08c.js"
   },
   {
-    "revision": "2f39336e7a3740c794778296eb95827b",
+    "revision": "fb4082b39bbcad861d67e939a2154607",
     "url": "/index.html"
   },
   {
-    "revision": "76e6023f5240126d2bbb",
-    "url": "/css/app.90623bb8.css"
+    "revision": "80fef6b5cd50d09e50a7",
+    "url": "/css/app.6db0527d.css"
   },
   {
     "revision": "8a6056bd34cfd7a17f1299662ddb24b5",
