@@ -59,7 +59,7 @@ export default {
         .then(response => {
           const generateRandomKey = (max, length=1) => {
             let key = ''
-            for (let _ of [...Array(length).keys()]) {
+            for (let i = 0; i < length; i++) {
               key += Math.ceil(Math.random() * max).toString()
             }
             return parseInt(key)

@@ -33,7 +33,7 @@
         </div>
 
         <transition name="fade" mode="out-in">
-          <router-view />
+          <router-view :isSettingsMode="isSettingsMode"/>
         </transition>
 
       </div>
