@@ -38,7 +38,6 @@ export default {
   },
   computed: {
     ...mapState([
-      'pomodorosTotal',
       'goalIndicatorFormat'
     ])
   }

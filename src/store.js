@@ -43,7 +43,7 @@ const loadState = function () {
     syncId: null
   }
   if (!stateData) {
-    localStorage.setItem('data', JSON.stringify(stateData));
+    localStorage.setItem('data', JSON.stringify(defaultData));
     stateData = Object.assign({} ,defaultData);
   } else {
     let found = false;
