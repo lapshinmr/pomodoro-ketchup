@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.e08f84818fb84c67b2aba8d8d4fa2f85.js"
+  "/precache-manifest.5e796643bcf52cefb49b30c43de0decb.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "pomodoro-ketchup"});
