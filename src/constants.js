@@ -1,4 +1,4 @@
-export const REFRESH_TIME = 1000
+export const REFRESH_TIME = 300
 export const POMODORO_DEFAULT = 25 * 60
 export const POMODOROS_GOAL_DEFAULT = 70
 export const GOAL_INDICATOR_FORMAT_DEFAULT = 2

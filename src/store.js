@@ -97,10 +97,10 @@ export default new Vuex.Store({
       state.timeLeft = payload
     },
     SET_END_TIME (state) {
-      state.timeEnd = Date.now() + state.timeLeft * cons.REFRESH_TIME
+      state.timeEnd = Date.now() + state.timeLeft * 1000
     },
     DECREASE_TIME (state) {
-      state.timeLeft -= cons.REFRESH_TIME / 1000
+      state.timeLeft = parseInt((state.timeEnd - new Date()) / 1000)
     },
     SET_TIMER_ID (state, payload) {
       state.timerId = payload
