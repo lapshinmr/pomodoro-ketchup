@@ -1,16 +1,16 @@
 <template>
   <div class="statistic-container d-flex justify-content-center align-items-center">
-    <graph></graph>
+    <graph />
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
-import Graph from '../components/Graph.vue';
+import Graph from '@/components/TheGraph.vue';
 
 export default {
-  components: { Graph }
-}
+  name: 'StatisticView',
+  components: { Graph },
+};
 </script>
 
 <style scoped lang="sass">

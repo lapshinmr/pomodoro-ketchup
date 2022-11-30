@@ -1,57 +1,82 @@
 <template>
-  <div class="container-fluid root" :style="COLORS">
+  <div
+    class="container-fluid root"
+    :style="COLORS"
+  >
     <div class="row">
       <div class="col-12 fill-screen-height">
-        <timer-title :title="title"></timer-title>
+        <timer-title :title="title" />
 
-        <github-link></github-link>
+        <github-link />
 
         <div class="navigation d-flex">
-          <router-link to="/" v-if="$router.currentRoute.path !== '/'" class="btn-round">
-            <i class="far fa-clock"></i>
+          <router-link
+            v-if="$router.currentRoute.path !== '/'"
+            to="/"
+            class="btn-round"
+          >
+            <i class="far fa-clock" />
           </router-link>
-          <router-link to="/statistic" v-else class="btn-round">
-            <i class="far fa-chart-bar"></i>
+          <router-link
+            v-else
+            to="/statistic"
+            class="btn-round"
+          >
+            <i class="far fa-chart-bar" />
           </router-link>
 
           <!-- SETTINGS -->
-          <button class="btn-round" @click="isSettingsMode = !isSettingsMode">
-            <i v-if="!isSettingsMode" class="fas fa-cog"></i>
-            <i v-else class="fas fa-times"></i>
+          <button
+            class="btn-round"
+            @click="isSettingsMode = !isSettingsMode"
+          >
+            <i
+              v-if="!isSettingsMode"
+              class="fas fa-cog"
+            />
+            <i
+              v-else
+              class="fas fa-times"
+            />
           </button>
           <transition name="slide">
-            <div v-if="isSettingsMode" class="settings__elements d-flex ml-2">
+            <div
+              v-if="isSettingsMode"
+              class="settings__elements d-flex ml-2"
+            >
               <component
-                v-for="item in components"
                 :is="item + '-settings'"
+                v-for="item in components"
                 :key="item"
                 class="list-item"
                 :is-settings-mode="isSettingsMode"
-              ></component>
+              />
             </div>
           </transition>
         </div>
 
-        <transition name="fade" mode="out-in">
-          <router-view :isSettingsMode="isSettingsMode"/>
+        <transition
+          name="fade"
+          mode="out-in"
+        >
+          <router-view :is-settings-mode="isSettingsMode" />
         </transition>
-
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState, mapGetters, mapActions } from 'vuex';
 import TimerTitle from '@/components/TimerTitle.vue';
 import GithubLink from '@/components/GithubLink.vue';
-import ColorSettings from '@/components/settings/ColorSettings.vue'
-import SoundSettings from '@/components/settings/SoundSettings.vue'
-import ProgressSettings from '@/components/settings/ProgressSettings.vue'
-import TitleSettings from '@/components/settings/TitleSettings.vue'
-import NotificationSettings from '@/components/settings/NotificationSettings.vue'
-import SyncSettings from '@/components/settings/SyncSettings.vue'
-import { mapState, mapGetters, mapActions } from 'vuex';
-import { TAB_TITLE_DEFAULT } from './constants';
+import ColorSettings from '@/components/settings/ColorSettings.vue';
+import SoundSettings from '@/components/settings/SoundSettings.vue';
+import ProgressSettings from '@/components/settings/ProgressSettings.vue';
+import TitleSettings from '@/components/settings/TitleSettings.vue';
+import NotificationSettings from '@/components/settings/NotificationSettings.vue';
+import SyncSettings from '@/components/settings/SyncSettings.vue';
+import { TAB_TITLE_DEFAULT } from './helpers/const/constants';
 
 export default {
   components: {
@@ -67,31 +92,31 @@ export default {
   data() {
     return {
       isSettingsMode: false,
-      components: ['color', 'sound', 'progress', 'title', 'notification', 'sync']
-    }
+      components: ['color', 'sound', 'progress', 'title', 'notification', 'sync'],
+    };
   },
   computed: {
     ...mapState([
-      'isTimerTitle'
+      'isTimerTitle',
     ]),
     ...mapGetters([
       'CUR_TIME_FORMATTED',
-      'COLORS'
+      'COLORS',
     ]),
-    title () {
-      return this.isTimerTitle ? this.CUR_TIME_FORMATTED : TAB_TITLE_DEFAULT
-    }
+    title() {
+      return this.isTimerTitle ? this.CUR_TIME_FORMATTED : TAB_TITLE_DEFAULT;
+    },
   },
-  created () {
-    this.startTimer()
+  created() {
+    this.startTimer();
   },
   methods: {
     ...mapActions([
       'startTimer',
-    ])
-  }
+    ]),
+  },
 
-}
+};
 </script>
 
 <style lang="sass">
@@ -184,7 +209,6 @@ body
   width: 8vh
   height: 8vh
 
-
 .noselect
   -webkit-touch-callout: none
   -webkit-user-select: none
@@ -192,7 +216,6 @@ body
   -moz-user-select: none
   -ms-user-select: none
   user-select: none
-
 
 // TRANSITIONS
 .fade-enter

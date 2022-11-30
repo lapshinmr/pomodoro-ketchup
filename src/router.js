@@ -1,9 +1,9 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Timer from './views/Timer.vue'
-import Statistic from './views/Statistic.vue'
+import Vue from 'vue';
+import Router from 'vue-router';
+import MainView from '@/views/MainView.vue';
+import StatisticView from '@/views/StatisticView.vue';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'history',
@@ -12,12 +12,12 @@ export default new Router({
     {
       path: '/',
       name: 'timer',
-      component: Timer
+      component: MainView,
     },
     {
       path: '/statistic',
       name: 'statistic',
-      component: Statistic
-    }
-  ]
-})
+      component: StatisticView,
+    },
+  ],
+});

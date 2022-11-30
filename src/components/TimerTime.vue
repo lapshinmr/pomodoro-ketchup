@@ -1,26 +1,34 @@
 <template>
   <div class="timer">
     <div class="timer__slot">
-      <slot></slot>
+      <slot />
     </div>
     <div class="timer__time d-flex justify-content-center align-items-center">
-      <span v-if="!isSettingsMode"
-          class="timer__string noselect"
-          contenteditable="false"
-          key="1"
+      <span
+        v-if="!isSettingsMode"
+        key="1"
+        class="timer__string noselect"
+        contenteditable="false"
       >{{ timeLeft | seconds-to-time }}</span>
-      <span v-if="isSettingsMode"
-          class="timer__string"
-          :class="{'timer__string_editable': isSettingsMode}"
-          contenteditable="true"
-          v-set-editable="handleInitTime"
-          key="2"
+      <span
+        v-if="isSettingsMode"
+        key="2"
+        v-set-editable="handleInitTime"
+        class="timer__string"
+        :class="{'timer__string_editable': isSettingsMode}"
+        contenteditable="true"
       >{{ timeInit | seconds-to-time }}</span>
       <transition name="line">
-        <div class="timer__line" v-if="isSettingsMode"></div>
+        <div
+          v-if="isSettingsMode"
+          class="timer__line"
+        />
       </transition>
       <transition name="fade">
-        <span v-if="isSettingsMode" class="timer__small noselect">
+        <span
+          v-if="isSettingsMode"
+          class="timer__small noselect"
+        >
           {{ timeLeft | seconds-to-time }}
         </span>
       </transition>
@@ -28,66 +36,63 @@
     <div class="timer__buttons">
       <button
         v-if="isPause"
+        key="play"
         class="btn-round btn-large"
         @click="startTimer(playFromButton=true)"
-        key="play"
       >
-        <i class="fas fa-play"></i>
+        <i class="fas fa-play" />
       </button>
       <button
         v-if="!isPause"
+        key="pause"
         class="btn-round btn-large"
         @click="pauseTimer"
-        key="pause"
       >
-        <i class="fas fa-pause"></i>
+        <i class="fas fa-pause" />
       </button>
       <button
+        key="stop"
         class="btn-round btn-large ml-2"
         @click="resetTimer"
-        key="stop"
       >
-        <i class="fas fa-stop"></i>
+        <i class="fas fa-stop" />
       </button>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
-import { secondsToTime } from '../store'
+import { mapState, mapActions } from 'vuex';
+import { secondsToTime } from '@/helpers/funcs/time';
 
-const stringToTimeSeconds = function (value) {
-  value = value.replace(':', '')
-  if (!parseInt(value)) {
-    return false
+const stringToTimeSeconds = (value) => {
+  const timeString = value.replace(':', '');
+  if (!+timeString) {
+    return false;
   }
-  let length = value.length
+  const { length } = timeString;
   if (length < 1 || length > 4) {
-    return false
+    return false;
   }
-  let digitLimits = [9, 9, 5, 9]
-  let digitsCheck = value.split('').every(function (value, index) {
-    return value <= digitLimits[4 - length + index]
-  })
+  const digitLimits = [9, 9, 5, 9];
+  const digitsCheck = timeString.split('').every((digit, index) => digit <= digitLimits[4 - length + index]);
   if (!digitsCheck) {
-    return false
-  } else {
-    let seconds = value.slice(-2)
-    let minutes = value.slice(0, length - 2)
-    return Number(minutes) * 60 + Number(seconds)
+    return false;
   }
-}
+  const seconds = timeString.slice(-2);
+  const minutes = timeString.slice(0, length - 2);
+  return Number(minutes) * 60 + Number(seconds);
+};
 
 export default {
-  name: 'timer-time',
-  props: [ 'isSettingsMode' ],
+  name: 'TimerTime',
+  props: ['isSettingsMode'],
   computed: {
     ...mapState([
       'isPause',
       'timeLeft',
-      'timeInit'
-    ])
+      'timeInit',
+    ]),
   },
   methods: {
     ...mapActions([
@@ -95,22 +100,22 @@ export default {
       'pauseTimer',
       'resetTimer',
       'setLeftTime',
-      'setInitTime'
+      'setInitTime',
     ]),
     handleInitTime(el) {
-      let initTimeSeconds = stringToTimeSeconds(el.innerText);
+      const initTimeSeconds = stringToTimeSeconds(el.innerText);
       if (!initTimeSeconds) {
-        el.innerText = secondsToTime(this.timeInit)
+        el.innerText = secondsToTime(this.timeInit);
       } else {
         if (this.timeInit === this.timeLeft) {
-          this.setLeftTime(initTimeSeconds)
+          this.setLeftTime(initTimeSeconds);
         }
-        this.setInitTime(initTimeSeconds)
-        el.innerText = secondsToTime(initTimeSeconds)
+        this.setInitTime(initTimeSeconds);
+        el.innerText = secondsToTime(initTimeSeconds);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped lang="sass">

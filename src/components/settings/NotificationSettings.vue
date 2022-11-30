@@ -1,39 +1,54 @@
 <template>
-  <div class="btn-round" :class="{active: isOpened}">
-    <div v-if="isGranted" class="element__open-area" @click="isOpened = !isOpened">
-      <i class="fas fa-bell"></i>
+  <div
+    class="btn-round"
+    :class="{active: isOpened}"
+  >
+    <div
+      v-if="isGranted"
+      class="element__open-area"
+      @click="isOpened = !isOpened"
+    >
+      <i class="fas fa-bell" />
     </div>
     <div v-else-if="isDenied">
-      <i class="fas fa-lock"></i>
-    </div>
-    <div v-else @click="notify">
-      <i class="fas fa-bell-slash"></i>
+      <i class="fas fa-lock" />
     </div>
     <div
-        v-if="isOpened"
-        class="element__close-area"
-        @click="isOpened = false">
+      v-else
+      @click="notify"
+    >
+      <i class="fas fa-bell-slash" />
     </div>
+    <div
+      v-if="isOpened"
+      class="element__close-area"
+      @click="isOpened = false"
+    />
     <transition name="fade">
-      <div v-if="isOpened" class="element__input-area container">
+      <div
+        v-if="isOpened"
+        class="element__input-area container"
+      >
         <div class="row py-2">
           <div class="col-12">
             <div class="mb-2">
               <small class="form-text text-muted mb-1">
                 Notification title
               </small>
-              <input type="text"
-                     class="form-control"
-                     v-model.lazy.text="notificationTitle"
+              <input
+                v-model.lazy="notificationTitle"
+                type="text"
+                class="form-control"
               >
             </div>
             <div class="">
               <small class="form-text text-muted mb-1">
                 Notification message
               </small>
-              <input type="text"
-                     class="form-control"
-                     v-model.lazy.text="notificationBody"
+              <input
+                v-model.lazy="notificationBody"
+                type="text"
+                class="form-control"
               >
             </div>
           </div>
@@ -47,55 +62,51 @@
 import { mapActions } from 'vuex';
 
 export default {
-  name: 'title-settings',
+  name: 'TitleSettings',
   data() {
     return {
       isGranted: false,
       isDenied: false,
-      isOpened: false
-    }
-  },
-  created() {
-    this.isGranted = Notification.permission === 'granted'
-    this.isDenied = Notification.permission === 'denied'
+      isOpened: false,
+    };
   },
   computed: {
     notificationTitle: {
       get() {
-        return this.$store.state.notificationTitle
+        return this.$store.state.notificationTitle;
       },
       set(notificationTitle) {
-        this.setNotificationTitle(notificationTitle)
-      }
+        this.setNotificationTitle(notificationTitle);
+      },
     },
     notificationBody: {
       get() {
-        return this.$store.state.notificationBody
+        return this.$store.state.notificationBody;
       },
       set(notificationBody) {
-        this.setNotificationBody(notificationBody)
-      }
-    }
+        this.setNotificationBody(notificationBody);
+      },
+    },
+  },
+  created() {
+    this.isGranted = Notification.permission === 'granted';
+    this.isDenied = Notification.permission === 'denied';
   },
   methods: {
     ...mapActions([
       'setNotificationTitle',
       'setNotificationBody',
     ]),
-    notify () {
-      if (!Notification) {
-        alert('Desktop notifications not available in your browser. Try Chromium.')
-        return
-      }
+    notify() {
       if (Notification.permission === 'default') {
-        Notification.requestPermission((permission) => {
-          this.isGranted = Notification.permission === 'granted'
-          this.isDenied = Notification.permission === 'denied'
-        })
+        Notification.requestPermission(() => {
+          this.isGranted = Notification.permission === 'granted';
+          this.isDenied = Notification.permission === 'denied';
+        });
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="sass" scoped>
@@ -130,7 +141,6 @@ export default {
 
 .active
   background-color: var(--primary)!important
-
 
 .fade-enter
   opacity: 0

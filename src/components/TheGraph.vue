@@ -1,60 +1,90 @@
 <template>
   <div class="graph d-flex justify-content-center">
-
-    <modal v-if="isOpened" class="graph__modal" :toggle-modal="toggleModal" :isOpened="isOpened">
-      <button type="button" class="close" aria-label="Close" @click="isOpened = false">
+    <modal
+      v-if="isOpened"
+      class="graph__modal"
+      :toggle-modal="toggleModal"
+      :is-opened="isOpened"
+    >
+      <button
+        type="button"
+        class="close"
+        aria-label="Close"
+        @click="isOpened = false"
+      >
         <span aria-hidden="true">&times;</span>
       </button>
       <div class="mb-2">
         <small class="form-text text-muted mb-1">
           Pomodoros
         </small>
-        <input type="text"
-               class="form-control"
-               v-model.lazy.number="barValue"
+        <input
+          v-model.lazy.number="barValue"
+          type="text"
+          class="form-control"
         >
       </div>
       <div class="mb-2">
         <small class="form-text text-muted mb-1">
           Note
         </small>
-        <input type="text"
-               class="form-control"
-               v-model.lazy.text="barNote"
+        <input
+          v-model.lazy="barNote"
+          type="text"
+          class="form-control"
         >
       </div>
       <div>
-        <button type="button"
-                name="button"
-                class="btn btn-success btn-sm"
-                @click="removeBar"
-        >Remove</button>
-        <button type="button"
-                name="button"
-                class="btn btn-success btn-sm ml-2"
-                @click="addBar"
-        >Add bar</button>
+        <button
+          type="button"
+          name="button"
+          class="btn btn-success btn-sm"
+          @click="removeBar"
+        >
+          Remove
+        </button>
+        <button
+          type="button"
+          name="button"
+          class="btn btn-success btn-sm ml-2"
+          @click="addBar"
+        >
+          Add bar
+        </button>
       </div>
     </modal>
 
     <transition name="fade">
-      <popup v-if="isOpenedPopup" :coordinates="{x: popupX, y: popupY}">
-        <div class="" slot="note">
+      <popup
+        v-if="isOpenedPopup"
+        :coordinates="{x: popupX, y: popupY}"
+      >
+        <div
+          slot="note"
+          class=""
+        >
           {{ statistic[activeBarIdx].note }}
         </div>
-        <div class="" slot="count">
+        <div
+          slot="count"
+          class=""
+        >
           {{ statistic[activeBarIdx].value }}
           pomodoro{{ statistic[activeBarIdx].value > 1 ? 's' : '' }}
         </div>
       </popup>
     </transition>
 
-    <svg class="graph__container" :viewBox="'0 0 ' + svgWidth + ' ' + svgHeight">
+    <svg
+      class="graph__container"
+      :viewBox="'0 0 ' + svgWidth + ' ' + svgHeight"
+    >
       <g transform="translate(0, 150) scale(1, -1)">
         <template v-for="(item, index) in statisticRanged">
           <!-- BAR -->
           <rect
             class="graph__bar"
+            :key="`rect_1_${index}`"
             :width="barWidth"
             :height="item.value * barsUnit"
             :x="barsStep * (index + 1) - barWidth / 2"
@@ -66,14 +96,19 @@
           />
           <rect
             class="graph__control-line"
+            :key="`rect_2_${index}`"
+            v-draggable
             :width="barWidth"
             :height="controlLineWidth"
             :x="barsStep * (index + 1) - (1 / 2) * barWidth"
             :y="bottomSpace + item.value * barsUnit - controlLineWidth"
-            v-draggable
             :data-index="index"
           />
-          <g v-if="statisticRanged.length < 15" transform="scale(1, -1)">
+          <g
+            v-if="statisticRanged.length < 15"
+            transform="scale(1, -1)"
+            :key="`g_${index}`"
+          >
             <text
               class="graph__counter noselect"
               :style="{'font-size': barCounterFont + 'px'}"
@@ -101,10 +136,16 @@
             :x="graphWidth"
             :y="- ( stats.mean * barsUnit + bottomSpace + 2 * barCounterFont )"
           >
-            <tspan :x="graphWidth" :dy="barCounterFont + 'px'">
+            <tspan
+              :x="graphWidth"
+              :dy="barCounterFont + 'px'"
+            >
               {{ stats.mean.toFixed(2) }}
             </tspan>
-            <tspan :x="graphWidth" :dy="barCounterFont + 'px'">
+            <tspan
+              :x="graphWidth"
+              :dy="barCounterFont + 'px'"
+            >
               {{ (stats.delta > 0 ? '+' : '') + (stats.delta).toFixed(2) }}
             </tspan>
           </text>
@@ -119,12 +160,12 @@
           :y="bottomSpace"
         />
         <rect
+          v-draggable="'progress'"
           class="graph__control-line"
           :width="barWidth"
           :height="controlLineWidth"
           :x="svgWidth - 4 * barWidth"
           :y="bottomSpace + pomodorosTotal * barsUnit - controlLineWidth"
-          v-draggable="'progress'"
         />
         <g transform="scale(1, -1)">
           <text
@@ -160,6 +201,7 @@
         <template v-for="(item, index) in statistic">
           <rect
             class="graph__bar"
+            :key="`rect_${index}`"
             :width="miniBarWidth"
             :height="item.value * miniBarsUnit"
             :x="miniBarsStep * index + (miniBarsStep / 2) - (miniBarWidth / 2)"
@@ -181,28 +223,28 @@
 
         <!-- SCALE CONTROL -->
         <rect
+          v-draggable-scale
           class="graph__scale-area"
           :width="miniBarsStep * (range[1] - range[0])"
           :height="bottomSpace - 2 * axisGap - statsSpace"
           :x="miniBarsStep * range[0]"
           :y="statsSpace"
-          v-draggable-scale
         />
         <rect
+          v-scaleable="'left'"
           class="graph__scale-control"
           :width="2"
           :height="bottomSpace - 2 * axisGap - statsSpace"
           :x="miniBarsStep * range[0]"
           :y="statsSpace"
-          v-scaleable="'left'"
         />
         <rect
+          v-scaleable="'right'"
           class="graph__scale-control"
           :width="2"
           :height="bottomSpace - 2 * axisGap - statsSpace"
           :x="miniBarsStep * range[1] - miniBarWidth"
           :y="statsSpace"
-          v-scaleable="'right'"
         />
 
         <!-- STATS -->
@@ -215,8 +257,7 @@
             :x="0"
             :y="0"
           >
-              Total: {{ stats.sumNew }}
-            </tspan>
+            Total: {{ stats.sumNew }}
           </text>
           <text
             class="noselect"
@@ -225,8 +266,7 @@
             :x="svgWidth / 2"
             :y="0"
           >
-              Min: {{ stats.min }}
-            </tspan>
+            Min: {{ stats.min }}
           </text>
           <text
             class="noselect"
@@ -235,8 +275,7 @@
             :x="svgWidth"
             :y="0"
           >
-              Max: {{ stats.max }}
-            </tspan>
+            Max: {{ stats.max }}
           </text>
         </g>
 
@@ -247,8 +286,8 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import Modal from './Modal.vue';
-import Popup from './Popup.vue';
+import Modal from './TheModal.vue';
+import Popup from './ThePopup.vue';
 
 export default {
   components: { Modal, Popup },
@@ -281,104 +320,105 @@ export default {
 
       // VIEW
       scale: 10,
-      offset: 0
-    }
+      offset: 0,
+    };
   },
   computed: {
     ...mapState([
       'pomodorosTotal',
-      'statistic'
+      'statistic',
     ]),
-    maxBarHeight () {
-      return this.barsSpace - this.barCounterFont - this.barCounterTextGap
+    maxBarHeight() {
+      return this.barsSpace - this.barCounterFont - this.barCounterTextGap;
     },
-    barsStep () {
-      return this.graphWidth / (this.statisticRanged.length + 1)
+    barsStep() {
+      return this.graphWidth / (this.statisticRanged.length + 1);
     },
-    barsUnit () {
-      let allValues = [...this.statisticRanged.map(item => item.value), this.pomodorosTotal]
-      return this.maxBarHeight / Math.max(...allValues)
+    barsUnit() {
+      const allValues = [...this.statisticRanged.map((item) => item.value), this.pomodorosTotal];
+      return this.maxBarHeight / Math.max(...allValues);
     },
-    miniBarsUnit () {
-      let allValues = [...this.statistic.map(item => item.value), this.pomodorosTotal]
-      return ( this.bottomSpace - 2 * this.axisGap - this.statsSpace) / Math.max(...allValues)
+    miniBarsUnit() {
+      const allValues = [...this.statistic.map((item) => item.value), this.pomodorosTotal];
+      return (this.bottomSpace - 2 * this.axisGap - this.statsSpace) / Math.max(...allValues);
     },
-    miniBarWidth () {
-      return this.svgWidth / (this.statistic.length) * 0.3
+    miniBarWidth() {
+      return (this.svgWidth / (this.statistic.length)) * 0.3;
     },
-    miniBarsStep () {
-      return this.svgWidth / (this.statistic.length)
+    miniBarsStep() {
+      return this.svgWidth / (this.statistic.length);
     },
-    modalData () {
+    modalData() {
       return {
-        text: this.statisticRanged[this.activeBarIdx].text
-      }
+        text: this.statisticRanged[this.activeBarIdx].text,
+      };
     },
-    range () {
-      let end = this.statistic.length - this.offset < 0 ? 0 : this.statistic.length - this.offset;
-      let start = end - this.scale < 0 ? 0 : end - this.scale
-      return [ start, end]
+    range() {
+      const end = this.statistic.length - this.offset < 0 ? 0 : this.statistic.length - this.offset;
+      const start = end - this.scale < 0 ? 0 : end - this.scale;
+      return [start, end];
     },
-    statisticRanged () {
-      return this.statistic.slice(...this.range)
+    statisticRanged() {
+      return this.statistic.slice(...this.range);
     },
-    offsetReversed () {
-      let result = this.statistic.length - this.offset - this.scale
-      return result < 0 ? 0 : result
+    offsetReversed() {
+      const result = this.statistic.length - this.offset - this.scale;
+      return result < 0 ? 0 : result;
     },
-    stats () {
-      let statistic = this.statistic.map(item => item.value);
-      let statisticNew = [...statistic, this.pomodorosTotal];
-      let [ sum, sumNew, mean, meanNew, delta, min, max ] = [0, , 0, , , 0, 0];
+    stats() {
+      const statistic = this.statistic.map((item) => item.value);
+      const statisticNew = [...statistic, this.pomodorosTotal];
+      let [sum, sumNew, mean, meanNew, delta, min, max] = [0, 0, 0, 0, 0, 0, 0];
       if (statistic.length > 0) {
-        sum = statistic.reduce((result, value) => result += value );
-        mean = ( sum / statistic.length )
-        min = Math.min(...statistic)
-        max = Math.max(...statistic)
+        statistic.forEach((value) => {
+          sum += value;
+        });
+        mean = (sum / statistic.length);
+        min = Math.min(...statistic);
+        max = Math.max(...statistic);
       }
-      sumNew = statisticNew.reduce((result, value) => result += value );
-      meanNew = ( sumNew / statisticNew.length )
-      delta = meanNew - mean
+      statisticNew.forEach((value) => {
+        sumNew += value;
+      });
+      meanNew = (sumNew / statisticNew.length);
+      delta = meanNew - mean;
       return {
-        sum, sumNew, mean, meanNew, delta, min, max
-      }
+        sum, sumNew, mean, meanNew, delta, min, max,
+      };
     },
-    pomodorosMean () {
-      return (this.pomodorosSum / this.statistic.length).toFixed(2)
-    },
-    pomodorosAverageNew () {
-      return (this.pomodorosSum / this.statistic.length).toFixed(2)
+    pomodorosAverageNew() {
+      return (this.pomodorosSum / this.statistic.length).toFixed(2);
     },
     barValue: {
       get() {
         if (this.activeBarIdx !== null) {
-          return this.statisticRanged[this.activeBarIdx].value
+          return this.statisticRanged[this.activeBarIdx].value;
         }
-        return;
+        return 0;
       },
       set(value) {
-        if (!parseInt(value)) {
+        if (!+value) {
           return;
         }
         this.editStatisticValue({
           index: this.activeBarIdx + this.offsetReversed,
-          value: value
-        })
-      }
+          value,
+        });
+      },
     },
     barNote: {
       get() {
         if (this.activeBarIdx !== null) {
-          return this.statisticRanged[this.activeBarIdx].note
+          return this.statisticRanged[this.activeBarIdx].note;
         }
-        return;
+        return '';
       },
       set(value) {
         this.editStatisticNote({
           index: this.activeBarIdx + this.offsetReversed,
-          note: value
-        })
-      }
+          note: value,
+        });
+      },
     },
   },
   methods: {
@@ -387,14 +427,14 @@ export default {
       'editStatisticValue',
       'editStatisticNote',
       'removeStatistic',
-      'setPomodorosTotal'
+      'setPomodorosTotal',
     ]),
     commitCurrent() {
-      this.addStatistic({ value: this.pomodorosTotal })
+      this.addStatistic({ value: this.pomodorosTotal });
     },
     addBar() {
-      this.addStatistic({ index: this.activeBarIdx + this.offsetReversed + 1, value: 0 })
-      this.toggleModal()
+      this.addStatistic({ index: this.activeBarIdx + this.offsetReversed + 1, value: 0 });
+      this.toggleModal();
     },
     toggleModal() {
       this.isOpened = !this.isOpened;
@@ -406,76 +446,77 @@ export default {
     popupOpen(index) {
       this.isOpenedPopup = true;
       this.activeBarIdx = index;
-
     },
-    popupMove() {
+    popupMove(event) {
       this.popupX = event.clientX;
       this.popupY = event.clientY;
     },
     removeBar() {
-      this.removeStatistic(this.activeBarIdx + this.offsetReversed)
+      this.removeStatistic(this.activeBarIdx + this.offsetReversed);
       this.activeBar = null;
       this.isOpened = false;
-    }
+    },
   },
   directives: {
-    'draggable': {
+    draggable: {
       bind(el, binding, vnode) {
-        let canvasHeight, initY, curPomodoros, curBarIdx;
+        let canvasHeight; let initY; let curPomodoros; let
+          curBarIdx;
 
         function mousemove(e) {
           if (e.buttons === 0) {
             document.removeEventListener('mousemove', mousemove);
-            return
-          };
-          let dy = (initY - e.clientY) * 150 / canvasHeight;
-          let dp = Math.floor(dy / vnode.context.barsUnit);
-          let pomodorosToSet = curPomodoros + dp < 0 ? 0 : curPomodoros + dp;
+            return;
+          }
+          const dy = ((initY - e.clientY) * 150) / canvasHeight;
+          const dp = Math.floor(dy / vnode.context.barsUnit);
+          const pomodorosToSet = curPomodoros + dp < 0 ? 0 : curPomodoros + dp;
           if (binding.value === 'progress') {
-            vnode.context.setPomodorosTotal(pomodorosToSet)
+            vnode.context.setPomodorosTotal(pomodorosToSet);
           } else {
             vnode.context.editStatisticValue({
               index: curBarIdx + vnode.context.offsetReversed,
-              value: pomodorosToSet
+              value: pomodorosToSet,
             });
           }
-          return false;
+          // return false;
         }
 
         el.addEventListener('mousedown', (e) => {
           if (binding.value === 'progress') {
             curPomodoros = vnode.context.pomodorosTotal;
           } else {
-            curBarIdx = parseInt(e.currentTarget.getAttribute('data-index'))
-            curPomodoros = vnode.context.statisticRanged[curBarIdx].value
+            curBarIdx = +e.currentTarget.getAttribute('data-index');
+            curPomodoros = vnode.context.statisticRanged[curBarIdx].value;
           }
-          canvasHeight = document.querySelector('.graph__container').clientHeight
-          initY = e.clientY
+          canvasHeight = document.querySelector('.graph__container').clientHeight;
+          initY = e.clientY;
           document.addEventListener('mousemove', mousemove);
           return false;
-        })
-      }
+        });
+      },
     },
     'draggable-scale': {
       bind(el, binding, vnode) {
-        let canvasWidth, initX, initOffset;
+        let canvasWidth; let initX; let
+          initOffset;
 
         function mousemove(e) {
           if (e.buttons === 0) {
             document.removeEventListener('mousemove', mousemove);
-            return
-          };
-          let dx = (initX - e.clientX) * 150 / canvasWidth;
-          let dp = Math.floor(dx / vnode.context.miniBarsStep);
+            return;
+          }
+          const dx = ((initX - e.clientX) * 150) / canvasWidth;
+          const dp = Math.floor(dx / vnode.context.miniBarsStep);
 
           if (initOffset + dp < 0) {
-            vnode.context.offset = 0
+            vnode.context.offset = 0;
           } else if (initOffset + dp >= vnode.context.statistic.length - vnode.context.scale) {
-            vnode.context.offset = vnode.context.statistic.length - vnode.context.scale
+            vnode.context.offset = vnode.context.statistic.length - vnode.context.scale;
           } else {
-            vnode.context.offset = initOffset + dp
+            vnode.context.offset = initOffset + dp;
           }
-          return false;
+          // return false;
         }
 
         el.addEventListener('mousedown', (e) => {
@@ -484,39 +525,40 @@ export default {
           initOffset = vnode.context.offset;
           document.addEventListener('mousemove', mousemove);
           return false;
-        })
-      }
+        });
+      },
     },
-    'scaleable': {
+    scaleable: {
       bind(el, binding, vnode) {
-        let canvasWidth, initX, initScale, initOffset;
+        let canvasWidth; let initX; let initScale; let
+          initOffset;
 
         function mousemove(e) {
           if (e.buttons === 0) {
             document.removeEventListener('mousemove', mousemove);
-            return
-          };
-          let dx = (initX - e.clientX) * 150 / canvasWidth;
-          let dp = Math.floor(dx / vnode.context.miniBarsStep);
+            return;
+          }
+          const dx = ((initX - e.clientX) * 150) / canvasWidth;
+          const dp = Math.floor(dx / vnode.context.miniBarsStep);
           let newScale;
           if (binding.value === 'left') {
             newScale = initScale + dp;
-            if ( newScale < 1 || newScale > vnode.context.statistic.length ) { return }
+            if (newScale < 1 || newScale > vnode.context.statistic.length) { return; }
             vnode.context.scale = newScale;
           } else {
             newScale = initScale - dp;
-            if (initOffset + dp < 0) { return }
-            if ( newScale < 1 || newScale > vnode.context.statistic.length ) { return }
+            if (initOffset + dp < 0) { return; }
+            if (newScale < 1 || newScale > vnode.context.statistic.length) { return; }
             vnode.context.scale = newScale;
             if (initOffset + dp < 0) {
-              vnode.context.offset = 0
+              vnode.context.offset = 0;
             } else if (initOffset + dp >= vnode.context.statistic.length - vnode.context.scale) {
-              vnode.context.offset = vnode.context.statistic.length - vnode.context.scale
+              vnode.context.offset = vnode.context.statistic.length - vnode.context.scale;
             } else {
-              vnode.context.offset = initOffset + dp
+              vnode.context.offset = initOffset + dp;
             }
           }
-          return false;
+          // return false;
         }
 
         el.addEventListener('mousedown', (e) => {
@@ -526,11 +568,11 @@ export default {
           initOffset = vnode.context.offset;
           document.addEventListener('mousemove', mousemove);
           return false;
-        })
-      }
-    }
-  }
-}
+        });
+      },
+    },
+  },
+};
 </script>
 
 <style lang="sass" scoped>

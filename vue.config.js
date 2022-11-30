@@ -1,10 +1,12 @@
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/', // change this if you need static files from project folder
+  // change this if you need static files from project folder
+  publicPath: process.env.NODE_ENV === 'production' ? '/pomodoro-ketchup/' : '/',
   css: {
     loaderOptions: {
       sass: {
-        data: `@import "@/styles/_variables.sass";`
-      }
-    }
-  }
-}
+        additionalData: '@import "@/assets/styles/_variables.sass"',
+      },
+    },
+  },
+  transpileDependencies: ['vuex-persist'],
+};

@@ -1,142 +1,180 @@
 <template>
   <div class="indicator d-flex align-items-center justify-content-center text-center">
-
     <div class="indicator__buttons indicator__buttons_left">
-      <transition name="slide-left" mode="out-in">
+      <transition
+        name="slide-left"
+        mode="out-in"
+      >
         <button
           v-if="!isSettingsMode && goalIndicatorFormat !== 3"
+          key="left-1"
           class="indicator__button btn btn-link"
           @click="removePomodoro"
-          key="left-1"
         >
-          <i class="fas fa-minus-circle"></i>
+          <i class="fas fa-minus-circle" />
         </button>
         <button
           v-else-if="isSettingsMode"
+          key="left-2"
           class="indicator__button btn btn-link"
           @click="handleGoalIndicatorFormat--"
-          key="left-2"
         >
-          <i class="far fa-arrow-alt-circle-left"></i>
+          <i class="far fa-arrow-alt-circle-left" />
         </button>
       </transition>
     </div>
 
     <transition name="fade">
-      <div v-if="goalIndicatorFormat !== 3 || isSettingsMode" class="indicator__text noselect">
-        <transition :name="slideIndicator" mode="out-in">
-
-          <div v-if="goalIndicatorFormat === 0" class="indicator__format" key="format-0">
+      <div
+        v-if="goalIndicatorFormat !== 3 || isSettingsMode"
+        class="indicator__text noselect"
+      >
+        <transition
+          :name="slideIndicator"
+          mode="out-in"
+        >
+          <div
+            v-if="goalIndicatorFormat === 0"
+            key="format-0"
+            class="indicator__format"
+          >
             {{ pomodorosTotal }} of
             <span class="indicator__container">
-              <span v-if="!isSettingsMode"
-                  class="indicator__total"
-                  contenteditable="false"
+              <span
+                v-if="!isSettingsMode"
+                class="indicator__total"
+                contenteditable="false"
               >{{ pomodorosGoal }}</span>
-              <span v-if="isSettingsMode"
-                  class="indicator__total"
-                  :class="{'indicator__total_editable': isSettingsMode}"
-                  contenteditable="true"
-                  v-set-editable="handlePomodorosGoal"
+              <span
+                v-if="isSettingsMode"
+                v-set-editable="handlePomodorosGoal"
+                class="indicator__total"
+                :class="{'indicator__total_editable': isSettingsMode}"
+                contenteditable="true"
               >{{ pomodorosGoal }}</span>
               <transition name="line">
-                <span class="timer__line" v-if="isSettingsMode"></span>
+                <span
+                  v-if="isSettingsMode"
+                  class="timer__line"
+                />
               </transition>
             </span>
-            <span class="ml-2" style="position: relative; top: -2px;">(</span>
-            <span>{{ Math.round(this.pomodorosTotal / this.pomodorosGoal * 100) + '%' }}</span>
+            <span
+              class="ml-2"
+              style="position: relative; top: -2px;"
+            >(</span>
+            <span>{{ Math.round(pomodorosTotal / pomodorosGoal * 100) + '%' }}</span>
             <span style="position: relative; top: -2px;">)</span>
           </div>
 
-          <div v-else-if="goalIndicatorFormat === 1" class="indicator__format" key="format-1">
+          <div
+            v-else-if="goalIndicatorFormat === 1"
+            key="format-1"
+            class="indicator__format"
+          >
             {{ pomodorosTotal }} of
             <span class="indicator__container">
-              <span v-if="!isSettingsMode"
-                  class="indicator__total"
-                  contenteditable="false"
+              <span
+                v-if="!isSettingsMode"
+                class="indicator__total"
+                contenteditable="false"
               >{{ pomodorosGoal }}</span>
-              <span v-if="isSettingsMode"
-                  class="indicator__total"
-                  :class="{'indicator__total_editable': isSettingsMode}"
-                  contenteditable="true"
-                  v-set-editable="handlePomodorosGoal"
+              <span
+                v-if="isSettingsMode"
+                v-set-editable="handlePomodorosGoal"
+                class="indicator__total"
+                :class="{'indicator__total_editable': isSettingsMode}"
+                contenteditable="true"
               >{{ pomodorosGoal }}</span>
               <transition name="line">
-                <span class="timer__line" v-if="isSettingsMode"></span>
+                <span
+                  v-if="isSettingsMode"
+                  class="timer__line"
+                />
               </transition>
             </span>
           </div>
 
-          <div v-else-if="goalIndicatorFormat === 2" class="indicator__format" key="format-2">
-            <span>{{ Math.round(this.pomodorosTotal / this.pomodorosGoal * 100) + '%' }}</span>
+          <div
+            v-else-if="goalIndicatorFormat === 2"
+            key="format-2"
+            class="indicator__format"
+          >
+            <span>{{ Math.round(pomodorosTotal / pomodorosGoal * 100) + '%' }}</span>
           </div>
 
-          <div v-else-if="goalIndicatorFormat === 3" class="indicator__format" key="format-3">
+          <div
+            v-else-if="goalIndicatorFormat === 3"
+            key="format-3"
+            class="indicator__format"
+          >
             Off
           </div>
-
         </transition>
       </div>
     </transition>
 
     <div class="indicator__buttons indicator__buttons_right">
-      <transition name="slide-right" mode="out-in">
+      <transition
+        name="slide-right"
+        mode="out-in"
+      >
         <button
           v-if="!isSettingsMode && goalIndicatorFormat !== 3"
+          key="right-1"
           class="indicator__button btn btn-link"
           @click="addPomodoro"
-          key="right-1"
         >
-          <i class="fas fa-plus-circle"></i>
+          <i class="fas fa-plus-circle" />
         </button>
         <button
           v-else-if="isSettingsMode"
+          key="right-2"
           class="indicator__button btn btn-link"
           @click="handleGoalIndicatorFormat++"
-          key="right-2"
         >
-          <i class="far fa-arrow-alt-circle-right"></i>
+          <i class="far fa-arrow-alt-circle-right" />
         </button>
       </transition>
     </div>
-
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex';
 
 export default {
-  name: 'pomodoros-indicator',
+  name: 'PomodorosIndicator',
   props: ['is-settings-mode'],
   data() {
     return {
-      slideIndicator: 'slide-indicator-left'
-    }
+      slideIndicator: 'slide-indicator-left',
+    };
   },
   computed: {
     ...mapState([
       'pomodorosTotal',
       'pomodorosGoal',
-      'goalIndicatorFormat'
+      'goalIndicatorFormat',
     ]),
     handleGoalIndicatorFormat: {
       get() {
-        return this.goalIndicatorFormat
+        return this.goalIndicatorFormat;
       },
       set(value) {
         if (value > this.goalIndicatorFormat) {
-          this.slideIndicator = 'slide-indicator-right'
+          this.slideIndicator = 'slide-indicator-right';
         } else {
-          this.slideIndicator = 'slide-indicator-left'
+          this.slideIndicator = 'slide-indicator-left';
         }
+        let indicatorFormatIndex = value;
         if (value < 0) {
-          value = 3
+          indicatorFormatIndex = 3;
         } else if (value > 3) {
-          value = 0
+          indicatorFormatIndex = 0;
         }
-        this.setGoalIndicatorFormat(value)
-      }
+        this.setGoalIndicatorFormat(indicatorFormatIndex);
+      },
     },
   },
   methods: {
@@ -144,17 +182,17 @@ export default {
       'addPomodoro',
       'removePomodoro',
       'setGoalIndicatorFormat',
-      'setPomodorosGoal'
+      'setPomodorosGoal',
     ]),
     handlePomodorosGoal(el) {
-      if (!parseInt(el.innerText)) {
-        el.innerText = this.pomodorosGoal
-        return
+      if (!+el.innerText) {
+        el.innerText = this.pomodorosGoal;
+        return;
       }
-      this.setPomodorosGoal(el.innerText)
-    }
-  }
-}
+      this.setPomodorosGoal(el.innerText);
+    },
+  },
+};
 </script>
 
 <style scoped lang="sass">

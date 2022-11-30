@@ -1,27 +1,52 @@
 <template>
   <div class="btn-round">
-    <div class="element__open-area" @click="isOpened = !isOpened">
-      <i class="fas fa-sync"></i>
+    <div
+      class="element__open-area"
+      @click="isOpened = !isOpened"
+    >
+      <i class="fas fa-sync" />
     </div>
     <div
-        v-if="isOpened"
-        class="element__close-area"
-        @click="isOpened = false">
-    </div>
+      v-if="isOpened"
+      class="element__close-area"
+      @click="isOpened = false"
+    />
     <transition name="fade">
-      <div v-if="isOpened" class="element__input-area container">
+      <div
+        v-if="isOpened"
+        class="element__input-area container"
+      >
         <div class="row py-2">
           <div class="col-12">
             <div class="form-group">
               <small class="form-text text-muted mb-1">
                 Use your key to sync the data
               </small>
-              <input type="text" class="form-control" v-model.lazy="syncId">
+              <input
+                v-model.lazy="syncId"
+                type="text"
+                class="form-control"
+              >
             </div>
             <div class="form-group">
-              <button class="btn btn-success btn-sm" @click="generateKey">Generate Key</button>
-              <button class="btn btn-success btn-sm ml-2" @click="post">Push</button>
-              <button class="btn btn-success btn-sm ml-2" @click="sync">Sync</button>
+              <button
+                class="btn btn-success btn-sm"
+                @click="generateKey"
+              >
+                Generate Key
+              </button>
+              <button
+                class="btn btn-success btn-sm ml-2"
+                @click="post"
+              >
+                Push
+              </button>
+              <button
+                class="btn btn-success btn-sm ml-2"
+                @click="sync"
+              >
+                Sync
+              </button>
             </div>
           </div>
         </div>
@@ -37,66 +62,62 @@ import { mapActions } from 'vuex';
 export default {
   data() {
     return {
-      isOpened: false
-    }
+      isOpened: false,
+    };
   },
   computed: {
     syncId: {
       get() {
-        return this.$store.state.syncId
+        return this.$store.state.syncId;
       },
       set(value) {
-        this.setSyncId(value)
-      }
-    }
+        this.setSyncId(value);
+      },
+    },
   },
   methods: {
     ...mapActions([
-      'setSyncId'
+      'setSyncId',
     ]),
     generateKey() {
-      axios.get(`/.json?shallow=true`)
-        .then(response => {
-          const generateRandomKey = (max, length=1) => {
-            let key = ''
-            for (let i = 0; i < length; i++) {
-              key += Math.ceil(Math.random() * max).toString()
-            }
-            return parseInt(key)
+      axios.get('/.json?shallow=true')
+        .then((response) => {
+          const generateRandomKey = (max, length = 1) => {
+            let key = '';
+            Array(length).forEach(() => {
+              key += Math.ceil(Math.random() * max).toString();
+            });
+            return +key;
+          };
+          const key = generateRandomKey(9, 4);
+          if (!(key in response.data)) {
+            this.syncId = key;
           }
-          let key;
-          do {
-            key = generateRandomKey(9, 4);
-          }
-          while (key in response.data) {
-            key = generateRandomKey(9, 4);
-          }
-          this.syncId = key;
-        })
+        });
     },
     sync() {
       axios.get(`/${this.syncId}/data.json`)
-        .then(response => {
-          let data = response.data;
-          localStorage.setItem('data', JSON.stringify(data))
-          Object.assign(this.$store.state, data)
+        .then((response) => {
+          const { data } = response;
+          localStorage.setItem('data', JSON.stringify(data));
+          Object.assign(this.$store.state, data);
         })
-        .catch(error => {
-          console.log(error)
-        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     post() {
       const data = localStorage.getItem('data');
       axios.put(`/${this.syncId}/data.json`, data)
-        .then(response => {
-          console.log(response)
+        .then((response) => {
+          console.log(response);
         })
-        .catch(error => {
-          console.log(error)
-        })
-    }
-  }
-}
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+  },
+};
 </script>
 
 <style lang="sass" scoped>
@@ -131,7 +152,6 @@ export default {
 
 .active
   background-color: var(--primary)!important
-
 
 .fade-enter
   opacity: 0

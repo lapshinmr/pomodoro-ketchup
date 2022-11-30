@@ -1,9 +1,11 @@
 <template>
-  <div class="popup noselect" :style="location">
-    <slot name="note"></slot>
-    <slot name="count"></slot>
+  <div
+    class="popup noselect"
+    :style="location"
+  >
+    <slot name="note" />
+    <slot name="count" />
   </div>
-
 </template>
 
 <script>
@@ -12,12 +14,12 @@ export default {
   computed: {
     location() {
       return {
-        left: this.coordinates.x + 10 + 'px',
-        top: this.coordinates.y + 10 + 'px'
-      }
-    }
-  }
-}
+        left: `${this.coordinates.x + 10}px`,
+        top: `${this.coordinates.y + 10}px`,
+      };
+    },
+  },
+};
 </script>
 
 <style lang="sass" scoped>

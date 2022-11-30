@@ -1,16 +1,16 @@
-<template><div></div></template>
+<template><div /></template>
 
 <script>
 export default {
-  name: 'timer-title',
+  name: 'TimerTitle',
   props: ['title'],
   watch: {
     title: {
       immediate: true,
-      handler () {
-        document.title = this.title
-      }
-    }
-  }
-}
+      handler() {
+        document.title = this.title;
+      },
+    },
+  },
+};
 </script>

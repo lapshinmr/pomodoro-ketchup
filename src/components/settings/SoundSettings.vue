@@ -1,41 +1,46 @@
 <template>
-  <div class="btn-round" @click="nextSound">
-    <i class="fas fa-volume-up"></i>
+  <div
+    class="btn-round"
+    @click="nextSound"
+  >
+    <i class="fas fa-volume-up" />
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { NOTIFICATION_SOUNDS } from '@/constants'
+import { NOTIFICATION_SOUNDS } from '@/helpers/const/constants';
 
 export default {
-  name: 'sound-settings',
+  name: 'SoundSettings',
   data() {
     return {
-      notificationSounds: NOTIFICATION_SOUNDS
-    }
+      notificationSounds: NOTIFICATION_SOUNDS,
+    };
   },
   computed: {
     ...mapState([
-      'notificationSound'
-    ])
+      'notificationSound',
+    ]),
   },
   methods: {
     ...mapActions([
-      'setNotificationSound'
+      'setNotificationSound',
     ]),
-    playSound (sound) {
-      let audio = new Audio(require('@/assets/' + sound))
-      audio.play()
+    playSound(sound) {
+      const audio = new Audio(sound);
+      audio.play();
     },
-    nextSound () {
-      let nextSoundIdx = (this.notificationSounds.indexOf(this.notificationSound) + 1) % this.notificationSounds.length
-      let sound = this.notificationSounds[nextSoundIdx];
-      this.setNotificationSound(sound)
-      this.playSound(sound)
-    }
-  }
-}
+    nextSound() {
+      const nextSoundIdx = (
+        this.notificationSounds.indexOf(this.notificationSound) + 1
+      ) % this.notificationSounds.length;
+      const sound = this.notificationSounds[nextSoundIdx];
+      this.setNotificationSound(sound);
+      this.playSound(sound);
+    },
+  },
+};
 </script>
 
 <style lang="sass" scoped>

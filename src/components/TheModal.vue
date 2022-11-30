@@ -1,14 +1,17 @@
 <template>
   <transition name="fade">
-    <div class="modal-window" @keydown.enter="toggleModal">
+    <div
+      class="modal-window"
+      @keydown.enter="toggleModal"
+    >
       <div
-          class="modal-window__close-area"
-          @click="toggleModal">
-      </div>
+        class="modal-window__close-area"
+        @click="toggleModal"
+      />
       <div class="modal-window__container container">
         <div class="row my-3">
           <div class="col-12">
-            <slot></slot>
+            <slot />
           </div>
         </div>
       </div>
@@ -18,9 +21,9 @@
 
 <script>
 export default {
-  name: 'modal',
-  props: ['toggleModal', 'isOpened']
-}
+  name: 'TheModal',
+  props: ['toggleModal', 'isOpened'],
+};
 </script>
 
 <style lang="sass" scoped>

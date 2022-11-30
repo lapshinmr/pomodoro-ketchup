@@ -1,11 +1,15 @@
 <template>
-  <div class="pomodoros-progress-bar" :style="progressBarStyle">
-    <div class="pomodoros-progress-bar__control-line"
-        v-draggable
+  <div
+    class="pomodoros-progress-bar"
+    :style="progressBarStyle"
+  >
+    <div
+      v-draggable
+      class="pomodoros-progress-bar__control-line"
     >
-      <div class="control-line__padding"></div>
-      <div class="control-line__line"></div>
-      <div class="control-line__padding"></div>
+      <div class="control-line__padding" />
+      <div class="control-line__line" />
+      <div class="control-line__padding" />
     </div>
     <transition name="fade">
       <button
@@ -13,21 +17,21 @@
         class="pomodoros-progress-bar__reset-button btn-round"
         @click="setPomodorosTotal(0)"
       >
-        <i class="fas fa-sync-alt"></i>
+        <i class="fas fa-sync-alt" />
       </button>
     </transition>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex';
 
 export default {
-  name: 'pomodoros-bar',
+  name: 'PomodorosBar',
   data() {
     return {
-      isTransition: true
-    }
+      isTransition: true,
+    };
   },
   computed: {
     ...mapState([
@@ -35,57 +39,56 @@ export default {
       'pomodorosGoal',
       'goalIndicatorFormat',
     ]),
-    ratio () {
-      return this.pomodorosTotal / this.pomodorosGoal
+    ratio() {
+      return this.pomodorosTotal / this.pomodorosGoal;
     },
-    progressBarStyle () {
+    progressBarStyle() {
       return {
-        height: (this.ratio < 1 ? this.ratio : 1) * 100 + '%',
-        transition: this.isTransition ? 'all 0.3s' : 'none'
-      }
-    }
+        height: `${(this.ratio < 1 ? this.ratio : 1) * 100}%`,
+        transition: this.isTransition ? 'all 0.3s' : 'none',
+      };
+    },
   },
   methods: {
     ...mapActions([
-      'setPomodorosTotal'
-    ])
+      'setPomodorosTotal',
+    ]),
   },
   directives: {
-    'draggable': {
+    draggable: {
       bind(el, binding, vnode) {
-        let rootHeight, curPomodoros;
+        let rootHeight; let
+          curPomodoros;
 
         function mousemove(e) {
           if (e.buttons === 0) {
             document.removeEventListener('mousemove', mousemove);
             vnode.context.isTransition = true;
-            return
-          };
-          curPomodoros = Math.floor(
-            (rootHeight - e.clientY) / rootHeight * vnode.context.pomodorosGoal
-          )
+            return;
+          }
+          curPomodoros = Math.floor(((rootHeight - e.clientY) / rootHeight) * vnode.context.pomodorosGoal);
           if (curPomodoros !== vnode.context.pomodorosTotal) {
             if (curPomodoros < 0) {
-              curPomodoros = 0
+              curPomodoros = 0;
             } else if (curPomodoros > vnode.context.pomodorosGoal) {
-              curPomodoros = vnode.context.pomodorosGoal
+              curPomodoros = vnode.context.pomodorosGoal;
             }
-            vnode.context.setPomodorosTotal(curPomodoros)
+            vnode.context.setPomodorosTotal(curPomodoros);
           }
-          el.click() // fixes bug in the chromium
-          return false;
+          el.click(); // fixes bug in the chromium
+          // return false;
         }
 
-        el.addEventListener('mousedown', (e) => {
-          rootHeight = document.querySelector('.root').offsetHeight
+        el.addEventListener('mousedown', () => {
+          rootHeight = document.querySelector('.root').offsetHeight;
           vnode.context.isTransition = false;
           document.addEventListener('mousemove', mousemove);
           return false;
-        })
-      }
-    }
-  }
-}
+        });
+      },
+    },
+  },
+};
 </script>
 
 <style scoped lang="sass">

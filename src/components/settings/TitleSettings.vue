@@ -1,6 +1,9 @@
 <template>
-  <div class="btn-round" @click="isTimerTitle = !isTimerTitle">
-    <i class="fas fa-heading"></i>
+  <div
+    class="btn-round"
+    @click="isTimerTitle = !isTimerTitle"
+  >
+    <i class="fas fa-heading" />
   </div>
 </template>
 
@@ -8,26 +11,26 @@
 import { mapActions, mapState } from 'vuex';
 
 export default {
-  name: 'title-settings',
+  name: 'TitleSettings',
   computed: {
     ...mapState([
-      'isTimerTitle'
+      'isTimerTitle',
     ]),
     isTimerTitle: {
       get() {
-        return this.$store.state.isTimerTitle
+        return this.$store.state.isTimerTitle;
       },
-      set(isTimerTitle) {
-        this.switchTimerTitleFlag()
-      }
-    }
+      set() {
+        this.switchTimerTitleFlag();
+      },
+    },
   },
   methods: {
     ...mapActions([
       'switchTimerTitleFlag',
     ]),
-  }
-}
+  },
+};
 </script>
 
 <style lang="sass" scoped>
