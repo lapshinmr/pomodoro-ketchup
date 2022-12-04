@@ -15,7 +15,7 @@
       <button
         v-if="pomodorosTotal"
         class="pomodoros-progress-bar__reset-button btn-round"
-        @click="setPomodorosTotal(0)"
+        @click="SET_POMODOROS_TOTAL(0)"
       >
         <i class="fas fa-sync-alt" />
       </button>
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   name: 'PomodorosBar',
@@ -50,8 +50,8 @@ export default {
     },
   },
   methods: {
-    ...mapActions([
-      'setPomodorosTotal',
+    ...mapMutations([
+      'SET_POMODOROS_TOTAL',
     ]),
   },
   directives: {

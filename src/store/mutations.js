@@ -1,7 +1,7 @@
 import Vue from 'vue';
 
 export default {
-  SET_INIT_TIME(state, payload) {
+  SET_TIME_INIT(state, payload) {
     state.timeInit = payload;
   },
   SET_LEFT_TIME(state, payload) {
@@ -10,11 +10,20 @@ export default {
   SET_END_TIME(state) {
     state.timeEnd = Date.now() + state.timeLeft * 1000;
   },
+  SET_TIME_EXTRA(state, payload) {
+    state.timeExtra = payload;
+  },
   DECREASE_TIME(state) {
     state.timeLeft = parseInt((state.timeEnd - new Date()) / 1000, 10);
   },
+  INCREASE_EXTRA_TIME(state) {
+    state.timeExtra = parseInt((new Date() - state.timeEnd) / 1000, 10);
+  },
   SET_TIMER_ID(state, payload) {
     state.timerId = payload;
+  },
+  SET_TIMER_EXTRA_ID(state, payload) {
+    state.timerExtraId = payload;
   },
   SET_PAUSE(state, payload) {
     state.isPause = payload;
@@ -24,6 +33,9 @@ export default {
   },
   ADD_POMODORO(state) {
     state.pomodorosTotal += 1;
+  },
+  ADD_POMODOROS(state, pomodorosAmount) {
+    state.pomodorosTotal += pomodorosAmount;
   },
   REMOVE_POMODORO(state) {
     if (state.pomodorosTotal > 0) {

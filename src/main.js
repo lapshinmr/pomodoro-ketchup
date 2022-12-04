@@ -10,7 +10,7 @@ Vue.config.productionTip = false;
 
 Vue.filter('capitalize', (value) => value.charAt(0).toUpperCase() + value.slice(1));
 
-Vue.filter('seconds-to-time', secondsToTime);
+Vue.filter('time', secondsToTime);
 
 Vue.directive('set-editable', {
   bind(el, binding) {

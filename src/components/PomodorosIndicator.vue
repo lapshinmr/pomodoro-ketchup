@@ -9,7 +9,7 @@
           v-if="!isSettingsMode && goalIndicatorFormat !== 3"
           key="left-1"
           class="indicator__button btn btn-link"
-          @click="removePomodoro"
+          @click="REMOVE_POMODORO"
         >
           <i class="fas fa-minus-circle" />
         </button>
@@ -44,14 +44,18 @@
                 v-if="!isSettingsMode"
                 class="indicator__total"
                 contenteditable="false"
-              >{{ pomodorosGoal }}</span>
+              >
+                {{ pomodorosGoal }}
+              </span>
               <span
                 v-if="isSettingsMode"
                 v-set-editable="handlePomodorosGoal"
                 class="indicator__total"
                 :class="{'indicator__total_editable': isSettingsMode}"
                 contenteditable="true"
-              >{{ pomodorosGoal }}</span>
+              >
+                {{ pomodorosGoal }}
+              </span>
               <transition name="line">
                 <span
                   v-if="isSettingsMode"
@@ -61,10 +65,10 @@
             </span>
             <span
               class="ml-2"
-              style="position: relative; top: -2px;"
+              style="position: relative; top: -3px;"
             >(</span>
-            <span>{{ Math.round(pomodorosTotal / pomodorosGoal * 100) + '%' }}</span>
-            <span style="position: relative; top: -2px;">)</span>
+            <span>{{ pomodorosPercentage }}</span>
+            <span style="position: relative; top: -3px;">)</span>
           </div>
 
           <div
@@ -78,14 +82,18 @@
                 v-if="!isSettingsMode"
                 class="indicator__total"
                 contenteditable="false"
-              >{{ pomodorosGoal }}</span>
+              >
+                {{ pomodorosGoal }}
+              </span>
               <span
                 v-if="isSettingsMode"
                 v-set-editable="handlePomodorosGoal"
                 class="indicator__total"
                 :class="{'indicator__total_editable': isSettingsMode}"
                 contenteditable="true"
-              >{{ pomodorosGoal }}</span>
+              >
+                {{ pomodorosGoal }}
+              </span>
               <transition name="line">
                 <span
                   v-if="isSettingsMode"
@@ -123,7 +131,7 @@
           v-if="!isSettingsMode && goalIndicatorFormat !== 3"
           key="right-1"
           class="indicator__button btn btn-link"
-          @click="addPomodoro"
+          @click="ADD_POMODORO"
         >
           <i class="fas fa-plus-circle" />
         </button>
@@ -141,7 +149,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 
 export default {
   name: 'PomodorosIndicator',
@@ -176,20 +184,25 @@ export default {
         this.setGoalIndicatorFormat(indicatorFormatIndex);
       },
     },
+    pomodorosPercentage() {
+      return `${Math.round((this.pomodorosTotal / this.pomodorosGoal) * 100)}%`;
+    },
   },
   methods: {
+    ...mapMutations([
+      'SET_POMODOROS_GOAL',
+      'ADD_POMODORO',
+      'REMOVE_POMODORO',
+    ]),
     ...mapActions([
-      'addPomodoro',
-      'removePomodoro',
       'setGoalIndicatorFormat',
-      'setPomodorosGoal',
     ]),
     handlePomodorosGoal(el) {
       if (!+el.innerText) {
         el.innerText = this.pomodorosGoal;
         return;
       }
-      this.setPomodorosGoal(el.innerText);
+      this.SET_POMODOROS_GOAL(el.innerText);
     },
   },
 };

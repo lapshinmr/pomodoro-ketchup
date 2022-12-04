@@ -1,67 +1,58 @@
 import * as cons from '@/helpers/const/constants';
-
-export function playNotification(state) {
-  if (Notification.permission === 'granted') {
-    Notification(state.notificationTitle, {
-      body: state.notificationBody,
-    });
-    // const soundPath = `@/assets/${state.notificationSound}`;
-    const audio = new Audio(state.notificationSound);
-    audio.play();
-  }
-}
+import { showNotification, playSound } from '@/helpers/funcs/notification';
 
 export default {
-  setInitTime({ commit }, payload) {
-    commit('SET_INIT_TIME', payload);
-  },
   setLeftTime({ commit }, payload) {
     commit('SET_LEFT_TIME', payload);
   },
-  setPomodorosGoal({ commit }, payload) {
-    commit('SET_POMODOROS_GOAL', payload);
-  },
   createTimerInterval({ commit, dispatch, state }) {
     const timerId = setInterval(() => {
-      if (state.timerId !== timerId) {
-        commit('SET_TIMER_ID', timerId);
-      }
       if (state.timeLeft <= 0) {
         commit('SET_LEFT_TIME', 0);
         dispatch('pauseTimer');
-        dispatch('addPomodoro');
-        playNotification(state);
+        commit('ADD_POMODORO');
+        showNotification(state.notificationTitle, state.notificationBody);
+        playSound(state.notificationSound);
+        dispatch('createExtraTimerInterval');
       } else {
         commit('DECREASE_TIME');
       }
     }, cons.REFRESH_TIME);
+    if (state.timerId !== timerId) {
+      commit('SET_TIMER_ID', timerId);
+    }
+  },
+  createExtraTimerInterval({ state, commit }) {
+    const timerExtraId = setInterval(() => {
+      commit('INCREASE_EXTRA_TIME');
+    }, cons.REFRESH_TIME);
+    if (state.timerExtraId !== timerExtraId) {
+      commit('SET_TIMER_EXTRA_ID', timerExtraId);
+    }
   },
   startTimer({ commit, dispatch, state }, playFromButton = false) {
-    // Timer can be run on button click and page reload
     let canStart = false;
-    const timeLeft = Math.floor((state.timeEnd - Date.now()) / 1000);
-    switch (true) {
-      case !playFromButton && state.isPause:
-        break;
-      case playFromButton && state.timerId !== null:
-        break;
-      case !playFromButton && !state.isPause && state.timerId !== null:
-        state.timeLeft = timeLeft >= 0 ? timeLeft : 0;
-        canStart = true;
-        break;
-      case playFromButton:
-        if (state.timeLeft === 0) {
-          dispatch('setLeftTime', state.timeInit);
-        }
-        canStart = true;
-        break;
-      default:
-        canStart = false;
+    // Start timer from play button
+    if (playFromButton) {
+      if (state.timeLeft <= 0) {
+        commit('SET_LEFT_TIME', state.timeInit);
+      }
+      canStart = true;
+    // Start timer after page refresh
+    } else if (!playFromButton && !state.isPause && state.timerId !== null) {
+      const timeLeft = Math.floor((state.timeEnd - Date.now()) / 1000);
+      state.timeLeft = timeLeft >= 0 ? timeLeft : 0;
+      canStart = true;
     }
     if (canStart) {
       commit('SET_PAUSE', false);
       commit('SET_END_TIME');
       dispatch('createTimerInterval');
+    }
+  },
+  startTimerExtra({ dispatch, state }) {
+    if (state.isPause && state.timerExtraId !== null) {
+      dispatch('createExtraTimerInterval');
     }
   },
   pauseTimer({ commit, state }) {
@@ -71,20 +62,28 @@ export default {
       commit('SET_PAUSE', true);
     }
   },
-  resetTimer({ commit, state, dispatch }) {
+  resetTimer({ commit, state }) {
     clearInterval(state.timerId);
-    dispatch('setLeftTime', state.timeInit);
+    commit('SET_LEFT_TIME', state.timeInit);
     commit('SET_TIMER_ID', null);
     commit('SET_PAUSE', true);
   },
+  resetTimerExtra({ state, commit }) {
+    clearInterval(state.timerExtraId);
+    commit('SET_TIME_EXTRA', 0);
+    commit('SET_TIMER_EXTRA_ID', null);
+  },
+  useTimeExtra({ state, commit, dispatch }) {
+    const pomodoros = Math.floor(state.timeExtra / state.timeInit);
+    if (pomodoros > 0) {
+      commit('ADD_POMODOROS', pomodoros);
+    }
+    const timeExtra = state.timeExtra % state.timeInit;
+    commit('SET_LEFT_TIME', state.timeInit - timeExtra);
+    dispatch('resetTimerExtra');
+  },
   setPomodorosTotal({ commit }, payload) {
     commit('SET_POMODOROS_TOTAL', payload);
-  },
-  addPomodoro({ commit }) {
-    commit('ADD_POMODORO');
-  },
-  removePomodoro({ commit }) {
-    commit('REMOVE_POMODORO');
   },
   switchTimerTitleFlag({ commit }) {
     commit('SWITCH_TIMER_TITLE_FLAG');

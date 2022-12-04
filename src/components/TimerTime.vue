@@ -9,7 +9,7 @@
         key="1"
         class="timer__string noselect"
         contenteditable="false"
-      >{{ timeLeft | seconds-to-time }}</span>
+      >{{ timeLeft | time }}</span>
       <span
         v-if="isSettingsMode"
         key="2"
@@ -17,7 +17,7 @@
         class="timer__string"
         :class="{'timer__string_editable': isSettingsMode}"
         contenteditable="true"
-      >{{ timeInit | seconds-to-time }}</span>
+      >{{ timeInit | time }}</span>
       <transition name="line">
         <div
           v-if="isSettingsMode"
@@ -29,7 +29,16 @@
           v-if="isSettingsMode"
           class="timer__small noselect"
         >
-          {{ timeLeft | seconds-to-time }}
+          {{ timeLeft | time }}
+        </span>
+      </transition>
+      <transition name="fade">
+        <span
+          v-if="!isSettingsMode && timeExtra > 0"
+          class="timer__small timer__small--extra noselect"
+          @click="useTimeExtra"
+        >
+          +{{ timeExtra | time }}
         </span>
       </transition>
     </div>
@@ -38,7 +47,7 @@
         v-if="isPause"
         key="play"
         class="btn-round btn-large"
-        @click="startTimer(playFromButton=true)"
+        @click="startTimer(true)"
       >
         <i class="fas fa-play" />
       </button>
@@ -53,7 +62,7 @@
       <button
         key="stop"
         class="btn-round btn-large ml-2"
-        @click="resetTimer"
+        @click="onStopTimer"
       >
         <i class="fas fa-stop" />
       </button>
@@ -62,7 +71,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 import { secondsToTime } from '@/helpers/funcs/time';
 
 const stringToTimeSeconds = (value) => {
@@ -92,15 +101,20 @@ export default {
       'isPause',
       'timeLeft',
       'timeInit',
+      'timeExtra',
     ]),
   },
   methods: {
+    ...mapMutations([
+      'SET_TIME_INIT',
+    ]),
     ...mapActions([
       'startTimer',
       'pauseTimer',
       'resetTimer',
+      'resetTimerExtra',
       'setLeftTime',
-      'setInitTime',
+      'useTimeExtra',
     ]),
     handleInitTime(el) {
       const initTimeSeconds = stringToTimeSeconds(el.innerText);
@@ -110,9 +124,13 @@ export default {
         if (this.timeInit === this.timeLeft) {
           this.setLeftTime(initTimeSeconds);
         }
-        this.setInitTime(initTimeSeconds);
+        this.SET_TIME_INIT(initTimeSeconds);
         el.innerText = secondsToTime(initTimeSeconds);
       }
+    },
+    onStopTimer() {
+      this.resetTimer();
+      this.resetTimerExtra();
     },
   },
 };
@@ -152,6 +170,8 @@ export default {
     right: 0
     font-size: 25%
     line-height: 1
+    &--extra
+      cursor: pointer
 
   .timer__buttons
     display: flex

@@ -109,10 +109,12 @@ export default {
   },
   created() {
     this.startTimer();
+    this.startTimerExtra();
   },
   methods: {
     ...mapActions([
       'startTimer',
+      'startTimerExtra',
     ]),
   },
 
