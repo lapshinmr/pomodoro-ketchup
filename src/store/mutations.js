@@ -72,28 +72,22 @@ export default {
   SET_COLOR_THEME(state, payload) {
     state.colorTheme = payload;
   },
-  ADD_STATISTIC(state, payload) {
+  ADD_STATISTIC(state, { value, index }) {
     const now = new Date();
     const itemToAd = {
-      value: payload.value,
-      note: `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`,
+      value,
+      note: `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
     };
-    if (payload.index !== undefined) {
-      state.statistic.splice(payload.index, 0, itemToAd);
+    if (index !== undefined) {
+      state.statistic.splice(index, 0, itemToAd);
     } else {
       state.statistic.push(itemToAd);
     }
   },
-  EDIT_STATISTIC_VALUE(state, payload) {
-    Vue.set(state.statistic, payload.index, {
-      value: payload.value,
-      note: state.statistic[payload.index].note,
-    });
-  },
-  EDIT_STATISTIC_NOTE(state, payload) {
-    Vue.set(state.statistic, payload.index, {
-      value: state.statistic[payload.index].value,
-      note: payload.note,
+  EDIT_STATISTIC_ITEM(state, { index, value, note }) {
+    Vue.set(state.statistic, index, {
+      value: value ?? state.statistic[index].value,
+      note: note ?? state.statistic[index].note,
     });
   },
   REMOVE_STATISTIC(state, payload) {

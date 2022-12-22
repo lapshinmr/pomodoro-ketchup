@@ -57,7 +57,6 @@
 
 <script>
 import axios from 'axios';
-import { mapActions } from 'vuex';
 
 export default {
   data() {
@@ -71,14 +70,11 @@ export default {
         return this.$store.state.syncId;
       },
       set(value) {
-        this.setSyncId(value);
+        this.$store.commit('SET_SYNC_ID', value);
       },
     },
   },
   methods: {
-    ...mapActions([
-      'setSyncId',
-    ]),
     generateKey() {
       axios.get('/.json?shallow=true')
         .then((response) => {

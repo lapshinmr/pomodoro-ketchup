@@ -82,9 +82,6 @@ export default {
     commit('SET_LEFT_TIME', state.timeInit - timeExtra);
     dispatch('resetTimerExtra');
   },
-  setPomodorosTotal({ commit }, payload) {
-    commit('SET_POMODOROS_TOTAL', payload);
-  },
   switchTimerTitleFlag({ commit }) {
     commit('SWITCH_TIMER_TITLE_FLAG');
   },
@@ -105,20 +102,5 @@ export default {
   },
   setNotificationSound({ commit }, payload) {
     commit('SET_NOTIFICATION_SOUND', payload);
-  },
-  addStatistic({ commit }, payload) {
-    commit('ADD_STATISTIC', payload);
-  },
-  editStatisticValue({ commit }, payload) {
-    commit('EDIT_STATISTIC_VALUE', payload);
-  },
-  editStatisticNote({ commit }, payload) {
-    commit('EDIT_STATISTIC_NOTE', payload);
-  },
-  removeStatistic({ commit }, payload) {
-    commit('REMOVE_STATISTIC', payload);
-  },
-  setSyncId({ commit }, payload) {
-    commit('SET_SYNC_ID', payload);
   },
 };

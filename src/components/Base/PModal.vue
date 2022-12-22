@@ -1,16 +1,25 @@
 <template>
   <transition name="fade">
     <div
+      v-if="value"
       class="modal-window"
-      @keydown.enter="toggleModal"
+      @keydown.enter="$emit('input', false)"
     >
       <div
         class="modal-window__close-area"
-        @click="toggleModal"
+        @click="$emit('input', false)"
       />
       <div class="modal-window__container container">
         <div class="row my-3">
           <div class="col-12">
+            <button
+              type="button"
+              class="close"
+              aria-label="Close"
+              @click="$emit('input', false)"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
             <slot />
           </div>
         </div>
@@ -21,8 +30,13 @@
 
 <script>
 export default {
-  name: 'TheModal',
-  props: ['toggleModal', 'isOpened'],
+  name: 'PModal',
+  props: {
+    value: {
+      type: Boolean,
+      default: false,
+    },
+  },
 };
 </script>
 

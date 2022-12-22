@@ -57,8 +57,8 @@ export default {
   directives: {
     draggable: {
       bind(el, binding, vnode) {
-        let rootHeight; let
-          curPomodoros;
+        let rootHeight;
+        let curPomodoros;
 
         function mousemove(e) {
           if (e.buttons === 0) {
@@ -73,10 +73,9 @@ export default {
             } else if (curPomodoros > vnode.context.pomodorosGoal) {
               curPomodoros = vnode.context.pomodorosGoal;
             }
-            vnode.context.setPomodorosTotal(curPomodoros);
+            vnode.context.$store.commit('SET_POMODOROS_TOTAL', curPomodoros);
           }
           el.click(); // fixes bug in the chromium
-          // return false;
         }
 
         el.addEventListener('mousedown', () => {

@@ -1,80 +1,5 @@
 <template>
   <div class="graph d-flex justify-content-center">
-    <modal
-      v-if="isOpened"
-      class="graph__modal"
-      :toggle-modal="toggleModal"
-      :is-opened="isOpened"
-    >
-      <button
-        type="button"
-        class="close"
-        aria-label="Close"
-        @click="isOpened = false"
-      >
-        <span aria-hidden="true">&times;</span>
-      </button>
-      <div class="mb-2">
-        <small class="form-text text-muted mb-1">
-          Pomodoros
-        </small>
-        <input
-          v-model.lazy.number="barValue"
-          type="text"
-          class="form-control"
-        >
-      </div>
-      <div class="mb-2">
-        <small class="form-text text-muted mb-1">
-          Note
-        </small>
-        <input
-          v-model.lazy="barNote"
-          type="text"
-          class="form-control"
-        >
-      </div>
-      <div>
-        <button
-          type="button"
-          name="button"
-          class="btn btn-success btn-sm"
-          @click="removeBar"
-        >
-          Remove
-        </button>
-        <button
-          type="button"
-          name="button"
-          class="btn btn-success btn-sm ml-2"
-          @click="addBar"
-        >
-          Add bar
-        </button>
-      </div>
-    </modal>
-
-    <transition name="fade">
-      <popup
-        v-if="isOpenedPopup"
-        :coordinates="{x: popupX, y: popupY}"
-      >
-        <div
-          slot="note"
-          class=""
-        >
-          {{ statistic[activeBarIdx].note }}
-        </div>
-        <div
-          slot="count"
-          class=""
-        >
-          {{ statistic[activeBarIdx].value }}
-          pomodoro{{ statistic[activeBarIdx].value > 1 ? 's' : '' }}
-        </div>
-      </popup>
-    </transition>
-
     <svg
       class="graph__container"
       :viewBox="'0 0 ' + svgWidth + ' ' + svgHeight"
@@ -90,9 +15,9 @@
             :x="barsStep * (index + 1) - barWidth / 2"
             :y="bottomSpace"
             @click="activateModal(index)"
-            @mouseover="popupOpen(index + offsetReversed)"
-            @mouseleave="isOpenedPopup = false"
-            @mousemove="popupMove"
+            @mouseover="showTooltip(index + offsetReversed)"
+            @mouseleave="isTooltipShown = false"
+            @mousemove="moveTooltip"
           />
           <rect
             class="graph__control-line"
@@ -206,9 +131,9 @@
             :height="item.value * miniBarsUnit"
             :x="miniBarsStep * index + (miniBarsStep / 2) - (miniBarWidth / 2)"
             :y="statsSpace"
-            @mouseover="popupOpen(index)"
-            @mouseleave="isOpenedPopup = false"
-            @mousemove="popupMove"
+            @mouseover="showTooltip(index)"
+            @mouseleave="isTooltipShown = false"
+            @mousemove="moveTooltip"
           />
         </template>
 
@@ -281,22 +206,43 @@
 
       </g>
     </svg>
+
+    <statistic-tooltip
+      :is-shown="isTooltipShown"
+      :item="statistic[activeBarIdx] || {}"
+      :x="tooltipX"
+      :y="tooltipY"
+    />
+
+    <statistic-popup
+      v-model="isPopupShown"
+      :total="barValue"
+      :note="barNote"
+      @add="addBar"
+      @save="onSaveBar"
+      @remove="removeBar"
+    />
+
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
-import Modal from './TheModal.vue';
-import Popup from './ThePopup.vue';
+import { mapState } from 'vuex';
+
+import StatisticTooltip from '@/components/Statistic/StatisticTooltip.vue';
+import StatisticPopup from '@/components/Statistic/StatisticPopup.vue';
 
 export default {
-  components: { Modal, Popup },
+  components: {
+    StatisticTooltip,
+    StatisticPopup,
+  },
   data() {
     return {
-      isOpened: false,
-      isOpenedPopup: false,
-      popupX: 0,
-      popupY: 0,
+      isPopupShown: false,
+      isTooltipShown: false,
+      tooltipX: 0,
+      tooltipY: 0,
       activeBarIdx: null,
 
       // SIZES
@@ -386,75 +332,57 @@ export default {
         sum, sumNew, mean, meanNew, delta, min, max,
       };
     },
-    pomodorosAverageNew() {
-      return (this.pomodorosSum / this.statistic.length).toFixed(2);
+    // pomodorosAverageNew() {
+    //   return (this.pomodorosSum / this.statistic.length).toFixed(2);
+    // },
+    barValue() {
+      if (this.activeBarIdx !== null) {
+        return this.statisticRanged[this.activeBarIdx]?.value;
+      }
+      return 0;
     },
-    barValue: {
-      get() {
-        if (this.activeBarIdx !== null) {
-          return this.statisticRanged[this.activeBarIdx].value;
-        }
-        return 0;
-      },
-      set(value) {
-        if (!+value) {
-          return;
-        }
-        this.editStatisticValue({
-          index: this.activeBarIdx + this.offsetReversed,
-          value,
-        });
-      },
-    },
-    barNote: {
-      get() {
-        if (this.activeBarIdx !== null) {
-          return this.statisticRanged[this.activeBarIdx].note;
-        }
-        return '';
-      },
-      set(value) {
-        this.editStatisticNote({
-          index: this.activeBarIdx + this.offsetReversed,
-          note: value,
-        });
-      },
+    barNote() {
+      if (this.activeBarIdx !== null) {
+        return this.statisticRanged[this.activeBarIdx]?.note;
+      }
+      return '';
     },
   },
   methods: {
-    ...mapActions([
-      'addStatistic',
-      'editStatisticValue',
-      'editStatisticNote',
-      'removeStatistic',
-      'setPomodorosTotal',
-    ]),
+    onSaveBar({ total, note }) {
+      this.$store.commit('EDIT_STATISTIC_ITEM', {
+        index: this.activeBarIdx + this.offsetReversed,
+        value: total,
+        note,
+      });
+      this.isPopupShown = false;
+    },
     commitCurrent() {
-      this.addStatistic({ value: this.pomodorosTotal });
+      this.$store.commit('ADD_STATISTIC', { value: this.pomodorosTotal });
     },
     addBar() {
-      this.addStatistic({ index: this.activeBarIdx + this.offsetReversed + 1, value: 0 });
-      this.toggleModal();
-    },
-    toggleModal() {
-      this.isOpened = !this.isOpened;
+      this.$store.commit(
+        'ADD_STATISTIC',
+        { index: this.activeBarIdx + this.offsetReversed + 1, value: 0 },
+      );
+      this.isPopupShown = false;
     },
     activateModal(index) {
       this.activeBarIdx = index;
-      this.toggleModal();
+      this.isPopupShown = true;
     },
-    popupOpen(index) {
-      this.isOpenedPopup = true;
+    showTooltip(index) {
+      this.isTooltipShown = true;
       this.activeBarIdx = index;
     },
-    popupMove(event) {
-      this.popupX = event.clientX;
-      this.popupY = event.clientY;
+    moveTooltip(event) {
+      this.tooltipX = event.clientX;
+      this.tooltipY = event.clientY;
     },
     removeBar() {
-      this.removeStatistic(this.activeBarIdx + this.offsetReversed);
-      this.activeBar = null;
-      this.isOpened = false;
+      this.$store.commit('REMOVE_STATISTIC', this.activeBarIdx + this.offsetReversed);
+      this.activeBarIdx = null;
+      this.isPopupShown = false;
     },
   },
   directives: {
@@ -472,9 +400,9 @@ export default {
           const dp = Math.floor(dy / vnode.context.barsUnit);
           const pomodorosToSet = curPomodoros + dp < 0 ? 0 : curPomodoros + dp;
           if (binding.value === 'progress') {
-            vnode.context.setPomodorosTotal(pomodorosToSet);
+            vnode.context.$store.commit('SET_POMODOROS_TOTAL', pomodorosToSet);
           } else {
-            vnode.context.editStatisticValue({
+            vnode.context.$store.commit('EDIT_STATISTIC_ITEM', {
               index: curBarIdx + vnode.context.offsetReversed,
               value: pomodorosToSet,
             });

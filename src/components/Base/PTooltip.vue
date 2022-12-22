@@ -3,14 +3,24 @@
     class="popup noselect"
     :style="location"
   >
-    <slot name="note" />
-    <slot name="count" />
+    <slot />
   </div>
 </template>
 
 <script>
 export default {
-  props: ['coordinates'],
+  name: 'PPopup',
+  props: {
+    coordinates: {
+      type: Object,
+      default() {
+        return {
+          x: 0,
+          y: 0,
+        };
+      },
+    },
+  },
   computed: {
     location() {
       return {
