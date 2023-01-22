@@ -59,8 +59,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-
 export default {
   name: 'TitleSettings',
   data() {
@@ -76,7 +74,7 @@ export default {
         return this.$store.state.notificationTitle;
       },
       set(notificationTitle) {
-        this.setNotificationTitle(notificationTitle);
+        this.$store.commit('SET_NOTIFICATION_TITLE', notificationTitle);
       },
     },
     notificationBody: {
@@ -84,7 +82,7 @@ export default {
         return this.$store.state.notificationBody;
       },
       set(notificationBody) {
-        this.setNotificationBody(notificationBody);
+        this.$store.commit('SET_NOTIFICATION_BODY', notificationBody);
       },
     },
   },
@@ -93,10 +91,6 @@ export default {
     this.isDenied = Notification.permission === 'denied';
   },
   methods: {
-    ...mapActions([
-      'setNotificationTitle',
-      'setNotificationBody',
-    ]),
     notify() {
       if (Notification.permission === 'default') {
         Notification.requestPermission(() => {

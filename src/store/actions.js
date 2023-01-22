@@ -82,25 +82,4 @@ export default {
     commit('SET_LEFT_TIME', state.timeInit - timeExtra);
     dispatch('resetTimerExtra');
   },
-  switchTimerTitleFlag({ commit }) {
-    commit('SWITCH_TIMER_TITLE_FLAG');
-  },
-  setGoalIndicatorFormat({ commit }, payload) {
-    commit('SET_GOAL_INDICATOR_FORMAT', payload);
-  },
-  switchProgressBarFlag({ commit }) {
-    commit('SWITCH_PROGRESS_BAR_FLAG');
-  },
-  setNotificationTitle({ commit }, payload) {
-    commit('SET_NOTIFICATION_TITLE', payload);
-  },
-  setNotificationBody({ commit }, payload) {
-    commit('SET_NOTIFICATION_BODY', payload);
-  },
-  setColorTheme({ commit }, payload) {
-    commit('SET_COLOR_THEME', payload);
-  },
-  setNotificationSound({ commit }, payload) {
-    commit('SET_NOTIFICATION_SOUND', payload);
-  },
 };

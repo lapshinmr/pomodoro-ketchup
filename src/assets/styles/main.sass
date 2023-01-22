@@ -1,0 +1,66 @@
+body
+  font-family: Arial, sans-serif
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+  margin: 0
+  padding: 0
+
+.noselect
+  -webkit-touch-callout: none
+  -webkit-user-select: none
+  -khtml-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+
+// TRANSITIONS
+.fade-enter
+  opacity: 0
+
+.fade-enter-active
+  transition: opacity 0.3s
+
+.fade-leave
+
+.fade-leave-active
+  opacity: 0
+  transition: opacity 0.3s
+
+.slide-enter
+  opacity: 0
+
+.slide-enter-active
+  animation: slide-in .3s ease-out forwards
+  transition: opacity .3s
+
+.slide-leave
+
+.slide-leave-active
+  animation: slide-out .3s ease-out forwards
+  transition: opacity .3s
+  opacity: 0
+
+@keyframes slide-in
+  from
+    transform: translateX(-30px)
+  to
+    transform: translateX(0)
+
+@keyframes slide-out
+  from
+    transform: translateX(0px)
+  to
+    transform: translateX(-30px)
+
+.line-enter
+  width: 0%!important
+
+.line-enter-active
+  transition: all 0.3s
+
+.line-leave
+
+.line-leave-active
+  width: 0%!important
+  transition: all 0.3s
+

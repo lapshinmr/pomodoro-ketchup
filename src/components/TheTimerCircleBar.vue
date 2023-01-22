@@ -1,17 +1,17 @@
 <template>
-  <div class="timer-bar">
+  <div class="timer-circle-bar">
     <svg
-      class="timer-bar__container"
+      class="timer-circle-bar__container"
       viewBox="0 0 150 150"
     >
       <circle
-        class="timer-bar__background"
+        class="timer-circle-bar__background"
         cx="75"
         cy="75"
         r="70"
       />
       <circle
-        class="timer-bar__progress"
+        class="timer-circle-bar__progress"
         cx="75"
         cy="75"
         r="70"
@@ -20,7 +20,7 @@
       />
       <circle
         v-draggable
-        class="timer-bar__line"
+        class="timer-circle-bar__line"
         cx="75"
         cy="75"
         r="70"
@@ -28,7 +28,7 @@
         :style="line"
       />
     </svg>
-    <div class="timer-bar__slot d-flex justify-content-center align-items-center">
+    <div class="timer-circle-bar__slot">
       <slot />
     </div>
   </div>
@@ -38,7 +38,7 @@
 import { mapState, mapActions } from 'vuex';
 
 export default {
-  name: 'TimerBar',
+  name: 'TheTimerCircleBar',
   props: ['isSettingsMode'],
   data() {
     return {
@@ -76,7 +76,6 @@ export default {
   },
   methods: {
     ...mapActions([
-      'setLeftTime',
       'pauseTimer',
       'startTimer',
     ]),
@@ -115,7 +114,6 @@ export default {
             }
             vnode.context.setLeftTime(curTime);
           }
-          // return false;
         }
 
         el.addEventListener('mousedown', () => {
@@ -132,36 +130,29 @@ export default {
 };
 </script>
 
-<style lang="sass">
-.timer-bar
+<style lang="sass" scoped>
+.timer-circle-bar
   position: relative
-  min-height: 75vh
-  max-height: 75vh
-  min-width: 90vw
-  max-width: 90vw
-  font-size: 90vw
+  height: 75vh
+  width: 90vw
 
-  @media (min-aspect-ratio: 75/90)
-    font-size: 75vh
-
-  @media (max-height: 400px)
+  @include md
     min-height: 95vh
     max-height: 95vh
     min-width: 95vw
     max-width: 95vw
-    font-size: 95vh
 
-  .timer-bar__slot
+  .timer-circle-bar__slot
     position: absolute
     left: 50%
     top: 50%
     transform: translate(-50%, -50%)
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
 
-  .timer-bar__container
-    position: absolute
-    left: 50%
-    top: 50%
-    transform: translate(-50%, -50%)
+  .timer-circle-bar__container
     height: 100%
     width: 100%
 
@@ -169,13 +160,13 @@ export default {
       stroke-width: 10
       fill: transparent
 
-      &.timer-bar__background
+      &.timer-circle-bar__background
         stroke: var(--primary)
 
-      &.timer-bar__progress
+      &.timer-circle-bar__progress
         stroke: var(--dark)
 
-      &.timer-bar__line
+      &.timer-circle-bar__line
         stroke: transparent
         transition: stroke 0.3s
 

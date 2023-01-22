@@ -1,6 +1,6 @@
 <template>
-  <div class="indicator d-flex align-items-center justify-content-center text-center">
-    <div class="indicator__buttons indicator__buttons_left">
+  <div class="pomodoros-counter">
+    <div class="pomodoros-counter__buttons">
       <transition
         name="slide-left"
         mode="out-in"
@@ -8,7 +8,7 @@
         <button
           v-if="!isSettingsMode && goalIndicatorFormat !== 3"
           key="left-1"
-          class="indicator__button btn btn-link"
+          class="pomodoros-counter__button btn btn-link"
           @click="REMOVE_POMODORO"
         >
           <i class="fas fa-minus-circle" />
@@ -16,7 +16,7 @@
         <button
           v-else-if="isSettingsMode"
           key="left-2"
-          class="indicator__button btn btn-link"
+          class="pomodoros-counter__button btn btn-link"
           @click="handleGoalIndicatorFormat--"
         >
           <i class="far fa-arrow-alt-circle-left" />
@@ -27,7 +27,7 @@
     <transition name="fade">
       <div
         v-if="goalIndicatorFormat !== 3 || isSettingsMode"
-        class="indicator__text noselect"
+        class="pomodoros-counter__text noselect"
       >
         <transition
           :name="slideIndicator"
@@ -36,13 +36,13 @@
           <div
             v-if="goalIndicatorFormat === 0"
             key="format-0"
-            class="indicator__format"
+            class="pomodoros-counter__format"
           >
             {{ pomodorosTotal }} of
-            <span class="indicator__container">
+            <span class="pomodoros-counter__container">
               <span
                 v-if="!isSettingsMode"
-                class="indicator__total"
+                class="pomodoros-counter__total"
                 contenteditable="false"
               >
                 {{ pomodorosGoal }}
@@ -50,8 +50,8 @@
               <span
                 v-if="isSettingsMode"
                 v-set-editable="handlePomodorosGoal"
-                class="indicator__total"
-                :class="{'indicator__total_editable': isSettingsMode}"
+                class="pomodoros-counter__total"
+                :class="{'pomodoros-counter__total--editable': isSettingsMode}"
                 contenteditable="true"
               >
                 {{ pomodorosGoal }}
@@ -74,13 +74,13 @@
           <div
             v-else-if="goalIndicatorFormat === 1"
             key="format-1"
-            class="indicator__format"
+            class="pomodoros-counter__format"
           >
             {{ pomodorosTotal }} of
-            <span class="indicator__container">
+            <span class="pomodoros-counter__container">
               <span
                 v-if="!isSettingsMode"
-                class="indicator__total"
+                class="pomodoros-counter__total"
                 contenteditable="false"
               >
                 {{ pomodorosGoal }}
@@ -88,8 +88,8 @@
               <span
                 v-if="isSettingsMode"
                 v-set-editable="handlePomodorosGoal"
-                class="indicator__total"
-                :class="{'indicator__total_editable': isSettingsMode}"
+                class="pomodoros-counter__total"
+                :class="{'pomodoros-counter__total--editable': isSettingsMode}"
                 contenteditable="true"
               >
                 {{ pomodorosGoal }}
@@ -106,7 +106,7 @@
           <div
             v-else-if="goalIndicatorFormat === 2"
             key="format-2"
-            class="indicator__format"
+            class="pomodoros-counter__format"
           >
             <span>{{ Math.round(pomodorosTotal / pomodorosGoal * 100) + '%' }}</span>
           </div>
@@ -114,7 +114,7 @@
           <div
             v-else-if="goalIndicatorFormat === 3"
             key="format-3"
-            class="indicator__format"
+            class="pomodoros-counter__format"
           >
             Off
           </div>
@@ -122,7 +122,7 @@
       </div>
     </transition>
 
-    <div class="indicator__buttons indicator__buttons_right">
+    <div class="pomodoros-counter__buttons pomodoros-counter__buttons--right">
       <transition
         name="slide-right"
         mode="out-in"
@@ -130,7 +130,7 @@
         <button
           v-if="!isSettingsMode && goalIndicatorFormat !== 3"
           key="right-1"
-          class="indicator__button btn btn-link"
+          class="pomodoros-counter__button btn btn-link"
           @click="ADD_POMODORO"
         >
           <i class="fas fa-plus-circle" />
@@ -138,7 +138,7 @@
         <button
           v-else-if="isSettingsMode"
           key="right-2"
-          class="indicator__button btn btn-link"
+          class="pomodoros-counter__button btn btn-link"
           @click="handleGoalIndicatorFormat++"
         >
           <i class="far fa-arrow-alt-circle-right" />
@@ -149,11 +149,16 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
-  name: 'PomodorosIndicator',
-  props: ['is-settings-mode'],
+  name: 'ThePomodorosCounter',
+  props: {
+    isSettingsMode: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       slideIndicator: 'slide-indicator-left',
@@ -181,7 +186,7 @@ export default {
         } else if (value > 3) {
           indicatorFormatIndex = 0;
         }
-        this.setGoalIndicatorFormat(indicatorFormatIndex);
+        this.$store.commit('SET_GOAL_INDICATOR_FORMAT', indicatorFormatIndex);
       },
     },
     pomodorosPercentage() {
@@ -193,9 +198,6 @@ export default {
       'SET_POMODOROS_GOAL',
       'ADD_POMODORO',
       'REMOVE_POMODORO',
-    ]),
-    ...mapActions([
-      'setGoalIndicatorFormat',
     ]),
     handlePomodorosGoal(el) {
       if (!+el.innerText) {
@@ -209,22 +211,22 @@ export default {
 </script>
 
 <style scoped lang="sass">
-.indicator
+.pomodoros-counter
   position: relative
+  display: flex
+  align-items: center
   color: var(--dark)
   transition: all 0.3s
   font-size: 6%
+  text-align: center
 
-  .indicator__buttons
-    position: absolute
+  .pomodoros-counter__buttons
 
-  .indicator__buttons_left
-    left: 10%
+  .pomodoros-counter__buttons--left
 
-  .indicator__buttons_right
-    right: 10%
+  .pomodoros-counter__buttons--right
 
-  .indicator__button
+  .pomodoros-counter__button
     position: relative
     top: 0.1rem
     color: var(--dark)
@@ -235,13 +237,13 @@ export default {
     cursor: pointer
     border: none
 
-  .indicator__text
+  .pomodoros-counter__text
 
-  .indicator__format
+  .pomodoros-counter__format
 
-  .indicator__total
+  .pomodoros-counter__total
 
-  .indicator__container
+  .pomodoros-counter__container
     position: relative
 
   .timer__line
@@ -252,7 +254,7 @@ export default {
     height: 2px
     background-color: var(--dark)
 
-  .indicator__total_editable
+  .pomodoros-counter__total--editable
     color: var(--dark)
     outline: none
 

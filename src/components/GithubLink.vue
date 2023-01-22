@@ -8,7 +8,7 @@
       width="80"
       height="80"
       viewBox="0 0 250 250"
-      style="fill: var(--dark); color: var(--super-light); position: absolute; top: 0; border: 0; right: 0;"
+      class="github-corner__svg"
       aria-hidden="true"
     >
       <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z" />
@@ -49,6 +49,14 @@ export default {
   top: 0
   right: 0
   z-index: 1000
+
+  .github-corner__svg
+    fill: var(--dark)
+    color: var(--super-light)
+    position: absolute
+    top: 0
+    border: 0
+    right: 0
 
   &:hover .octo-arm
     animation: octocat-wave 560ms ease-in-out

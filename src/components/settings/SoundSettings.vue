@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 import { NOTIFICATION_SOUNDS } from '@/helpers/const/constants';
 
 export default {
@@ -24,9 +24,6 @@ export default {
     ]),
   },
   methods: {
-    ...mapActions([
-      'setNotificationSound',
-    ]),
     playSound(sound) {
       const audio = new Audio(sound);
       audio.play();
@@ -36,7 +33,7 @@ export default {
         this.notificationSounds.indexOf(this.notificationSound) + 1
       ) % this.notificationSounds.length;
       const sound = this.notificationSounds[nextSoundIdx];
-      this.setNotificationSound(sound);
+      this.$store.commit('SET_NOTIFICATION_SOUND', sound);
       this.playSound(sound);
     },
   },

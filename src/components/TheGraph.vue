@@ -388,8 +388,10 @@ export default {
   directives: {
     draggable: {
       bind(el, binding, vnode) {
-        let canvasHeight; let initY; let curPomodoros; let
-          curBarIdx;
+        let canvasHeight;
+        let initY;
+        let curPomodoros;
+        let curBarIdx;
 
         function mousemove(e) {
           if (e.buttons === 0) {

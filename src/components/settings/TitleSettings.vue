@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
   name: 'TitleSettings',
@@ -21,14 +21,9 @@ export default {
         return this.$store.state.isTimerTitle;
       },
       set() {
-        this.switchTimerTitleFlag();
+        this.$store.commit('SWITCH_TIMER_TITLE_FLAG');
       },
     },
-  },
-  methods: {
-    ...mapActions([
-      'switchTimerTitleFlag',
-    ]),
   },
 };
 </script>

@@ -1,23 +1,24 @@
 <template>
   <div class="timer">
-    <div class="timer__slot">
-      <slot />
-    </div>
     <div class="timer__time d-flex justify-content-center align-items-center">
       <span
         v-if="!isSettingsMode"
-        key="1"
         class="timer__string noselect"
         contenteditable="false"
-      >{{ timeLeft | time }}</span>
+      >
+        {{ timeLeft | time }}
+      </span>
       <span
         v-if="isSettingsMode"
-        key="2"
         v-set-editable="handleInitTime"
         class="timer__string"
-        :class="{'timer__string_editable': isSettingsMode}"
+        :class="{
+          'timer__string--editable': isSettingsMode,
+        }"
         contenteditable="true"
-      >{{ timeInit | time }}</span>
+      >
+        {{ timeInit | time }}
+      </span>
       <transition name="line">
         <div
           v-if="isSettingsMode"
@@ -41,31 +42,6 @@
           +{{ timeExtra | time }}
         </span>
       </transition>
-    </div>
-    <div class="timer__buttons">
-      <button
-        v-if="isPause"
-        key="play"
-        class="btn-round btn-large"
-        @click="startTimer(true)"
-      >
-        <i class="fas fa-play" />
-      </button>
-      <button
-        v-if="!isPause"
-        key="pause"
-        class="btn-round btn-large"
-        @click="pauseTimer"
-      >
-        <i class="fas fa-pause" />
-      </button>
-      <button
-        key="stop"
-        class="btn-round btn-large ml-2"
-        @click="onStopTimer"
-      >
-        <i class="fas fa-stop" />
-      </button>
     </div>
   </div>
 </template>
@@ -128,32 +104,24 @@ export default {
         el.innerText = secondsToTime(initTimeSeconds);
       }
     },
-    onStopTimer() {
-      this.resetTimer();
-      this.resetTimerExtra();
-    },
   },
 };
 </script>
 
 <style scoped lang="sass">
 .timer
-  .timer__slot
-    position: absolute
-    bottom: 100%
-    width: 100%
-
   .timer__time
     position: relative
     color: var(--dark)
-    line-height: 1em
-    font-size: 30%
-    width: 100%
 
   .timer__string
-    width: 100%
+    font-size: 10rem
+    line-height: 1
 
-  .timer__string_editable
+    @include md
+      font-size: 8rem
+
+  .timer__string--editable
     outline: none
 
   .timer__line
@@ -174,9 +142,9 @@ export default {
       cursor: pointer
 
   .timer__buttons
+    position: absolute
     display: flex
     justify-content: center
-    position: absolute
     top: 115%
     left: 50%
     transform: translateX(-50%)

@@ -1,0 +1,21 @@
+@import './variables.sass'
+
+@mixin sm
+  @media (max-width: #{$md - 1px})
+    @content
+
+@mixin md
+  @media (max-width: #{$lg - 1px})
+    @content
+
+@mixin lg
+  @media (max-width: #{$xl - 1px})
+    @content
+
+@mixin xl
+  @media (max-width: #{$xxl - 1px})
+    @content
+
+@mixin xxl
+  @media (min-width: $xxl)
+    @content

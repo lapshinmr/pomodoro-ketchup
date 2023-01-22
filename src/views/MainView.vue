@@ -1,32 +1,34 @@
 <template>
-  <div class="timer-container d-flex align-items-center justify-content-center">
+  <div class="timer">
     <!-- POMODOROS PROGRESS BAR -->
     <transition name="fade">
       <pomodoros-bar v-if="goalIndicatorFormat !== 3" />
     </transition>
     <!-- TIMER WITH PROGRESS BAR -->
-    <timer-bar>
-      <timer-time :is-settings-mode="isSettingsMode">
-        <pomodoros-indicator :is-settings-mode="isSettingsMode" />
-      </timer-time>
-    </timer-bar>
+    <the-timer-circle-bar>
+      <the-pomodoros-counter :is-settings-mode="isSettingsMode" />
+      <the-timer-time :is-settings-mode="isSettingsMode" />
+      <the-timer-controls />
+    </the-timer-circle-bar>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import TimerBar from '@/components/TimerBar.vue';
+import TheTimerCircleBar from '@/components/TheTimerCircleBar.vue';
 import PomodorosBar from '@/components/PomodorosBar.vue';
-import PomodorosIndicator from '@/components/PomodorosIndicator.vue';
-import TimerTime from '@/components/TimerTime.vue';
+import ThePomodorosCounter from '@/components/ThePomodorosCounter.vue';
+import TheTimerTime from '@/components/TheTimerTime.vue';
+import TheTimerControls from '@/components/TheTimerControls.vue';
 
 export default {
   name: 'MainView',
   components: {
-    TimerTime,
-    TimerBar,
+    TheTimerControls,
+    ThePomodorosCounter,
+    TheTimerTime,
+    TheTimerCircleBar,
     PomodorosBar,
-    PomodorosIndicator,
   },
   props: {
     isSettingsMode: {
@@ -42,8 +44,11 @@ export default {
 </script>
 
 <style lang="sass">
-.timer-container
+.timer
   position: relative
+  display: flex
+  align-items: center
+  justify-content: center
   width: 100%
   height: 100%
 
@@ -53,5 +58,4 @@ export default {
   top: 5px
   padding: 0
   z-index: 1000
-
 </style>

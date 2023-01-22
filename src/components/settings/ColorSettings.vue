@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 import { COLOR_THEMES } from '@/helpers/const/constants';
 
 export default {
@@ -24,13 +24,10 @@ export default {
     ]),
   },
   methods: {
-    ...mapActions([
-      'setColorTheme',
-    ]),
     nextColorTheme() {
       const colorThemeList = Object.keys(this.colorThemes).sort();
       const nextColorThemeIdx = (colorThemeList.indexOf(this.colorTheme) + 1) % colorThemeList.length;
-      this.setColorTheme(colorThemeList[nextColorThemeIdx]);
+      this.$store.commit('SET_COLOR_THEME', colorThemeList[nextColorThemeIdx]);
     },
   },
 };

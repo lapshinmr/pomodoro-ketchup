@@ -1,68 +1,64 @@
 <template>
   <div
-    class="container-fluid root"
+    class="app"
     :style="COLORS"
   >
-    <div class="row">
-      <div class="col-12 fill-screen-height">
-        <timer-title :title="title" />
+    <timer-title :title="title" />
 
-        <github-link />
+    <github-link />
 
-        <div class="navigation d-flex">
-          <router-link
-            v-if="$router.currentRoute.path !== '/'"
-            to="/"
-            class="btn-round"
-          >
-            <i class="far fa-clock" />
-          </router-link>
-          <router-link
-            v-else
-            to="/statistic"
-            class="btn-round"
-          >
-            <i class="far fa-chart-bar" />
-          </router-link>
+    <div class="navigation">
+      <router-link
+        v-if="$router.currentRoute.path !== '/'"
+        to="/"
+        class="btn-round"
+      >
+        <i class="far fa-clock" />
+      </router-link>
+      <router-link
+        v-else
+        to="/statistic"
+        class="btn-round"
+      >
+        <p-icon name="chart" />
+      </router-link>
 
-          <!-- SETTINGS -->
-          <button
-            class="btn-round"
-            @click="isSettingsMode = !isSettingsMode"
-          >
-            <i
-              v-if="!isSettingsMode"
-              class="fas fa-cog"
-            />
-            <i
-              v-else
-              class="fas fa-times"
-            />
-          </button>
-          <transition name="slide">
-            <div
-              v-if="isSettingsMode"
-              class="settings__elements d-flex ml-2"
-            >
-              <component
-                :is="item + '-settings'"
-                v-for="item in components"
-                :key="item"
-                class="list-item"
-                :is-settings-mode="isSettingsMode"
-              />
-            </div>
-          </transition>
-        </div>
-
-        <transition
-          name="fade"
-          mode="out-in"
+      <!-- SETTINGS -->
+      <button
+        class="btn-round"
+        @click="isSettingsMode = !isSettingsMode"
+      >
+        <p-icon
+          v-if="!isSettingsMode"
+          name="cog"
+        />
+        <p-icon
+          v-else
+          name="close"
+        />
+      </button>
+      <transition name="slide">
+        <div
+          v-if="isSettingsMode"
+          class="settings__elements d-flex ml-2"
         >
-          <router-view :is-settings-mode="isSettingsMode" />
-        </transition>
-      </div>
+          <component
+            v-for="item in components"
+            :key="item"
+            :is="item + '-settings'"
+            class="list-item"
+            :is-settings-mode="isSettingsMode"
+          />
+        </div>
+      </transition>
     </div>
+
+    <transition
+      name="fade"
+      mode="out-in"
+    >
+      <router-view :is-settings-mode="isSettingsMode" />
+    </transition>
   </div>
 </template>
 
@@ -122,152 +118,16 @@ export default {
 </script>
 
 <style lang="sass">
-body
-  font-family: Arial, sans-serif
-  -webkit-font-smoothing: antialiased
-  -moz-osx-font-smoothing: grayscale
-  margin: 0
-  padding: 0
-
-.root
+.app
   color: var(--super-dark)
   background-color: var(--super-light)
+  height: 100vh
 
 .navigation
   position: absolute
   left: 5px
   top: 5px
+  display: flex
   padding: 0
   z-index: 1000
-
-// COMMON TOOLS
-.fill-screen-height
-  height: 100vh
-
-.fill-screen-width
-  width: 100vw
-
-.btn-success
-  color: var(--super-light)
-  border-color: var(--dark)
-  background-color: var(--dark)
-
-  &:hover
-    color: var(--super-light)
-    border-color: var(--super-dark)
-    background-color: var(--super-dark)
-
-  &:focus, &.focus
-    box-shadow: none
-
-.btn-success:not(:disabled):not(.disabled):active,
-.btn-success:not(:disabled):not(.disabled).active,
-.show > .btn-success.dropdown-toggle
-    color: var(--super-light)
-    background-color: var(--dark)
-    border-color: var(--dark)
-
-.btn-success:not(:disabled):not(.disabled):active:focus,
-.btn-success:not(:disabled):not(.disabled).active:focus,
-.show > .btn-success.dropdown-toggle:focus
-  box-shadow: none
-
-.btn-link
-  color: var(--dark)
-
-  &:hover
-    color: var(--super-dark)!important
-    text-decoration: none
-
-  &:focus
-    outline: none
-    text-decoration: none
-
-.btn-round
-  position: relative
-  display: flex
-  justify-content: center
-  align-items: center
-  width: 6vh
-  height: 6vh
-  font-size: 3.5vh
-  margin-left: 3px
-  border: none
-  border-radius: 50%
-  cursor: pointer
-  transition: all 0.15s
-  color: var(--super-light)
-  background-color: var(--dark)
-  &:hover
-    background-color: var(--primary)
-    color: var(--super-light)
-    text-decoration: none
-  &:first-child
-    margin-left: 0
-  &:focus
-    outline: none
-
-.btn-large
-  width: 8vh
-  height: 8vh
-
-.noselect
-  -webkit-touch-callout: none
-  -webkit-user-select: none
-  -khtml-user-select: none
-  -moz-user-select: none
-  -ms-user-select: none
-  user-select: none
-
-// TRANSITIONS
-.fade-enter
-  opacity: 0
-
-.fade-enter-active
-  transition: opacity 0.3s
-
-.fade-leave
-
-.fade-leave-active
-  opacity: 0
-  transition: opacity 0.3s
-
-.slide-enter
-    opacity: 0
-
-.slide-enter-active
-    animation: slide-in .3s ease-out forwards
-    transition: opacity .3s
-
-.slide-leave
-
-.slide-leave-active
-    animation: slide-out .3s ease-out forwards
-    transition: opacity .3s
-    opacity: 0
-
-@keyframes slide-in
-  from
-    transform: translateX(-30px)
-  to
-    transform: translateX(0)
-
-@keyframes slide-out
-  from
-    transform: translateX(0px)
-  to
-    transform: translateX(-30px)
-
-.line-enter
-  width: 0%!important
-
-.line-enter-active
-  transition: all 0.3s
-
-.line-leave
-
-.line-leave-active
-  width: 0%!important
-  transition: all 0.3s
-
 </style>

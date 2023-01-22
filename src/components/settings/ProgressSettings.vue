@@ -1,7 +1,7 @@
 <template>
   <div
     class="btn-round"
-    @click="switchProgressBarFlag"
+    @click="$store.commit('SWITCH_PROGRESS_BAR_FLAG')"
   >
     <i
       class="fas fa-redo-alt"
@@ -11,17 +11,12 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
   computed: {
     ...mapState([
       'isReversedProgressBar',
-    ]),
-  },
-  methods: {
-    ...mapActions([
-      'switchProgressBarFlag',
     ]),
   },
 };
