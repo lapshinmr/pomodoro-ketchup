@@ -42,6 +42,17 @@ export default {
       state.pomodorosTotal -= 1;
     }
   },
+  ADD_POMODOROS_SPLIT(state) {
+    if (!state.pomodorosSplits.includes(state.pomodorosTotal)) {
+      state.pomodorosSplits.push(state.pomodorosTotal);
+    }
+  },
+  SET_POMODOROS_SPLIT(state, { index, value }) {
+    Vue.set(state.pomodorosSplits, index, value);
+  },
+  SET_POMODOROS_SPLITS(state, payload) {
+    state.pomodorosSplits = payload;
+  },
   SET_POMODOROS_GOAL(state, payload) {
     state.pomodorosGoal = payload;
   },
