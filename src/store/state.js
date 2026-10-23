@@ -11,6 +11,7 @@ export default () => ({
   timeExtra: 0,
   // POMODOROS
   pomodorosTotal: 0,
+  pomodorosSplits: [],
   // APP STATE
   isPause: true,
   isSettingsMode: false,
