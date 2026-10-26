@@ -23,6 +23,8 @@ export default {
     }
   },
   createExtraTimerInterval({ state, commit }) {
+    // Never keep more than one extra interval, otherwise the lost one can't be cleared
+    clearInterval(state.timerExtraId);
     const timerExtraId = setInterval(() => {
       commit('INCREASE_EXTRA_TIME');
     }, cons.REFRESH_TIME);
@@ -37,6 +39,8 @@ export default {
       if (state.timeLeft <= 0) {
         commit('SET_LEFT_TIME', state.timeInit);
       }
+      // Unused extra time is dropped when the next pomodoro starts
+      dispatch('resetTimerExtra');
       canStart = true;
     // Start timer after page refresh
     } else if (!playFromButton && !state.isPause && state.timerId !== null) {
